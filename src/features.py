@@ -11,10 +11,10 @@ FEATURE_NAMES = ["log_ret", "c_over_o", "h_over_l", "log_vol_rel", "c_ema50", "c
                  "rsi", "macd", "macd_sig", "atr", "bb_pctb", "bb_bw", "adx"]
 assert len(FEATURE_NAMES) == 13
 
-
-def _ema(s, n):
+                    
+def _ema(s, n): 
     return s.ewm(span=n, adjust=False, min_periods=n).mean()          # alpha = 2/(n+1)
-
+       
 
 def _wilder(s, n):
     return s.ewm(alpha=1.0 / n, adjust=False, min_periods=n).mean()
@@ -22,7 +22,7 @@ def _wilder(s, n):
 
 def _true_range(h, l, c):
     pc = c.shift(1)
-    return pd.concat([h - l, (h - pc).abs(), (l-pc).abs()], axis=1).max(axis=1, skipna=False)
+    return pd.concat([h - l, (h - pc).abs(), (l-pc).abs()], axis=1).max(axis=1, skipna=False)  
 
 
 def asset_features(o, h, l, c, v, ic=CFG.ind):  

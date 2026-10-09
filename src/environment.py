@@ -153,7 +153,7 @@ if __name__ == "__main__":
             rs.append(r); tos.append(info["turnover"]); costs += info["cost"]
         finals[m] = env.V
         print(f"{m}: final V {env.V:,.2f} | mean turnover {np.mean(tos):.3f} | total cost {costs:,.0f} | "
-              f"mean reward {np.mean(rs):+.5f} | max |reward| {np.max(np.abs(rs)):.5f}")
+              f"mean reward {np.mean(rs):+.5f} | max reward| {np.max(np.abs(rs)):.5f}")
     v = np.array(list(finals.values()))
     assert np.allclose(v, v[0], rtol=1e-12), "wealth differs across models for identical actions"
     print("OK: identical actions give identical wealth for M1-M4; only the reward differs")

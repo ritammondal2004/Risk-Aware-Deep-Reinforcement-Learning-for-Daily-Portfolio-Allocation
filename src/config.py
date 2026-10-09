@@ -80,7 +80,7 @@ class ModelConfig:
 @dataclass(frozen=True)
 class PPOConfig:
     gamma: float = 0.99             # Zou et al. 2023, Table 1
-    clip_range: float = 0.2
+    clip_range: float = 0.2 
     value_coef: float = 0.5
     entropy_coef: float = 0.01
     max_grad_norm: float = 0.5
