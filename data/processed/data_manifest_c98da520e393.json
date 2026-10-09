@@ -1,0 +1,18 @@
+{
+  "raw_source": "download",
+  "raw_hash": "8f16afe04aba21c8da21fc01c989c055c3b559be4a3d625bf7030a05c83f34d6",
+  "align_hash": "903123e67860681266f7d33e4326d8cbbd5407bf92dd4d737e1f2a789cd40855",
+  "universe_tag": "c98da520e393",
+  "config_hash": "3b260e3b9b190798",
+  "n_common_days": 4192,
+  "n_dropped_days": 0,
+  "env": {
+    "python": "3.13.5",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "scipy": "1.15.3",
+    "torch": "2.12.0+cpu",
+    "cuda": null
+  }
+}
