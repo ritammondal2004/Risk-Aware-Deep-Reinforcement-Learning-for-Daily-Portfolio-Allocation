@@ -68,7 +68,8 @@ class PortfolioEnv:
         self.N = ret_next.shape[1]
         assert X.shape[1] % self.N == 0
         self.X, self.R, self.p = X, ret_next, params
-        self.first, self.end = max(int(start), params.window - 1), int(end)
+        self.first, self.end = max(int(start), params.window - 1), int(end) 
+                
         assert self.end - self.first >= 2 and self.end <= X.shape[0]
         assert np.isfinite(self.R[self.first:self.end]).all()
         self.action_dim = self.N + 1
@@ -128,11 +129,12 @@ class PortfolioEnv:
                 "penalty": penalty, "dsr": dsr, "w_before": w_before, "target": target, "w_next": w_new}
 
         self.V, self.w, self.i = v_new, w_new, i + 1
-        self.wbuf = np.roll(self.wbuf, -1, axis=0)
+        self.wbuf = np.roll(self.wbuf, -1, axis=0)      
         self.wbuf[-1] = w_new
         self.done = self.i >= self.end
-        obs = self._last_obs if self.done else self._obs()   # at segment end: last valid obs, truncated=True
-        return obs, float(reward), False, self.done, info
+        info["next_obs_valid"] = self.i < self.X.shape[0]          # true next state exists?
+        obs = self._obs() if info["next_obs_valid"] else self._last_obs
+        return obs, float(reward), False, self.done, info          # terminated=False, truncated=done
 
 
 if __name__ == "__main__":

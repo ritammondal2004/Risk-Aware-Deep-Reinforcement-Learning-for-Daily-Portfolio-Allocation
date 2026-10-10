@@ -1,49 +1,75 @@
-"""MLP/LSTM encoders and Dirichlet policy components.
-
-This file provides the core network/distribution building blocks. The full
-PPO rollout/update loop should be kept in one implementation so M1-M4 share
-exactly the same optimizer and training protocol.
-"""
-
-from __future__ import annotations
-
+"""Actor-critic with Dirichlet policy; encoder = MLP (M1) or LSTM (M2-M4)."""
+import numpy as np
 import torch
-from torch import nn
+import torch.nn as nn
 from torch.distributions import Dirichlet
 
 
-class MLPEncoder(nn.Module):
-    def __init__(self, input_dim: int, hidden_dim: int = 512):
+# Builds the shared 512-d state representation; only this part differs between M1 and M2-M4.
+class Encoder(nn.Module):
+    def __init__(self, kind, d_in, hidden):
         super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.Tanh(),
-        )
+        self.kind = kind
+        if kind == "mlp":
+            self.net = nn.Sequential(nn.Linear(d_in, hidden), nn.Tanh(),
+                                     nn.Linear(hidden, hidden), nn.Tanh())
+        elif kind == "lstm":
+            self.net = nn.LSTM(d_in, hidden, batch_first=True)
+        else:
+            raise ValueError(kind)
 
-    def forward(self, x):
-        return self.net(x)
-
-
-class LSTMEncoder(nn.Module):
-    def __init__(self, input_dim: int, hidden_dim: int = 512, layers: int = 1):
-        super().__init__()
-        self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers=layers, batch_first=True)
-
-    def forward(self, x):
-        out, (h, _) = self.lstm(x)
-        return h[-1]
-
-
-class DirichletActorCritic(nn.Module):
-    def __init__(self, encoder: nn.Module, hidden_dim: int, n_actions: int):
-        super().__init__()
-        self.encoder = encoder
-        self.actor = nn.Linear(hidden_dim, n_actions)
-        self.critic = nn.Linear(hidden_dim, 1)
-
+    # obs: (B, W, D). MLP sees only the last row; LSTM sees the whole window.
     def forward(self, obs):
-        h = self.encoder(obs)
-        concentration = torch.exp(self.actor(h)).clamp(min=1e-4, max=1e4)
-        dist = Dirichlet(concentration)
-        value = self.critic(h).squeeze(-1)
-        return dist, value
+        if self.kind == "mlp":
+            return self.net(obs[:, -1, :])
+        out, _ = self.net(obs)
+        return out[:, -1]
+
+
+class ActorCritic(nn.Module):
+    # Heads are built BEFORE the encoder so the same seed gives identical heads in every model.
+    def __init__(self, kind, d_in, n_out, hidden=512, alpha_init=1.0,
+                 log_alpha_min=-3.0, log_alpha_max=6.0):
+        super().__init__()
+        self.actor = nn.Linear(hidden, n_out)
+        self.critic = nn.Linear(hidden, 1)
+        nn.init.orthogonal_(self.actor.weight, gain=0.01)
+        nn.init.constant_(self.actor.bias, float(np.log(alpha_init)))
+        nn.init.orthogonal_(self.critic.weight, gain=1.0)
+        nn.init.zeros_(self.critic.bias)
+        self.enc = Encoder(kind, d_in, hidden)
+        self.lo, self.hi = log_alpha_min, log_alpha_max
+
+    # Returns clamped log-alpha (so alpha = exp(m)) and the state value.
+    def forward(self, obs):
+        h = self.enc(obs)
+        return self.actor(h).clamp(self.lo, self.hi), self.critic(h).squeeze(-1)
+
+    # Samples the RAW Dirichlet action with numpy gamma draws and returns (raw, logp, value).
+    @torch.no_grad()
+    def act(self, obs, rng):
+        la, v = self(obs)
+        alpha = la.exp().double().cpu().numpy()[0]
+        g = rng.gamma(alpha)
+        raw = np.clip(g / g.sum(), 1e-12, None)
+        raw = raw / raw.sum()
+        logp = Dirichlet(torch.as_tensor(alpha), validate_args=False).log_prob(torch.as_tensor(raw))
+        return raw, float(logp), float(v)
+
+    # Log-prob, entropy and value of stored raw actions under the CURRENT policy.
+    def evaluate(self, obs, raw):
+        la, v = self(obs)
+        dist = Dirichlet(la.exp().double(), validate_args=False)
+        raw = raw.double()
+        return dist.log_prob(raw).float(), dist.entropy().float(), v
+
+    # State value only (used for bootstrapping at segment end).
+    @torch.no_grad()
+    def value(self, obs):
+        return float(self(obs)[1])
+
+    # Deterministic action = Dirichlet mean, for evaluation.
+    @torch.no_grad()
+    def mean_action(self, obs):
+        a = self(obs)[0].exp()
+        return (a / a.sum(-1, keepdim=True)).cpu().numpy()[0]

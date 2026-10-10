@@ -74,7 +74,9 @@ class ModelConfig:
     lstm_hidden: int = 512      # Zou et al. 2023, Table 3
     lstm_layers: int = 1
     mlp_hidden: Tuple[int, ...] = (512, 512)
-    action_threshold: float = 0.01   # tau, OURS
+    action_threshold: float = 0.01   # tau, OURS 
+    alpha_init: float = 1.0; log_alpha_min: float = -3.0; log_alpha_max: float = 6.0
+
 
 
 @dataclass(frozen=True)
@@ -89,8 +91,9 @@ class PPOConfig:
     adam_eps: float = 1e-8
     rollout_len: int = 128
     gae_lambda: float = 0.95
-    n_epochs: int = 10
-    minibatch_size: int = 64
+    n_epochs: int = 10   
+    minibatch_size: int = 64   
+    normalize_reward: bool = True
     total_env_steps: int = 300_000
 
 
