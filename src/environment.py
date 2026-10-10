@@ -91,7 +91,7 @@ class PortfolioEnv:
         self.i, self.V, self.w, self.done = self.first, self.p.v0, self._cash(), False
         self.wbuf = np.tile(self.w, (self.p.window, 1))
         self.dsr.reset()
-        return self._obs(), {"index": self.i}
+        return self._obs(), {"index": self.i}  
 
     def step(self, raw_action):
         if self.done:

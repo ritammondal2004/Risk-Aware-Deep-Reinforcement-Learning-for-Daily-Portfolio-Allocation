@@ -43,7 +43,7 @@ class PPO:
         self.rng = np.random.default_rng(seed)
         self.opt = torch.optim.Adam(model.parameters(), lr=p.lr)
         self.rs = RunningStd()
-        self.obs = env.reset()
+        self.obs, _ = env.reset()
         self.ep_return = 0.0  
 
     # Converts one numpy obs (W,D) to a (1,W,D) float tensor on the device.
@@ -66,7 +66,8 @@ class PPO:
             for k, x in zip(B, (self.obs, raw, logp, v, r, terminated or truncated, fv)):
                 B[k].append(x)
             self.ep_return += r
-            self.obs = self.env.reset() if (terminated or truncated) else nxt
+            self.obs = self.env.reset()[0] if (terminated or truncated) else nxt 
+                   
         last_v = self.m.value(self._t(self.obs))
         r = np.asarray(B["r"], dtype=np.float64)
         if self.p.normalize_reward:

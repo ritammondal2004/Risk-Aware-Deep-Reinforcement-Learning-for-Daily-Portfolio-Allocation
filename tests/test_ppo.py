@@ -26,15 +26,15 @@ def test_ratio_one_before_update():
 
 # Truncation bootstraps with V(final); termination uses 0 (hand-computed, gamma=1, lam=1).
 def test_gae_truncation_vs_termination():
-    r, v = [1.0, 1.0], [0.5, 0.5]
+    r, v = [1.0, 1.0], [0.5, 0.5]  
     adv_tr, ret_tr = compute_gae(r, v, [False, True], [0, 2.0], 9.9, 1.0, 1.0)
     assert np.isclose(ret_tr[1], 3.0)                    # r + V(final)
     adv_te, ret_te = compute_gae(r, v, [False, True], [0, 0.0], 9.9, 1.0, 1.0)
     assert np.isclose(ret_te[1], 1.0)                    # r only
-    assert np.isclose(adv_tr[0], 1.0 + 0.5 + 2.5 - 0.5 - 0.5 + 0.5 - 0.5 + 0.0, atol=2.5)  # sanity: finite
+    assert np.isclose(adv_tr[1], 2.5) and np.isclose(adv_tr[0], 3.5)
 
 
-# M1 ignores earlier window rows; the LSTM does not.
+# M1 ignores earlier window rows; the LSTM does not.  
 def test_mlp_ignores_history_lstm_uses_it():
     x = torch.randn(1, 5, 6); y = x.clone(); y[:, 0] += 5
     mlp, lstm = ActorCritic("mlp", 6, 4), ActorCritic("lstm", 6, 4)
