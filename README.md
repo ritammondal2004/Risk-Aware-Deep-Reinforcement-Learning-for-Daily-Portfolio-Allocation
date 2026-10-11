@@ -26,7 +26,14 @@ BTP1_repo/
 │   ├── ppo.py               rollout, GAE, clipped loss, training loop
 │   ├── evaluation.py        metrics
 │   └── run_ablation.py      --model --seed --fold
-├── tests/                   test_config.py, test_features.py, test_environment.py
+├── tests/  
+|   ├── test_config.py,        
+|   ├── test_features.py,      # cell 5 and align/reshape logic
+|   ├── test_environment.py
+|   ├── test_evaluation.py    # tests src/evaluation.py ( constant return cases) 
+|   ├── test_ppo.py           # tests ppo.py (rollout, GAE, one update, saving)
+|   └── test_run_ablation.py    # smoke runs M1-M4 (one seed/fold) + basic logging
+|                                
 ├── requirements.txt
 ├── .gitignore
 └── README.md

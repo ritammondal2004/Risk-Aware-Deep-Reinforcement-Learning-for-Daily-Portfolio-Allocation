@@ -40,8 +40,8 @@ class PPO:
     # p: PPOConfig-like object (gamma, clip, value_coef, entropy_coef, ...).
     def __init__(self, model, env, p, device, seed):
         self.m, self.env, self.p, self.dev = model.to(device), env, p, device
-        self.rng = np.random.default_rng(seed)
-        self.opt = torch.optim.Adam(model.parameters(), lr=p.lr)
+        self.rng = np.random.default_rng(seed)  
+        self.opt = torch.optim.Adam(model.parameters(), lr=p.lr, betas=p.adam_betas, eps=p.adam_eps)
         self.rs = RunningStd()
         self.obs, _ = env.reset()
         self.ep_return = 0.0  
@@ -81,8 +81,8 @@ class PPO:
     # Several epochs of minibatch clipped-PPO updates on one rollout.
     def update(self, d):  
         
-        n = len(d["adv"])
-        stats = {}
+        n = len(d["adv"])  
+        stats = {}      
         for _ in range(self.p.epochs):
             for idx in torch.randperm(n, device=self.dev).split(self.p.minibatch):
                 adv = d["adv"][idx]

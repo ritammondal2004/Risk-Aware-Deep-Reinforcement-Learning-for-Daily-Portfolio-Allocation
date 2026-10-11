@@ -13,7 +13,7 @@ def test_logp_matches_scipy():
     raw, logp, _ = m.act(obs, np.random.default_rng(0))
     alpha = m(obs)[0].exp().detach().double().numpy()[0]
     assert abs(logp - dirichlet.logpdf(raw / raw.sum(), alpha)) < 1e-6
-
+  
 
 # Before any update the ratio is exactly 1.
 def test_ratio_one_before_update():
@@ -21,16 +21,16 @@ def test_ratio_one_before_update():
     obs = torch.randn(1, 3, 6)
     raw, logp, _ = m.act(obs, np.random.default_rng(1))
     lp, _, _ = m.evaluate(obs, torch.as_tensor(raw).unsqueeze(0))
-    assert abs(float(lp) - logp) < 1e-5
+    assert abs(float(lp.detach()) - logp) < 1e-5
 
 
-# Truncation bootstraps with V(final); termination uses 0 (hand-computed, gamma=1, lam=1).
+# Truncation bootstraps with V(final); termination uses 0 (gamma=1, lam=1).
 def test_gae_truncation_vs_termination():
     r, v = [1.0, 1.0], [0.5, 0.5]  
     adv_tr, ret_tr = compute_gae(r, v, [False, True], [0, 2.0], 9.9, 1.0, 1.0)
     assert np.isclose(ret_tr[1], 3.0)                    # r + V(final)
     adv_te, ret_te = compute_gae(r, v, [False, True], [0, 0.0], 9.9, 1.0, 1.0)
-    assert np.isclose(ret_te[1], 1.0)                    # r only
+    assert np.isclose(ret_te[1], 1.0)                     # r only
     assert np.isclose(adv_tr[1], 2.5) and np.isclose(adv_tr[0], 3.5)
 
 
