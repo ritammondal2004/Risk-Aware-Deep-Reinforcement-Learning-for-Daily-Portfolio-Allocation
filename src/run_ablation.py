@@ -39,20 +39,14 @@ def check_arch(m):
 
 
 
-# Output folder for one run: first matching key in get_paths(), else BTP1_HOME (or repo root)/outputs/runs.
-def run_dir(model, fold, seed, tag):
+# One folder name per run; metrics/logs go under outputs/metrics, the checkpoint under outputs/checkpoints.
+def run_dirs(model, fold, seed, tag):
     paths = get_paths()
-    root = None
-    if isinstance(paths, dict):
-        for k in ("runs", "outputs", "results", "metrics"):
-            if k in paths:
-                root = Path(paths[k]) / ("" if k == "runs" else "runs")
-                break
-    if root is None:
-        root = Path(os.environ.get("BTP1_HOME", Path(__file__).resolve().parents[1])) / "outputs" / "runs"
-    d = root / f"{model}_fold{fold}_seed{seed}{tag}"
-    d.mkdir(parents=True, exist_ok=True)
-    return d
+    name = f"{model}_fold{fold}_seed{seed}{tag}"
+    m, c = Path(paths["metrics"]) / name, Path(paths["checkpoints"]) / name
+    m.mkdir(parents=True, exist_ok=True)
+    c.mkdir(parents=True, exist_ok=True)
+    return m, c
 
 
 # Trains one (model, fold, seed) run, evaluates greedily on val and test, saves everything.
@@ -88,7 +82,7 @@ def main():
 
     log = PPO(model, tr, p, device, a.seed).train(steps)
      
-    out = run_dir(a.model, a.fold, a.seed, "_smoke" if a.smoke else (f"_lam{a.lam}" if a.lam is not None else ""))
+    out, ckpt = run_dirs(a.model, a.fold, a.seed, "_smoke" if a.smoke else (f"_lam{a.lam}" if a.lam is not None else ""))
     results = {"model": a.model, "seed": a.seed, "fold": a.fold, "train_steps": steps,
                "reward": params.reward, "lam": params.lam, "config_hash": config_hash(cfg)}
     
@@ -99,11 +93,10 @@ def main():
         np.savez(out / f"daily_{split}.npz", dates=np.asarray(ds.dates)[rec["index"].astype(int)].astype("datetime64[D]"),
                  **{k: rec[k] for k in ("r_net", "turnover", "cost", "v")})  
 
-    torch.save({"model": model.state_dict(), "name": a.model, "seed": a.seed}, out / "model.pt")
+    torch.save({"model": model.state_dict(), "name": a.model, "seed": a.seed}, ckpt / "model.pt")
     (out / "metrics.json").write_text(json.dumps(results, indent=2))
     (out / "train_log.json").write_text(json.dumps(log))
-    print(json.dumps({s: results[s] for s in ("val", "test")}, indent=2))
-    print("saved to", out)
+    print("saved to", out, "| checkpoint", ckpt)
 
 
 if __name__ == "__main__":
