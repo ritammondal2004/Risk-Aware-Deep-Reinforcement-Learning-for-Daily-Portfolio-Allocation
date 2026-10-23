@@ -2,6 +2,8 @@
 """Greedy out-of-sample evaluation and the common metrics, identical for M1-M4."""
 import numpy as np
 import torch
+import json
+from pathlib import Path
 
 ANN = 252  # trading days per year
           
@@ -39,3 +41,45 @@ def compute_metrics(r_net, turnover, cost, v0):
         "total_cost_pct_of_v0": float(np.sum(cost) / v0),
         "n_days": int(len(r)),
     }
+
+
+
+
+# Equal-weight benchmark: 1/N in every stock, zero cash, rebalanced daily, same env/costs/metrics.
+def run_equal_weight(env):
+    env.reset()
+    w = np.zeros(env.action_dim)
+    w[:env.N] = 1.0 / env.N
+    rec = {k: [] for k in ("index", "r_net", "turnover", "cost", "v")}
+    done = False
+    while not done:
+        _, _, _, done, info = env.step(w)
+        for k in rec:
+            rec[k].append(info[k])
+    return {k: np.asarray(v, dtype=np.float64) for k, v in rec.items()}
+
+
+# Writes EW metrics for every fold into outputs/metrics/EW_fold{k}/metrics.json (same schema as model runs).
+def main():
+    from .config import CFG, config_hash, get_paths
+    from .data import build_folds
+    from .environment import EnvParams, PortfolioEnv
+    from .features import build_dataset
+
+    ds, _ = build_dataset()
+    params = EnvParams.from_cfg("M1")                           # accounting is identical for every model
+    for k, fold in enumerate(build_folds(ds.dates), start=1):
+        res = {"model": "EW", "seed": 0, "fold": k, "train_steps": 0, "reward": "none", "lam": 0.0,
+               "config_hash": config_hash(CFG)}
+        for split in ("val", "test"):
+            rec = run_equal_weight(PortfolioEnv(ds.X, ds.ret_next, *fold[split], params))
+            res[split] = compute_metrics(rec["r_net"], rec["turnover"], rec["cost"], params.v0)
+        out = Path(get_paths()["metrics"]) / f"EW_fold{k}"
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "metrics.json").write_text(json.dumps(res, indent=2))
+        print(f"fold {k}: val sharpe {res['val']['sharpe']:.3f} | test sharpe {res['test']['sharpe']:.3f} "
+              f"| test cum {res['test']['cumulative_return']:.3f}")
+
+
+if __name__ == "__main__":
+    main()

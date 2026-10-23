@@ -57,7 +57,9 @@ def main():
    
     ap.add_argument("--fold", type=int, default=1, help="1-based fold number")
     ap.add_argument("--lam", type=float, default=None, help="override lambda_turnover (M4 tuning only)")
-    ap.add_argument("--smoke", action="store_true", help="2 PPO updates only, to test the pipeline")
+    ap.add_argument("--smoke", action="store_true", help="2 PPO updates only, to test the pipeline") 
+    ap.add_argument("--steps", type=int, default=None, help="override total training steps (short test runs)")
+
     a = ap.parse_args()
 
     cfg = with_lambda(CFG, a.lam) if a.lam is not None else CFG 
@@ -67,7 +69,8 @@ def main():
     fold = build_folds(ds.dates)[a.fold - 1]
     params = EnvParams.from_cfg(a.model, cfg)                  # reward mode and lam differ per model HERE
     p = ppo_params(cfg)
-    steps = 2 * p.rollout_steps if a.smoke else p.total_steps
+    #steps = 2 * p.rollout_steps if a.smoke else p.total_steps 
+    steps = a.steps or (2 * p.rollout_steps if a.smoke else p.total_steps)
 
     tr = PortfolioEnv(ds.X, ds.ret_next, *fold["train"], params)
     set_global_seed(a.seed)                                    # seed right before model creation -> same init
@@ -81,8 +84,11 @@ def main():
           f"fold {a.fold} train steps {fold['train'][1] - fold['train'][0]} | device {device} | train {steps} steps")
 
     log = PPO(model, tr, p, device, a.seed).train(steps)
-     
-    out, ckpt = run_dirs(a.model, a.fold, a.seed, "_smoke" if a.smoke else (f"_lam{a.lam}" if a.lam is not None else ""))
+    
+    tag = "_smoke" if a.smoke else (f"_s{a.steps}" if a.steps else "")
+    tag += f"_lam{a.lam}" if a.lam is not None else ""
+    out, ckpt = run_dirs(a.model, a.fold, a.seed, tag)
+   # out, ckpt = run_dirs(a.model, a.fold, a.seed, "_smoke" if a.smoke else (f"_lam{a.lam}" if a.lam is not None else ""))
     results = {"model": a.model, "seed": a.seed, "fold": a.fold, "train_steps": steps,
                "reward": params.reward, "lam": params.lam, "config_hash": config_hash(cfg)}
     
