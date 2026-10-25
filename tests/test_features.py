@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
-
-from src.features import FEATURE_NAMES, asset_features, build_feature_tensor, check_causality
+from src.features import standardize
 
 
 def synth(T=700, N=3, seed=0):
@@ -23,7 +22,20 @@ def test_shape_and_names():
 
 
 def test_features_are_causal():
-    assert check_causality(*synth(), n=8, min_idx=250)
+    assert check_causality(*synth(), n=8, min_idx=250) 
+
+
+
+
+# Train rows get mean~0/std~1; changing val/test rows can never alter the train transform.
+def test_standardize_uses_train_only():  
+    rng = np.random.default_rng(0)
+    X = rng.normal(5.0, 3.0, size=(200, 4))
+    Z = standardize(X, 0, 100)
+    assert np.allclose(Z[:100].mean(0), 0, atol=0.05) and np.allclose(Z[:100].std(0), 1, atol=0.05)
+    X2 = X.copy(); X2[150:] += 1000.0
+    assert np.allclose(standardize(X2, 0, 100)[:100], Z[:100])
+    assert np.abs(standardize(X2, 0, 100)).max() <= 5.0
 
        
 def test_ranges_after_warmup():

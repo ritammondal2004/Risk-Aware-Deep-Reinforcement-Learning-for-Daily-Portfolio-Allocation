@@ -1,12 +1,12 @@
-
-"""Greedy out-of-sample evaluation and the common metrics, identical for M1-M4."""
-import numpy as np
-import torch
+"""Greedy out-of-sample evaluation, the common metrics, and the equal-weight benchmark."""
 import json
 from pathlib import Path
 
+import numpy as np
+import torch
+
 ANN = 252  # trading days per year
-          
+
 
 # Runs the policy's mean action (Dirichlet mean) through one segment and records daily accounting.
 def run_policy(model, env, device):
@@ -19,7 +19,21 @@ def run_policy(model, env, device):
         for k in rec:
             rec[k].append(info[k])
     return {k: np.asarray(v, dtype=np.float64) for k, v in rec.items()}
-         
+
+
+# Equal-weight benchmark: 1/N in every stock, zero cash, rebalanced daily, same env/costs/metrics.
+def run_equal_weight(env):
+    env.reset()
+    w = np.zeros(env.action_dim)
+    w[:env.N] = 1.0 / env.N
+    rec = {k: [] for k in ("index", "r_net", "turnover", "cost", "v")}
+    done = False
+    while not done:
+        _, _, _, done, info = env.step(w)
+        for k in rec:
+            rec[k].append(info[k])
+    return {k: np.asarray(v, dtype=np.float64) for k, v in rec.items()}
+
 
 # Computes the agreed metrics from daily net returns, turnover and costs.
 def compute_metrics(r_net, turnover, cost, v0):
@@ -41,22 +55,6 @@ def compute_metrics(r_net, turnover, cost, v0):
         "total_cost_pct_of_v0": float(np.sum(cost) / v0),
         "n_days": int(len(r)),
     }
-
-
-
-
-# Equal-weight benchmark: 1/N in every stock, zero cash, rebalanced daily, same env/costs/metrics.
-def run_equal_weight(env):
-    env.reset()
-    w = np.zeros(env.action_dim)
-    w[:env.N] = 1.0 / env.N
-    rec = {k: [] for k in ("index", "r_net", "turnover", "cost", "v")}
-    done = False
-    while not done:
-        _, _, _, done, info = env.step(w)
-        for k in rec:
-            rec[k].append(info[k])
-    return {k: np.asarray(v, dtype=np.float64) for k, v in rec.items()}
 
 
 # Writes EW metrics for every fold into outputs/metrics/EW_fold{k}/metrics.json (same schema as model runs).

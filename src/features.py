@@ -25,6 +25,8 @@ def _true_range(h, l, c):
     return pd.concat([h - l, (h - pc).abs(), (l-pc).abs()], axis=1).max(axis=1, skipna=False)  
 
 
+
+
 def asset_features(o, h, l, c, v, ic=CFG.ind):  
     f = pd.DataFrame(index=c.index)
     f["log_ret"] = np.log(c / c.shift(1))
@@ -112,6 +114,13 @@ def build_dataset(cfg=CFG, aligned=None):
                  hash=sha256_frame(pd.DataFrame(X, index=dates[dec])))
     return ds, (O, H, L, C, V)
         
+
+# Z-scores features with mean/std from the TRAIN rows only, then clips; applied unchanged to val/test.
+def standardize(X, train_start, train_end, clip=5.0):
+    X = np.asarray(X, dtype=np.float64)
+    tr = X[train_start:train_end]
+    mu, sd = np.nanmean(tr, axis=0), np.nanstd(tr, axis=0)
+    return np.clip((X - mu) / np.maximum(sd, 1e-8), -clip, clip)
 
 if __name__ == "__main__":
     ds, ohlcv = build_dataset()
