@@ -47,7 +47,11 @@ def run_dirs(model, fold, seed, tag):
     c.mkdir(parents=True, exist_ok=True)
     return m, c
 
-
+# Returns cfg with the given PPO fields overridden (same override applies to every model you run).
+def with_ppo(cfg, **kw):
+    kw = {k: v for k, v in kw.items() if v is not None}
+    return replace(cfg, ppo=replace(cfg.ppo, **kw)) if kw else cfg
+      
 # Trains one (model, fold, seed) run, evaluates greedily on val and test, saves everything.
 def main():
     ap = argparse.ArgumentParser()
@@ -58,9 +62,14 @@ def main():
     ap.add_argument("--smoke", action="store_true", help="2 PPO updates only, to test the pipeline")
     ap.add_argument("--steps", type=int, default=None, help="override total training steps (short test runs)")
     ap.add_argument("--raw-inputs", action="store_true", help="skip standardization (A/B check only)")
+    ap.add_argument("--lr", type=float, default=None, help="override PPO learning rate (stabilization sweep)")
+    ap.add_argument("--epochs", type=int, default=None, help="override PPO epochs per update")
+    ap.add_argument("--target-kl", type=float, default=None, help="enable KL early stopping")
     a = ap.parse_args()  
 
-    cfg = with_lambda(CFG, a.lam) if a.lam is not None else CFG
+    cfg = with_lambda(CFG, a.lam) if a.lam is not None else CFG   
+    cfg = with_ppo(cfg, learning_rate=a.lr, n_epochs=a.epochs, target_kl=a.target_kl) 
+
     check_arch(cfg.model)
     device = get_device()
     ds, _ = build_dataset()
@@ -84,7 +93,11 @@ def main():
 
     tag = "_smoke" if a.smoke else (f"_s{a.steps}" if a.steps else "")
     tag += f"_lam{a.lam}" if a.lam is not None else ""
-    tag += "_raw" if a.raw_inputs else ""
+    tag += "_raw" if a.raw_inputs else "" 
+    tag += f"_lr{a.lr}" if a.lr is not None else ""
+    tag += f"_ep{a.epochs}" if a.epochs is not None else ""
+    tag += f"_kl{a.target_kl}" if a.target_kl is not None else "" 
+    
     out, ckpt = run_dirs(a.model, a.fold, a.seed, tag)
     results = {"model": a.model, "seed": a.seed, "fold": a.fold, "train_steps": steps,
                "reward": params.reward, "lam": params.lam, "config_hash": config_hash(cfg)} 

@@ -74,9 +74,10 @@ class PPO:
         return dict(obs=f(B["obs"]), raw=f(B["raw"], torch.float64), logp=f(B["logp"]),
                     adv=f(adv), ret=f(ret))
 
-    # Several epochs of minibatch clipped-PPO updates; returns stats AVERAGED over the whole update.
+    # Minibatch clipped-PPO epochs with optional KL early stop; returns stats AVERAGED over the update.
     def update(self, d):
         n, acc = len(d["adv"]), {k: [] for k in ("pl", "vl", "ent", "kl", "clipfrac")}
+        stop = False
         for _ in range(self.p.epochs):
             for idx in torch.randperm(n, device=self.dev).split(self.p.minibatch):
                 adv = d["adv"][idx]
@@ -84,6 +85,11 @@ class PPO:
                 logp, ent, v = self.m.evaluate(d["obs"][idx], d["raw"][idx])
                 logr = logp - d["logp"][idx]
                 ratio = logr.exp()
+                kl = ((ratio - 1) - logr).mean().item() 
+
+                if self.p.target_kl is not None and kl > 1.5 * self.p.target_kl:
+                    stop = True                                  # policy already moved far enough
+                    break
                 pl = -torch.min(ratio * adv, ratio.clamp(1 - self.p.clip, 1 + self.p.clip) * adv).mean()
                 vl = (v - d["ret"][idx]).pow(2).mean()
                 loss = pl + self.p.value_coef * vl - self.p.entropy_coef * ent.mean()
@@ -92,15 +98,21 @@ class PPO:
                 torch.nn.utils.clip_grad_norm_(self.m.parameters(), self.p.max_grad_norm)
                 self.opt.step()
                 with torch.no_grad():
-                    for k, x in (("pl", pl), ("vl", vl), ("ent", ent.mean()), ("kl", ((ratio - 1) - logr).mean()),
+                    for k, x in (("pl", pl), ("vl", vl), ("ent", ent.mean()), ("kl", kl),
                                  ("clipfrac", ((ratio - 1).abs() > self.p.clip).float().mean())):
-                        acc[k].append(x.item())
-        return {k: float(np.mean(v)) for k, v in acc.items()}
+                        acc[k].append(float(x))
+            if stop:
+                break
+        return {k: float(np.mean(v)) if v else 0.0 for k, v in acc.items()}
 
-    # Trains for total_steps env steps; returns the list of per-update stats.
+    # Trains for total_steps env steps, printing progress every 25 updates; returns per-update stats.
     def train(self, total_steps):
-        log, done = [], 0
+        log, done, t0 = [], 0, time.time()
+
         while done < total_steps:
             log.append(self.update(self.collect()))
             done += self.p.rollout_steps
-        return log
+            if len(log) % 25 == 0:
+                print(f"  update {len(log)} | {done}/{total_steps} steps | {time.time() - t0:.0f}s | "
+                      f"kl {log[-1]['kl']:.3f} clipfrac {log[-1]['clipfrac']:.2f}", flush=True)
+        return log  

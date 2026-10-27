@@ -94,7 +94,8 @@ class PPOConfig:
     n_epochs: int = 10   
     minibatch_size: int = 64   
     normalize_reward: bool = True
-    total_env_steps: int = 300_000
+    total_env_steps: int = 300_000 
+    target_kl: Optional[float] = None     # early-stop PPO epochs when approx KL exceeds 1.5x this (None = off)
 
 
 @dataclass(frozen=True)
