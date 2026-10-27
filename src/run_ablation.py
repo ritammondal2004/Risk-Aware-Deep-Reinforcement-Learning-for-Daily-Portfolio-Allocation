@@ -2,23 +2,24 @@
 import argparse
 import json
 from pathlib import Path
+from dataclasses import replace
 from types import SimpleNamespace
 
 import numpy as np
 import torch
 
 from .config import CFG, MODEL_SPECS, config_hash, get_paths, with_lambda
-from .data import build_folds
+from .data import build_folds 
 from .environment import EnvParams, PortfolioEnv
 from .evaluation import compute_metrics, run_policy
 from .features import build_dataset, standardize
 from .models import ActorCritic
-from .ppo import PPO
-from .utils import get_device, set_global_seed
+from .ppo import PPO  
+from .utils import get_device, set_global_seed 
 
 # The ONLY model-specific switch outside the env: which encoder reads the observation window.
 ENCODER = {"M1": "mlp", "M2": "lstm", "M3": "lstm", "M4": "lstm"}
-
+  
 
 # Maps CFG.ppo's exact field names to the names ppo.py uses (identical for all four models).
 def ppo_params(cfg):
@@ -28,7 +29,7 @@ def ppo_params(cfg):
         gae_lambda=q.gae_lambda, clip=q.clip_range, value_coef=q.value_coef,
         entropy_coef=q.entropy_coef, max_grad_norm=q.max_grad_norm, rollout_steps=q.rollout_len,
         epochs=q.n_epochs, minibatch=q.minibatch_size, normalize_reward=q.normalize_reward,
-        total_steps=q.total_env_steps)
+        total_steps=q.total_env_steps, target_kl=q.target_kl) 
 
 
 # Checks that models.py can honour the architecture in the config, so no config field is silently ignored.
@@ -97,7 +98,7 @@ def main():
     tag += f"_lr{a.lr}" if a.lr is not None else ""
     tag += f"_ep{a.epochs}" if a.epochs is not None else ""
     tag += f"_kl{a.target_kl}" if a.target_kl is not None else "" 
-    
+
     out, ckpt = run_dirs(a.model, a.fold, a.seed, tag)
     results = {"model": a.model, "seed": a.seed, "fold": a.fold, "train_steps": steps,
                "reward": params.reward, "lam": params.lam, "config_hash": config_hash(cfg)} 

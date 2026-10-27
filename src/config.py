@@ -3,7 +3,7 @@ import json
 import os
 from dataclasses import asdict, dataclass, field, replace 
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Optional
 
 import pandas as pd
 
