@@ -107,14 +107,18 @@ class PPO:
                 break
         return {k: float(np.mean(v)) if v else 0.0 for k, v in acc.items()}
 
-    # Trains for total_steps env steps, printing progress every 25 updates; returns per-update stats.
-    def train(self, total_steps):
-        log, done, t0 = [], 0, time.time()
 
+        # Trains for total_steps; calls on_eval(step) every eval_every steps and at the end; returns per-update stats.
+    def train(self, total_steps, on_eval=None, eval_every=25_000):
+        log, done, t0, nxt = [], 0, time.time(), eval_every
         while done < total_steps:
             log.append(self.update(self.collect()))
             done += self.p.rollout_steps
             if len(log) % 25 == 0:
                 print(f"  update {len(log)} | {done}/{total_steps} steps | {time.time() - t0:.0f}s | "
                       f"kl {log[-1]['kl']:.3f} clipfrac {log[-1]['clipfrac']:.2f}", flush=True)
-        return log  
+            if on_eval is not None and (done >= nxt or done >= total_steps):
+                on_eval(done)
+                while nxt <= done:
+                    nxt += eval_every
+        return log

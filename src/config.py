@@ -86,7 +86,10 @@ class PPOConfig:
     value_coef: float = 0.5
     entropy_coef: float = 0.01
     max_grad_norm: float = 0.5
-    learning_rate: float = 3e-4
+    #learning_rate: float = 3e-4 
+    learning_rate: float = 1e-4     # Zou et al. use 3e-4; lowered once on fold-1 validation (M1), shared by M1-M4
+    target_kl: Optional[float] = 0.02   # KL early stop, shared by M1-M4 (not in Zou et al.)
+    #target_kl: Optional[float] = None     # early-stop PPO epochs when approx KL exceeds 1.5x this (None = off)
     adam_betas: Tuple[float, float] = (0.9, 0.999)
     adam_eps: float = 1e-8
     rollout_len: int = 128
@@ -95,7 +98,7 @@ class PPOConfig:
     minibatch_size: int = 64   
     normalize_reward: bool = True
     total_env_steps: int = 300_000 
-    target_kl: Optional[float] = None     # early-stop PPO epochs when approx KL exceeds 1.5x this (None = off)
+    
 
 
 @dataclass(frozen=True)
