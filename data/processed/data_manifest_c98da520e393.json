@@ -9,10 +9,10 @@
   "env": {
     "python": "3.13.5",
     "platform": "Windows-11-10.0.26300-SP0",
-    "numpy": "2.4.6",
+    "numpy": "2.5.4",
     "pandas": "2.3.3",
     "scipy": "1.15.3",
-    "torch": "2.12.0+cpu",
-    "cuda": null
+    "torch": "2.6.0+cu124",
+    "cuda": "NVIDIA GeForce RTX 3050 Laptop GPU"
   }
 }

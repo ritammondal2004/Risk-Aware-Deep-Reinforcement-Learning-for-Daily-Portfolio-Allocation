@@ -10,8 +10,8 @@ ANN = 252  # trading days per year
 
 # Runs the policy's mean action (Dirichlet mean) through one segment and records daily accounting.
 def run_policy(model, env, device):
-    obs, _ = env.reset()
-    rec = {k: [] for k in ("index", "r_net", "turnover", "cost", "v")}
+    obs, _ = env.reset() 
+    rec = {k: [] for k in ("index", "r_net", "turnover", "cost", "v", "target")}
     done = False
     while not done:
         x = torch.as_tensor(obs, dtype=torch.float32, device=device).unsqueeze(0)

@@ -126,7 +126,8 @@ def main():
         rec = run_policy(model, env, device)
         results[split] = compute_metrics(rec["r_net"], rec["turnover"], rec["cost"], params.v0)
         np.savez(out / f"daily_{split}.npz", dates=np.asarray(ds.dates)[rec["index"].astype(int)].astype("datetime64[D]"),
-                 **{k: rec[k] for k in ("r_net", "turnover", "cost", "v")})
+                 **{k: rec[k] for k in ("r_net", "turnover", "cost", "v", "target")}) 
+
     torch.save({"model": model.state_dict(), "name": a.model, "seed": a.seed, "step": selected}, ckpt / "model.pt")
     (out / "metrics.json").write_text(json.dumps(results, indent=2))
     (out / "train_log.json").write_text(json.dumps(log))
