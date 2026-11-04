@@ -1,6 +1,6 @@
 \documentclass[11pt,a4paper]{report}
 \usepackage[top=20mm,bottom=20mm,left=22mm,right=18mm]{geometry}
-\usepackage{setspace}\setstretch{1.05}
+\usepackage{setspace}\setstretch{1.04}
 \setlength{\parskip}{2.5pt plus 0.5pt minus 0.5pt}
 \setlength{\parindent}{1.3em}
 \usepackage{amsmath,amssymb,amsfonts}
@@ -9,39 +9,39 @@
 \usepackage[table]{xcolor}
 \usepackage{pifont}
 \newcommand{\cmark}{\ding{51}}%
-\usepackage[font=small,labelfont=bf,skip=4pt]{caption}
+\usepackage[font=small,labelfont=bf,skip=3pt]{caption}
 \usepackage{enumerate}
 \usepackage{hyperref}\hypersetup{colorlinks,linkcolor=blue!70!black,citecolor=blue!70!black,urlcolor=blue!70!black}
 \usepackage[numbers,sort&compress]{natbib}
-\setlength{\bibsep}{3pt}
+\setlength{\bibsep}{2.5pt}
 \pagestyle{headings}
 
 %% Tighten float spacing
-\setlength{\floatsep}{8pt plus 2pt minus 2pt}
-\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
-\setlength{\intextsep}{8pt plus 2pt minus 2pt}
-\setlength{\abovecaptionskip}{4pt}
-\setlength{\belowcaptionskip}{3pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{2pt}
 
 \usepackage{etoolbox}
 \makeatletter
 %% Continuous chapter layout with clean separation
-\patchcmd{\chapter}{\clearpage}{\par\vspace{16pt}}{}{}
+\patchcmd{\chapter}{\clearpage}{\par\vspace{14pt}}{}{}
 \def\@makechapterhead#1{%
-  \vspace*{6\p@}%
+  \vspace*{4\p@}%
   {\parindent \z@ \raggedright \normalfont
     \ifnum \c@secnumdepth >\m@ne
         \large\bfseries \@chapapp\space \thechapter\quad---\quad #1
         \par\nobreak
-        \vskip 6\p@
+        \vskip 4\p@
     \fi
   }}
 \def\@makeschapterhead#1{%
-  \vspace*{6\p@}%
+  \vspace*{4\p@}%
   {\parindent \z@ \raggedright
     \normalfont
     \large \bfseries #1\par\nobreak
-    \vskip 6\p@
+    \vskip 4\p@
   }}
 \makeatother
 
@@ -52,7 +52,7 @@
 
 \begin{document}
 
-%% ===== TITLE PAGE (Image 1 Style) =====
+%% ===== TITLE PAGE =====
 \begin{titlepage}
 \centering
 \vspace*{0.2cm}
@@ -67,25 +67,25 @@
 {\normalsize in\par}
 \vspace{0.15cm}
 {\large Industrial and Systems Engineering\par}
-\vspace{0.8cm}
+\vspace{0.6cm}
 {\normalsize by\par}
 \vspace{0.2cm}
 {\large\bfseries Ritam Mondal\par}
 \vspace{0.15cm}
 {\normalsize\bfseries (23IM30018)\par}
-\vspace{0.8cm}
+\vspace{0.6cm}
 {\normalsize Under the supervision of\par}
 \vspace{0.2cm}
-{\large\bfseries Professor Abhisek Sharma\par}
-\vspace{0.8cm}
-\includegraphics[width=3.2cm]{figures/iitkgp_logo.png}\par
-\vspace{0.8cm}
+{\large\bfseries Dr. Abhishek Sharma\par}
+\vspace{0.6cm}
+\includegraphics[width=3.0cm]{figures/iitkgp_logo.png}\par
+\vspace{0.6cm}
 {\large\bfseries Department of Industrial and Systems Engineering\par}
-\vspace{0.2cm}
+\vspace{0.15cm}
 {\large Indian Institute of Technology Kharagpur\par}
-\vspace{0.2cm}
+\vspace{0.15cm}
 {\normalsize Autumn Semester, 2026--27\par}
-\vspace{0.2cm}
+\vspace{0.15cm}
 {\normalsize November 2026\par}
 \vfill
 \end{titlepage}
@@ -93,28 +93,28 @@
 \pagenumbering{roman}
 \setcounter{page}{1}
 
-%% ===== DECLARATION PAGE (Image 2 Style) =====
+%% ===== DECLARATION PAGE =====
 \newpage
 \thispagestyle{plain}
 \begin{center}
-\vspace*{1.5cm}
+\vspace*{1.2cm}
 {\large\bfseries DECLARATION\par}
 \end{center}
-\vspace{1.5cm}
+\vspace{1.2cm}
 \noindent I certify that
-\vspace{0.5cm}
+\vspace{0.4cm}
 \begin{enumerate}[(a)]
-  \setlength{\itemsep}{14pt}
+  \setlength{\itemsep}{12pt}
   \item The work contained in this report has been done by me under the guidance of my supervisor.
   \item The work has not been submitted to any other Institute for any degree or diploma.
   \item I have conformed to the norms and guidelines given in the Ethical Code of Conduct of the Institute.
   \item Whenever I have used materials (data, theoretical analysis, figures, and text) from other sources, I have given due credit to them by citing them in the text of the thesis and giving their details in the references. Further, I have taken permission from the copyright owners of the sources, whenever necessary.
 \end{enumerate}
 
-\vspace{4.0cm}
+\vspace{3.5cm}
 \noindent
 \begin{minipage}[t]{0.5\textwidth}
-Date: November 1, 2026\\[6pt]
+Date: November 10, 2026\\[6pt]
 Place: Kharagpur
 \end{minipage}
 \hfill
@@ -124,7 +124,7 @@ Place: Kharagpur
 (23IM30018)
 \end{minipage}
 
-%% ===== CERTIFICATE PAGE (Image 3 Style) =====
+%% ===== CERTIFICATE PAGE =====
 \newpage
 \thispagestyle{plain}
 \begin{center}
@@ -134,24 +134,24 @@ Place: Kharagpur
 {\bfseries INDIAN INSTITUTE OF TECHNOLOGY KHARAGPUR\par}
 \vspace{0.15cm}
 {\bfseries KHARAGPUR -- 721302, INDIA\par}
-\vspace{0.8cm}
-\includegraphics[width=2.8cm]{figures/iitkgp_logo.png}\par
-\vspace{0.8cm}
+\vspace{0.6cm}
+\includegraphics[width=2.6cm]{figures/iitkgp_logo.png}\par
+\vspace{0.6cm}
 {\large\bfseries CERTIFICATE\par}
 \end{center}
-\vspace{0.8cm}
-\noindent This is to certify that the project report entitled ``\textbf{Risk-Aware Deep Reinforcement Learning for Daily Portfolio Allocation}'' submitted by \textbf{Ritam Mondal} (Roll No. 23IM30018) to Indian Institute of Technology Kharagpur towards partial fulfilment of requirements for the award of degree of Bachelor of Technology in Industrial and Systems Engineering is a record of bona fide work carried out under my supervision and guidance during Autumn Semester, 2026--27.
+\vspace{0.6cm}
+\noindent This is to certify that the project report entitled ``\textbf{Risk-Aware Deep Reinforcement Learning for Daily Portfolio Allocation: Controlled Ablation of Temporal Memory, Reward Shaping, and Turnover Regularization}'' submitted by \textbf{Ritam Mondal} (Roll No. 23IM30018) to Indian Institute of Technology Kharagpur towards partial fulfilment of requirements for the award of degree of Bachelor of Technology in Industrial and Systems Engineering is a record of bona fide work carried out under my supervision and guidance during Autumn Semester, 2026--27.
 
-\vspace{3.5cm}
+\vspace{3.2cm}
 \noindent
 \begin{minipage}[t]{0.5\textwidth}
-Date: November 1, 2026\\[6pt]
+Date: November 10, 2026\\[6pt]
 Place: Kharagpur
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.48\textwidth}
 \raggedleft
-Professor Abhisek Sharma\\[4pt]
+Dr. Abhishek Sharma\\[4pt]
 Department of Industrial and Systems Engineering\\[4pt]
 Indian Institute of Technology Kharagpur\\[4pt]
 Kharagpur -- 721302, India
@@ -164,17 +164,15 @@ Kharagpur -- 721302, India
 \addcontentsline{toc}{chapter}{Acknowledgement and Abstract}
 
 \noindent\textbf{Acknowledgement:}\par
-I express my deepest gratitude to my supervisor, Professor Abhisek Sharma, for his insightful guidance, intellectual mentorship, and continuous encouragement throughout this B.Tech.\ Project. His domain expertise in financial engineering, operations research, and sequential decision processes has been instrumental in shaping the theoretical and empirical methodology of this thesis. I also extend my gratitude to the Department of Industrial and Systems Engineering, Indian Institute of Technology Kharagpur, for providing the necessary computing resources, and to my peers and family for their unwavering support.
+I express my sincere gratitude to my supervisor, Dr. Abhishek Sharma, for his insightful guidance, intellectual mentorship, and continuous encouragement throughout this B.Tech.\ Project. His domain expertise in financial engineering, operations research, and sequential decision processes provided invaluable direction for this study. I also thank the Department of Industrial and Systems Engineering, Indian Institute of Technology Kharagpur, for providing computational facilities, and my peers and family for their continuous support.
 
-\vspace{0.6cm}
+\vspace{0.4cm}
 \noindent\textbf{Abstract:}\par
-Daily portfolio allocation is difficult to automate because financial markets exhibit low signal-to-noise ratios, non-stationary dynamics, and only partial observability of the true underlying economic state. Deep reinforcement learning (DRL) research has separately proposed temporal memory, risk-aware reward shaping, and turnover regularization to address these challenges, but such mechanisms are rarely isolated under identical experimental conditions, making it difficult to attribute performance differences to any single design choice.
+Automating daily portfolio allocation via deep reinforcement learning (DRL) requires balancing return generation against market non-stationarity, partial state observability, and execution frictions. Prior literature separately suggests temporal encoders, risk-sensitive rewards, and turnover penalties, but these mechanisms are rarely evaluated under a single controlled setup. This report investigates a four-stage ablation: (i)~Model M1: PPO with a feedforward MLP baseline and net return reward; (ii)~Model M2: PPO with a recurrent LSTM encoder; (iii)~Model M3: LSTM-PPO with recursive Differential Sharpe Ratio (DSR) reward; and (iv)~Model M4: LSTM-PPO with DSR reward and a quadratic weight-change penalty ($\lambda_{\text{turn}} = 0.1$). All agents output continuous Dirichlet allocations over ten liquid National Stock Exchange of India (NSE) equities and an assumed zero-return cash reserve.
 
-This report presents a rigorous, controlled four-stage ablation framework: (i)~Model M1: Proximal Policy Optimisation (PPO) with a feedforward Multi-Layer Perceptron (MLP) baseline and net return reward; (ii)~Model M2: PPO with a recurrent Long Short-Term Memory (LSTM) encoder and net return reward; (iii)~Model M3: LSTM-PPO with recursive Differential Sharpe Ratio (DSR) reward shaping; and (iv)~Model M4: LSTM-PPO with DSR reward and explicit quadratic turnover regularisation ($\lambda_{\text{turn}} = 0.1$). All models parameterise portfolio allocations over a continuous Dirichlet distribution, naturally satisfying non-negativity and budget simplex constraints with an explicit cash reserve.
+Models are evaluated across four chronological walk-forward folds spanning 2018--2025 across three random seeds under realistic proportional transaction costs ($0.1\%$). In our experimental setup, the LSTM encoder (M2) improves upon the MLP baseline (M1) in pooled Sharpe ratio ($0.92$ vs.\ $0.71$) and cumulative return ($28.2\%$ vs.\ $20.6\%$). The DSR reward (M3) demonstrates mixed, regime-dependent effects without an overall advantage over M2. Turnover regularisation (M4) effectively curtails daily turnover (cutting costs from $4.14\%$ to $0.97\%$ of capital) and achieves the shallowest maximum drawdown ($-16.04\%$), but trades off cumulative return. Crucially, the passive Equal-Weight benchmark outperforms all RL models in pooled return ($36.48\%$) and Sharpe ratio ($1.13$), driven by continuous broad-market exposure in a secular bull market and cash drag from the agents' learned liquidity holdings.
 
-Models are trained and evaluated on the same daily equity universe of ten major National Stock Exchange of India (NSE) stocks, identical thirteen causal technical indicators, realistic proportional transaction costs ($0.1\%$), and four rolling walk-forward folds across 2018--2025 over multiple random seeds. Results reveal that temporal memory (M2) substantially enhances out-of-sample Sharpe ratio ($+0.201$) while cutting daily turnover by $57\%$. Turnover regularisation (M4) effectively suppresses transaction costs to $0.97\%$ of starting capital and achieves the shallowest maximum drawdown ($-16.04\%$). However, learned risk-aversion leads the agents to hold conservative cash buffers, resulting in cash drag against a fully-invested passive Equal-Weight benchmark during an extended bull market.
-
-\medskip\noindent\textbf{Keywords:} Deep Reinforcement Learning, Portfolio Management, Proximal Policy Optimisation, Dirichlet Policy, Differential Sharpe Ratio, Turnover Regularisation, POMDP, Walk-Forward Validation.
+\medskip\noindent\raggedright\textbf{Keywords:} Deep Reinforcement Learning, Portfolio Allocation, Proximal Policy Optimisation, Dirichlet Distribution, Differential Sharpe Ratio, Turnover Regularisation, Walk-Forward Validation.
 
 %% ===== TABLE OF CONTENTS =====
 \newpage

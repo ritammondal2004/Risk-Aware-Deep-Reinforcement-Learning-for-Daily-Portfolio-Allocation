@@ -2,34 +2,22 @@
 \label{ch:limitations}
 
 \section{Methodological and Empirical Limitations}
-While this project provides a rigorous, controlled investigation into reinforcement learning for portfolio management, several realistic limitations must be acknowledged:
+While this project establishes a controlled single-factor evaluation of reinforcement learning components for portfolio management, several important empirical and modeling limitations should be acknowledged:
 
-\subsection{Passive Benchmark Outperformance and Survivorship Bias}
-The equal-weight 1/N strategy demonstrated superior cumulative profit and Sharpe ratio compared to all deep RL agents. This is attributable to two primary factors:
 \begin{enumerate}
-    \item \textbf{Survivorship Bias in Equity Selection:} The 10 stocks selected (e.g., Reliance, TCS, HDFC Bank, ICICI Bank) represent established corporate leaders that survived and prospered over the 2011--2025 window. In an asset universe characterised by strong upward drift, a passive, fully-invested allocation captures market beta at negligible transaction costs ($0.61\%$).
-    \item \textbf{Cash Drag from Learned Risk Aversion:} The continuous Dirichlet policy learned to maintain cash buffers (up to $32.4\%$ in M4) to guard against volatility. While this successfully curbed maximum drawdown to $-16.04\%$, it penalized nominal capital compounding during bull markets.
+    \item \textbf{Survivorship and Selection Bias:} The 10 equities evaluated (e.g., Reliance, TCS, HDFC Bank, ICICI Bank) represent established large-cap market leaders that survived and prospered over the 2011--2025 period. In an asset universe characterized by strong long-term upward drift, a passive, fully-invested allocation captures broad market beta at minimal rebalancing friction ($0.61\%$). Evaluating on a fixed set of historically successful equities introduces selection bias that inherently favors passive holding.
+    \item \textbf{Zero-Return Cash Assumption:} The portfolio environment models cash with an assumed zero nominal return. In reality, institutional cash holdings earn a risk-free rate or overnight yield (e.g., Indian MIBOR or Treasury bill yields). Assuming zero return on cash penalizes the nominal growth of risk-averse agents (especially Model M4, which held $32.4\%$ in cash) during sustained bull markets.
+    \item \textbf{Simplified Execution and Market Friction Model:} Transaction costs are modeled as a constant proportional fee of $c_{\text{trans}} = 0.001$ ($10\text{ bps}$). While reasonable for liquid equities, this does not capture nonlinear market impact, order-book liquidity depletion, bid-ask spread widening during volatility, or intraday execution slippage.
+    \item \textbf{Limited Hyperparameter Tuning Scope:} The quadratic penalty parameter $\lambda_{\text{turn}} = 0.1$ was selected based on preliminary validation tuning on Fold 1 across two seeds, and kept frozen across all subsequent folds. A static penalty tuned in a relatively calm market regime (2017) may prove overly restrictive during periods of sudden market rebound (such as post-March 2020 in Fold 2).
+    \item \textbf{Sample Size of Evaluation Pairs:} The empirical evaluation relies on four walk-forward folds and three random seeds, yielding 12 paired observations. While bootstrap resampling provides informative confidence interval estimates, the modest number of market regimes limits broad statistical generalizations across arbitrary market conditions.
 \end{enumerate}
 
-\subsection{Market Regime Dependence and Single-Epoch Hyperparameter Selection}
-As disclosed in Chapter~\ref{ch:results}, the turnover regularisation coefficient $\lambda_{\text{turn}} = 0.1$ was tuned strictly on Fold 1 validation across two seeds. Subsequent folds encompassed vastly different market regimes—notably the COVID-19 crash of March 2020 (Fold 2) and the global inflationary cycle of 2022 (Fold 3). A constant hyperparameter tuned in a calm market proved overly restrictive during volatile recovery phases where rapid rebalancing was necessary.
-
-\subsection{Simplified Execution and Market Impact Assumptions}
-The environment models execution costs as a fixed proportional fee $c_{\text{trans}} = 0.001$ ($10\text{ bps}$). While appropriate for retail and liquid institutional execution, this model neglects:
-\begin{itemize}
-    \item Non-linear market impact and price slippage for large order sizes.
-    \item Intraday execution dynamics (trades are executed at the official daily closing price).
-    \item Short-selling constraints and margin financing costs.
-\end{itemize}
-
-\subsection{Computational and Stochastic Architecture Constraints}
-Due to computational constraints, policies were restricted to a single-layer LSTM with 512 hidden units, trained for 300,000 steps per run. Furthermore, continuous Dirichlet sampling exhibits inherent stochasticity, leading to noticeable variance across random seeds (e.g., Fold 2 return std $\pm 14.8\%$ in M4).
-
 \section{Directions for Future Research}
-The insights gained from this study motivate several promising avenues for future inquiry:
+The findings and trade-offs observed in this thesis point to several valuable directions for future investigation:
 \begin{enumerate}
-    \item \textbf{Dynamic and Adaptive Turnover Regularisation:} Rather than maintaining a static penalty $\lambda_{\text{turn}}$, future models could employ adaptive penalty scheduling conditioned on real-time market volatility (e.g., VIX) or learned meta-policy networks.
-    \item \textbf{Attention and Transformer Backbones:} Replacing recurrent LSTM cells with temporal multi-head attention mechanisms (such as Temporal Fusion Transformers) could enhance the extraction of long-range cross-asset correlations.
-    \item \textbf{Macroeconomic and Alternative Feature Integration:} Augmenting technical indicators with macroeconomic variables (interest rates, crude oil prices, USD/INR foreign exchange rates) and sentiment features from financial disclosures.
-    \item \textbf{Dynamic Cash Hurdles:} Incorporating an active risk-free interest rate yield on the cash reserve to mitigate the harsh cash drag observed in equity bull markets.
+    \item \textbf{Point-in-Time Dynamic Universes:} Constructing dynamic, point-in-time asset universes (such as historical Nifty 50 constituents reconstituted semi-annually) would mitigate survivorship bias and evaluate adaptability to corporate turnover.
+    \item \textbf{Interest-Bearing Cash Reserves:} Modeling an active risk-free interest rate yield on cash allocations would provide a fairer reflection of money-market returns and partially alleviate artificial cash drag.
+    \item \textbf{Benchmark-Relative Rewards:} Training policies against excess returns or tracking-error-penalized rewards relative to a market benchmark could encourage active exposure management while capturing index beta.
+    \item \textbf{Adaptive and Regime-Aware Regularisation:} Investigating dynamic turnover penalty schedules conditioned on real-time market volatility (e.g., India VIX) or validation-only tuning per fold.
+    \item \textbf{Alternative Temporal Encoders:} Exploring temporal Transformer backbones or state-space models (e.g., Mamba) to capture multi-scale cross-asset dependencies beyond single-stream recurrent cells.
 \end{enumerate}

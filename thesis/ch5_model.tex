@@ -2,14 +2,14 @@
 \label{ch:methodology}
 
 \section{Overview of the Actor--Critic Architecture}
-The portfolio management policy is trained using Proximal Policy Optimisation (PPO) \citep{schulman2017proximal} formulated within an Actor--Critic framework. The system architecture decouples temporal representation learning, continuous allocation policy parameterisation on the simplex manifold, and state-value baseline estimation:
+The portfolio management agents are trained using Proximal Policy Optimisation (PPO) \citep{schulman2017proximal} formulated within an Actor--Critic framework. The system architecture decouples state representation learning, continuous allocation policy parameterisation on the simplex manifold, and state-value baseline estimation:
 \begin{enumerate}
-    \item An \textbf{Encoder} processes the state observation to generate a compact 512-dimensional latent representation $\mathbf{h}_t \in \mathbb{R}^{512}$.
-    \item An \textbf{Actor head} maps $\mathbf{h}_t$ to the parameters of a multivariate Dirichlet distribution that outputs portfolio allocations across $M = 11$ assets (10 equities plus cash).
-    \item A \textbf{Critic head} maps $\mathbf{h}_t$ to a scalar baseline estimate $V_\phi(\mathbf{s}_t) \in \mathbb{R}$ approximating the expected cumulative discounted future reward.
+    \item An \textbf{Encoder} processes market observations to generate a compact 512-dimensional latent representation $\mathbf{h}_t \in \mathbb{R}^{512}$.
+    \item An \textbf{Actor head} maps $\mathbf{h}_t$ to the concentration parameters of a multivariate Dirichlet distribution that outputs portfolio allocations across $M = 11$ assets (10 equities plus cash).
+    \item A \textbf{Critic head} maps $\mathbf{h}_t$ to a scalar baseline estimate $V_\phi(\mathbf{s}_t) \in \mathbb{R}$ approximating expected cumulative discounted future reward.
 \end{enumerate}
 
-Figure~\ref{fig:architecture} illustrates the end-to-end information flow, and Figure~\ref{fig:pipeline} portrays the rollout interaction and PPO optimization pipeline.
+Figure~\ref{fig:architecture} illustrates the information flow from input tensor to executed portfolio weights, and Figure~\ref{fig:pipeline} portrays the rollout interaction and PPO training loop.
 
 \begin{figure}[htbp]
 \centering
@@ -27,133 +27,133 @@ Figure~\ref{fig:architecture} illustrates the end-to-end information flow, and F
 \end{minipage}
 \end{figure}
 
-\section{State Encoders: MLP versus Recurrent LSTM}
-To rigorously evaluate the utility of temporal memory, two alternative encoder backbones are examined:
+\section{Encoder Formulations: MLP versus LSTM}
+To evaluate the empirical utility of temporal memory, two alternative encoder backbones are examined:
 
 \subsection{Multi-Layer Perceptron (MLP) Encoder (Model M1)}
-The feedforward MLP baseline observes solely the instantaneous observation vector at day $t$, $\mathbf{x}_t = \mathbf{s}_t \in \mathbb{R}^{141}$, discarding multi-period historical trajectories. The representation $\mathbf{h}_t$ is computed via two fully-connected layers with Tanh activations:
-\begin{equation}
-\mathbf{h}_t = \tanh\left( \mathbf{W}_2 \tanh\left( \mathbf{W}_1 \mathbf{x}_t + \mathbf{b}_1 \right) + \mathbf{b}_2 \right),
-\end{equation}
-where $\mathbf{W}_1 \in \mathbb{R}^{512 \times 141}$ and $\mathbf{W}_2 \in \mathbb{R}^{512 \times 512}$.
+The feedforward MLP baseline observes solely the instantaneous observation vector at day $t$, $\mathbf{s}_t \in \mathbb{R}^{141}$, discarding multi-period historical trajectories. The representation $\mathbf{h}_t$ and raw actor output $\mathbf{z}_t$ are computed via two fully-connected layers with Tanh activations:
+\begin{align}
+\mathbf{h}_t^{(1)} &= \tanh\left( \mathbf{W}_1 \mathbf{s}_t + \mathbf{b}_1 \right), \quad \mathbf{W}_1 \in \mathbb{R}^{512 \times 141}, \; \mathbf{b}_1 \in \mathbb{R}^{512}, \\
+\mathbf{h}_t &= \tanh\left( \mathbf{W}_2 \mathbf{h}_t^{(1)} + \mathbf{b}_2 \right), \quad \mathbf{W}_2 \in \mathbb{R}^{512 \times 512}, \; \mathbf{b}_2 \in \mathbb{R}^{512}, \\
+\mathbf{z}_t &= f_\theta^{\text{MLP}}(\mathbf{s}_t) = \mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a, \quad \mathbf{W}_a \in \mathbb{R}^{11 \times 512}, \; \mathbf{b}_a \in \mathbb{R}^{11}.
+\end{align}
 
 \subsection{Recurrent LSTM Encoder (Models M2--M4)}
-To capture sequential price momentum and multi-period dependencies, Models M2, M3, and M4 pass the sliding history window $\mathbf{F}_t = [\mathbf{s}_{t-W+1}, \dots, \mathbf{s}_t] \in \mathbb{R}^{W \times 141}$ ($W = 30$) through a recurrent Long Short-Term Memory (LSTM) network:
-\begin{equation}
-(\mathbf{h}_t, \mathbf{c}_t) = \text{LSTM}(\mathbf{F}_t),
-\end{equation}
-with hidden representation size $H = 512$, following the empirical findings of \citet{zou2023novel}. The LSTM is trained end-to-end with the policy and value networks; rather than serving as an explicit price forecaster, $\mathbf{h}_t$ serves as a learned temporal belief state for sequential allocation.
+To capture sequential momentum and multi-period dependencies, Models M2, M3, and M4 pass the sliding history window $\mathbf{F}_t = [\mathbf{s}_{t-W+1}, \dots, \mathbf{s}_t] \in \mathbb{R}^{30 \times 141}$ ($W = 30$ trading days) through a recurrent Long Short-Term Memory (LSTM) network \citep{hochreiter1997long, zou2024novel}:
+\begin{align}
+(\mathbf{h}_t, \mathbf{c}_t) &= \operatorname{LSTM}_\psi(\mathbf{F}_t), \\
+\mathbf{z}_t &= f_\theta^{\text{LSTM}}(\mathbf{F}_t) = \mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a,
+\end{align}
+where $\psi$ denotes recurrent weights and $\mathbf{h}_t \in \mathbb{R}^{512}$ is the final hidden state across the 30 daily steps. The LSTM uses internal forget gates (to discard stale price patterns), input gates (to integrate new market signals), and output gates (to modulate the emitted hidden representation $\mathbf{h}_t$). Rather than acting as a directional price forecaster, $\mathbf{h}_t$ serves as a learned temporal summary for sequential allocation.
 
 \section{Continuous Dirichlet Policy on the Simplex}
 \label{sec:dirichlet_policy}
-A fundamental challenge in continuous portfolio control is ensuring that allocated asset weights satisfy the portfolio simplex constraints:
+Portfolio allocations must strictly satisfy the long-only unit simplex constraints:
 \begin{equation}
 w_{i,t}^{\text{target}} \ge 0, \quad w_{\text{cash},t}^{\text{target}} \ge 0, \quad \sum_{i=1}^{N} w_{i,t}^{\text{target}} + w_{\text{cash},t}^{\text{target}} = 1.
 \end{equation}
-Following \citet{yang2022selective}, the policy is parameterised using a multivariate Dirichlet distribution, which natively defines a probability measure directly over the open unit simplex without requiring arbitrary heuristic projections.
+Following \citet{yang2022selective}, the continuous policy is parameterised using a multivariate Dirichlet distribution.
 
 \subsection{Actor Mapping to Dirichlet Parameters}
-The actor network maps the latent representation $\mathbf{h}_t$ to an unconstrained linear vector $\mathbf{z}_t \in \mathbb{R}^{N+1}$:
-\begin{equation}
-\mathbf{z}_t = \mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a, \quad \mathbf{W}_a \in \mathbb{R}^{(N+1) \times 512}, \; \mathbf{b}_a \in \mathbb{R}^{N+1}.
-\end{equation}
-To ensure numerical stability during gradient backpropagation, the outputs are clamped to a safe log-concentration range and exponentiated to yield strictly positive Dirichlet concentration parameters $\boldsymbol{\alpha}_t \in \mathbb{R}_{>0}^{N+1}$:
+The actor head outputs unconstrained real values $\mathbf{z}_t \in \mathbb{R}^{11}$. Concentration parameters must be strictly positive ($\alpha_i > 0$). In our implementation, $\mathbf{z}_t$ represents log-concentration values, which are clamped to a numerically safe range and exponentiated:
 \begin{align}
-\boldsymbol{\ell}_t &= \text{clip}\left( \mathbf{z}_t, -3.0, 6.0 \right), \\
+\boldsymbol{\ell}_t &= \operatorname{clip}\left( \mathbf{z}_t, -3.0, 6.0 \right), \\
 \alpha_{i,t} &= \exp\left( \ell_{i,t} \right) \in \left[ e^{-3}, e^6 \right] \approx [0.0498, 403.43].
 \end{align}
-Clamping prevents underflow (which leads to degenerate distributions concentrated at vertices) and overflow (which causes numerical instability in the Gamma function derivative).
+Clamping prevents underflow (avoiding degenerate densities at simplex vertices) and overflow (avoiding gradient instability in the Gamma function derivative).
 
-\subsection{Action Sampling and Expected Allocation}
-The continuous action $\mathbf{a}_t \in \Delta^N$ is sampled from the Dirichlet probability density:
-\begin{equation}
-\label{eq:dirichlet_pdf}
-\pi_\theta(\mathbf{a}_t \mid \mathbf{h}_t) = \frac{\Gamma\left( \sum_{i=1}^{N+1} \alpha_{i,t} \right)}{\prod_{i=1}^{N+1} \Gamma(\alpha_{i,t})} \prod_{i=1}^{N+1} a_{i,t}^{\alpha_{i,t} - 1},
-\end{equation}
-where $\Gamma(z)$ is the standard Gamma function. Sampling is performed via normalized independent Gamma variates: $g_{i,t} \sim \text{Gamma}(\alpha_{i,t}, 1)$ with $a_{i,t} = g_{i,t} / \sum_j g_{j,t}$. The expected portfolio allocation is:
-\begin{equation}
-\mathbb{E}\left[ a_{i,t} \right] = \frac{\alpha_{i,t}}{\sum_{j=1}^{N+1} \alpha_{j,t}}.
-\end{equation}
-During deterministic out-of-sample evaluation, the policy executes this expected allocation directly.
+\subsection{Action Sampling, Thresholding, and Log-Probabilities}
+It is essential to distinguish between the three operational forms of the action:
+\begin{enumerate}
+    \item \textbf{Raw Sampled Action ($\mathbf{a}_t$):} During environment rollout, a continuous action vector $\mathbf{a}_t \in \Delta^N$ is sampled from the Dirichlet probability density function:
+    \begin{equation}
+    \label{eq:dirichlet_pdf}
+    \pi_\theta(\mathbf{a}_t \mid \mathbf{h}_t) = \frac{\Gamma\left( \sum_{i=1}^{N+1} \alpha_{i,t} \right)}{\prod_{i=1}^{N+1} \Gamma(\alpha_{i,t})} \prod_{i=1}^{N+1} a_{i,t}^{\alpha_{i,t} - 1},
+    \end{equation}
+    via normalized Gamma variates: $g_{i,t} \sim \operatorname{Gamma}(\alpha_{i,t}, 1)$ with $a_{i,t} = g_{i,t} / \sum_j g_{j,t}$. The expected portfolio allocation is $\mathbb{E}[a_{i,t}] = \alpha_{i,t} / \sum_j \alpha_{j,t}$, which is executed directly during deterministic evaluation.
+    \item \textbf{Thresholded Target Weights ($\mathbf{w}_t^{\text{target}}$):} Because a Dirichlet sample with positive parameters assigns non-zero mass across all assets, tiny positions can induce unnecessary transaction fees. A threshold $\tau = 0.01$ (1\%) is applied, zeroing minuscule allocations and renormalising survivors:
+    \begin{equation}
+    \label{eq:thresholding}
+    \tilde{w}_{i,t} = 
+    \begin{cases}
+    a_{i,t}, & \text{if } a_{i,t} \ge \tau, \\
+    0, & \text{if } a_{i,t} < \tau,
+    \end{cases}
+    \qquad
+    w_{i,t}^{\text{target}} = \frac{\tilde{w}_{i,t}}{\sum_{j=1}^{N+1} \tilde{w}_{j,t}}.
+    \end{equation}
+    \item \textbf{Log Probability Evaluation for PPO:} For PPO importance sampling, the log-probability is evaluated strictly on the \textit{raw continuous action} $\mathbf{a}_t$ under the Dirichlet density:
+    \begin{equation}
+    \log \pi_\theta(\mathbf{a}_t \mid \mathbf{h}_t) = \ln \Gamma\left( \sum_{i=1}^{N+1} \alpha_{i,t} \right) - \sum_{i=1}^{N+1} \ln \Gamma(\alpha_{i,t}) + \sum_{i=1}^{N+1} (\alpha_{i,t} - 1) \ln a_{i,t}.
+    \end{equation}
+    The raw action $\mathbf{a}_t$ (and not $\mathbf{w}_t^{\text{target}}$) is stored in the rollout buffer to preserve the validity of probability density evaluations.
+\end{enumerate}
 
-\subsection{Sparsity Thresholding and Renormalisation}
-Because a Dirichlet distribution with positive parameters assigns non-zero mass across all assets, raw samples can contain minuscule allocations (e.g., $0.05\%$) that induce unneeded rebalancing fees. A threshold $\tau = 0.01$ (1\%) is applied identically across all models:
+\section{Portfolio Accounting and Transaction Timing}
+\label{sec:portfolio_accounting}
+To ensure causality and prevent look-ahead bias, the transaction timeline operates as follows:
+\begin{enumerate}
+    \item At day $t$, the agent observes historical market information $\mathbf{s}_t$ (or window $\mathbf{F}_t$) available up to market close.
+    \item The agent determines target portfolio weights $\mathbf{w}_t^{\text{target}}$ for day $t$.
+    \item The portfolio is rebalanced from current weights $\mathbf{w}_t^{\text{cur}}$ to $\mathbf{w}_t^{\text{target}}$, incurring transaction cost $C_t$.
+    \item The rebalanced portfolio earns the subsequent asset returns from day $t$ to day $t+1$:
+    \begin{equation}
+    R_{i,t+1} = \frac{C_{i,t+1}}{C_{i,t}} - 1.
+    \end{equation}
+\end{enumerate}
+Rebalancing the $N$ risky equities incurs a proportional fee $c_{\text{trans}} = 0.001$ ($10\text{ bps}$), while reallocations to or from the cash leg incur no fee:
+\begin{align}
+\text{Turnover}_t &= \sum_{i=1}^N \left| w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}} \right|, \\
+C_t &= c_{\text{trans}} V_t \cdot \text{Turnover}_t.
+\end{align}
+As a simplifying modeling assumption, cash earns zero nominal interest (multiplier 1.0). End-of-day wealth $V_{t+1}$ evolves as:
 \begin{equation}
-\label{eq:thresholding}
-\tilde{w}_{i,t} = 
-\begin{cases}
-a_{i,t}, & \text{if } a_{i,t} \ge \tau, \\
-0, & \text{if } a_{i,t} < \tau,
-\end{cases}
-\qquad
-w_{i,t}^{\text{target}} = \frac{\tilde{w}_{i,t}}{\sum_{j=1}^{N+1} \tilde{w}_{j,t}}.
+V_{t+1} = (V_t - C_t) \left[ \sum_{i=1}^N w_{i,t}^{\text{target}} (1 + R_{i,t+1}) + w_{\text{cash},t}^{\text{target}} \right].
 \end{equation}
-This operation liquidates tiny positions and renormalises the surviving allocations to sum strictly to one.
-
-\section{Portfolio Dynamics and Transaction Cost Accounting}
-Let $\mathbf{w}_t^{\text{cur}} \in \Delta^N$ denote the portfolio weights immediately preceding rebalancing at day $t$. The required reallocation across the risky equities is $\Delta w_{i,t} = w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}}$.
-
-Reallocating between cash and risky assets incurs a proportional transaction fee $c_{\text{trans}} = 0.001$ ($10\text{ bps}$):
+Transaction cost $C_t$ is deducted once from capital prior to return compounding. The realized net rate of portfolio return is:
 \begin{equation}
-C_t = c_{\text{trans}} V_{t-1} \sum_{i=1}^N \left| \Delta w_{i,t} \right|.
+R_{\text{net},t} = \frac{V_{t+1} - V_t}{V_t}.
 \end{equation}
-End-of-day portfolio wealth $V_t$ evolves according to:
-\begin{equation}
-V_t = (V_{t-1} - C_t) \left[ \sum_{i=1}^N w_{i,t}^{\text{target}} (1 + R_{i,t}) + w_{\text{cash},t}^{\text{target}} \right],
-\end{equation}
-where $R_{i,t} = \frac{C_{i,t}}{C_{i,t-1}} - 1$ is the simple price return. The net portfolio return used throughout the framework is:
-\begin{equation}
-R_{\text{net},t} = \frac{V_t - V_{t-1}}{V_{t-1}}.
-\end{equation}
+Entering day $t+1$, asset weights naturally drift to $w_{i,t+1}^{\text{cur}} = w_{i,t}^{\text{target}} (1 + R_{i,t+1}) / G_t$ ($i \le N$) and $w_{\text{cash},t+1}^{\text{cur}} = w_{\text{cash},t}^{\text{target}} / G_t$, where $G_t = V_{t+1} / (V_t - C_t)$ is the gross growth multiplier.
 
 \section{Model Reward Formulations (M1 to M4)}
-The reward signal $r_t$ emitted to the agent constitutes the core ablation dimension:
+The reward signal $r_t$ emitted to the agent defines the ablation dimension:
 \begin{enumerate}
     \item \textbf{Models M1 and M2 (Net Return Reward):}
     \begin{equation}
     r_t = R_{\text{net},t}.
     \end{equation}
-
-    \item \textbf{Model M3 (Differential Sharpe Ratio):}
-    Following \citet{millea2021deep}, an online recursive Differential Sharpe Ratio (DSR) is computed without requiring batch return histories. Moving estimates of the first and second return moments ($A_t \approx \mathbb{E}[R]$ and $B_t \approx \mathbb{E}[R^2]$) update exponentially with adaptation rate $\eta = 0.01$:
+    \item \textbf{Model M3 (Differential Sharpe Ratio):} Following \citet{millea2021deep}, first and second return moments ($A_t \approx \mathbb{E}[R]$ and $B_t \approx \mathbb{E}[R^2]$) update recursively with adaptation rate $\eta = 0.01$:
     \begin{align}
     A_t &= A_{t-1} + \eta (R_{\text{net},t} - A_{t-1}), \\
     B_t &= B_{t-1} + \eta (R_{\text{net},t}^2 - B_{t-1}).
     \end{align}
-    With moment changes $\Delta A_t = A_t - A_{t-1}$ and $\Delta B_t = B_t - B_{t-1}$, the DSR reward is:
+    With moment changes $\Delta A_t = A_t - A_{t-1}$ and $\Delta B_t = B_t - B_{t-1}$, the online DSR reward is:
     \begin{equation}
     D_t = \frac{B_{t-1} \Delta A_t - \frac{1}{2} A_{t-1} \Delta B_t}{\left( B_{t-1} - A_{t-1}^2 + \varepsilon_{\text{DSR}} \right)^{3/2}},
     \end{equation}
     where $\varepsilon_{\text{DSR}} = 10^{-8}$ prevents numerical division by zero. For Model M3, $r_t = D_t$.
-
-    \item \textbf{Model M4 (DSR with Squared Turnover Penalty):}
-    To discourage excessive daily weight churn, an explicit quadratic turnover penalty is subtracted from the DSR reward:
+    \item \textbf{Model M4 (DSR + Quadratic Penalty):} An explicit quadratic penalty on risky asset rebalancing is subtracted from the DSR reward:
     \begin{equation}
     r_t = D_t - \lambda_{\text{turn}} \sum_{i=1}^N \left( w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}} \right)^2,
     \end{equation}
-    with $\lambda_{\text{turn}} = 0.1$ selected via validation tuning.
+    with $\lambda_{\text{turn}} = 0.1$ selected via preliminary validation tuning. Note that this quadratic penalty is an optimization regularizer on the reward; it is distinct from the L1 turnover metric and is not deducted from portfolio wealth $V_t$.
 \end{enumerate}
 
 \section{PPO Policy Optimisation}
-During environment interaction, the agent collects transitions and stores the raw sampled continuous action $\mathbf{a}_t$ along with its log-likelihood under old parameters $\theta_{\text{old}}$:
-\begin{equation}
-\log \pi_{\theta_{\text{old}}}(\mathbf{a}_t \mid \mathbf{h}_t) = \ln \Gamma\left( \sum_{i=1}^{N+1} \alpha_{i,t} \right) - \sum_{i=1}^{N+1} \ln \Gamma(\alpha_{i,t}) + \sum_{i=1}^{N+1} (\alpha_{i,t} - 1) \ln a_{i,t}.
-\end{equation}
-
-Generalized Advantage Estimation (GAE) computes advantages $\hat{A}_t$ using temporal-difference residuals $\delta_t = \tilde{r}_t + \gamma V_\phi(\mathbf{s}_{t+1}) - V_\phi(\mathbf{s}_t)$ with discount $\gamma = 0.99$ and trace decay $\lambda_{\text{GAE}} = 0.95$:
+GAE computes advantage estimates $\hat{A}_t$ using temporal-difference residuals $\delta_t = \tilde{r}_t + \gamma V_\phi(\mathbf{s}_{t+1}) - V_\phi(\mathbf{s}_t)$ with discount $\gamma = 0.99$ and trace decay $\lambda_{\text{GAE}} = 0.95$:
 \begin{equation}
 \hat{A}_t = \sum_{l=0}^\infty (\gamma \lambda_{\text{GAE}})^l \delta_{t+l}.
 \end{equation}
-
-During mini-batch optimisation, the probability ratio is evaluated for the identical raw action $\mathbf{a}_t$:
+The probability ratio is evaluated for the identical raw action $\mathbf{a}_t$:
 \begin{equation}
 \rho_t(\theta) = \frac{\pi_\theta(\mathbf{a}_t \mid \mathbf{h}_t)}{\pi_{\theta_{\text{old}}}(\mathbf{a}_t \mid \mathbf{h}_t)} = \exp\left( \log \pi_\theta(\mathbf{a}_t \mid \mathbf{h}_t) - \log \pi_{\theta_{\text{old}}}(\mathbf{a}_t \mid \mathbf{h}_t) \right).
 \end{equation}
-The policy parameters $\theta$ and critic parameters $\phi$ are updated by minimising the joint multi-task loss \citep{schulman2017proximal}:
+Policy parameters $\theta$ and critic parameters $\phi$ are optimized using Adam by minimising the joint loss \citep{schulman2017proximal}:
 \begin{equation}
-\mathcal{L}(\theta, \phi) = -\hat{\mathbb{E}}_t \left[ \min\left( \rho_t(\theta) \hat{A}_t, \; \text{clip}(\rho_t(\theta), 1 - \epsilon, 1 + \epsilon) \hat{A}_t \right) \right] + c_1 \hat{\mathbb{E}}_t \left[ (V_\phi(\mathbf{s}_t) - \hat{V}_t^{\text{target}})^2 \right] - c_2 \hat{\mathbb{E}}_t [\mathcal{H}(\pi_\theta)],
+\mathcal{L}(\theta, \phi) = -\hat{\mathbb{E}}_t \left[ \min\left( \rho_t(\theta) \hat{A}_t, \; \operatorname{clip}(\rho_t(\theta), 1 - \epsilon, 1 + \epsilon) \hat{A}_t \right) \right] + c_1 \hat{\mathbb{E}}_t \left[ (V_\phi(\mathbf{s}_t) - \hat{V}_t^{\text{target}})^2 \right] - c_2 \hat{\mathbb{E}}_t [\mathcal{H}(\pi_\theta)],
 \end{equation}
-with clipping range $\epsilon = 0.2$, critic weight $c_1 = 0.5$, and entropy bonus $c_2 = 0.01$.
+with clipping range $\epsilon = 0.2$, critic coefficient $c_1 = 0.5$, and analytical Dirichlet entropy bonus coefficient $c_2 = 0.01$.
 
 \begin{figure}[htbp]
 \centering
@@ -170,11 +170,11 @@ with clipping range $\epsilon = 0.2$, critic weight $c_1 = 0.5$, and entropy bon
     \item \quad Reset rollout buffer $\mathcal{B} \gets \emptyset$.
     \item \quad \textbf{for} $t = 1$ to $T_{\text{rollout}} = 128$ \textbf{do}
     \item \qquad Compute representation $\mathbf{h}_t \gets \text{Encoder}(\mathbf{s}_t)$ (MLP for M1; LSTM for M2--M4).
-    \item \qquad Compute concentrations $\boldsymbol{\ell}_t \gets \text{clip}(\mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a, -3, 6)$ and $\boldsymbol{\alpha}_t \gets \exp(\boldsymbol{\ell}_t)$.
-    \item \qquad Sample raw action variates $g_i \sim \text{Gamma}(\alpha_{i,t}, 1)$, set $\mathbf{a}_t \gets \mathbf{g} / \sum_i g_i$.
+    \item \qquad Compute concentrations $\boldsymbol{\ell}_t \gets \operatorname{clip}(\mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a, -3, 6)$ and $\boldsymbol{\alpha}_t \gets \exp(\boldsymbol{\ell}_t)$.
+    \item \qquad Sample raw action variates $g_i \sim \operatorname{Gamma}(\alpha_{i,t}, 1)$, set $\mathbf{a}_t \gets \mathbf{g} / \sum_i g_i$.
     \item \qquad Evaluate old log-likelihood $lp_t \gets \log \pi_\theta(\mathbf{a}_t \mid \mathbf{h}_t)$ and value $V_t \gets V_\phi(\mathbf{h}_t)$.
     \item \qquad Apply threshold $\tau = 0.01$: $\tilde{w}_i \gets a_{i,t} \cdot \mathbf{1}_{a_{i,t} \ge \tau}$, set $\mathbf{w}_t^{\text{target}} \gets \tilde{\mathbf{w}} / \sum_j \tilde{w}_j$.
-    \item \qquad Execute trade: compute $\text{Turnover}_t$, cost $C_t$, net return $R_{\text{net},t}$, new wealth $V_t$.
+    \item \qquad Execute trade: compute $\text{Turnover}_t$, cost $C_t$, net return $R_{\text{net},t}$, new wealth $V_{t+1}$.
     \item \qquad Compute model reward $r_t$ (Net return for M1/M2; DSR for M3; DSR $-\lambda_{\text{turn}} \sum (\Delta w_i)^2$ for M4).
     \item \qquad Store transition $(\mathbf{s}_t, \mathbf{a}_t, lp_t, V_t, r_t)$ in buffer $\mathcal{B}$.
     \item \quad \textbf{end for}
