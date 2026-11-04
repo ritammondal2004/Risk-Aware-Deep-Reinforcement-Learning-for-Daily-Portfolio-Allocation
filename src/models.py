@@ -52,17 +52,17 @@ class ActorCritic(nn.Module):
         alpha = la.exp().double().cpu().numpy()[0]
         g = rng.gamma(alpha)
         raw = np.clip(g / g.sum(), 1e-12, None)
-        raw = raw / raw.sum()
+        raw = raw / raw.sum() 
         logp = Dirichlet(torch.as_tensor(alpha), validate_args=False).log_prob(torch.as_tensor(raw))
         return raw, float(logp), float(v)
-
+                                       
     # Log-prob, entropy and value of stored raw actions under the CURRENT policy.
-    def evaluate(self, obs, raw):
-        la, v = self(obs)
+    def evaluate(self, obs, raw):         
+        la, v = self(obs)                   
         dist = Dirichlet(la.exp().double(), validate_args=False)
-        raw = raw.double()
+        raw = raw.double()                  
         return dist.log_prob(raw).float(), dist.entropy().float(), v
-
+                           
     # State value only (used for bootstrapping at segment end).
     @torch.no_grad()
     def value(self, obs):

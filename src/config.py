@@ -93,7 +93,7 @@ class PPOConfig:
     adam_betas: Tuple[float, float] = (0.9, 0.999)
     adam_eps: float = 1e-8
     rollout_len: int = 128
-    gae_lambda: float = 0.95
+    gae_lambda: float = 0.95  
     n_epochs: int = 10   
     minibatch_size: int = 64   
     normalize_reward: bool = True

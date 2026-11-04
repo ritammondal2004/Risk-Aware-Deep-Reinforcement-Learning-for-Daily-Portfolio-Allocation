@@ -1,0 +1,56 @@
+\chapter{Research Gap and Problem Formulation}
+\label{ch:gap}
+
+\section{Identified Research Gap}
+A critical synthesis of the literature reveals that while individual advancements have been made in temporal neural architectures, risk-aware reward design, and realistic evaluation methods, these mechanisms have consistently been studied in isolation across disparate datasets, conflicting trading friction assumptions, and ad-hoc architectures. 
+
+\textbf{Main Research Gap:} Among the studies reviewed, we did not identify a controlled empirical framework that systematically isolates \textit{temporal memory}, \textit{risk-aware reward shaping}, and \textit{turnover regularisation} under identical market data, feature representations, transaction-cost models, training budgets, and chronological out-of-sample walk-forward evaluations. Without isolating these mechanisms within a single-factor ablation framework, it is impossible to determine whether reported performance improvements stem from the sequence encoder, the reward signal, turnover suppression, or simply idiosyncratic differences in experimental setups.
+
+Table~\ref{tab:positioning} positions this thesis relative to the reviewed benchmark literature, highlighting the comprehensive and controlled nature of our design.
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\caption{Positioning of this work relative to the reviewed literature.}
+\label{tab:positioning}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.8cm}>{\centering\arraybackslash}X>{\centering\arraybackslash}p{3.1cm}>{\centering\arraybackslash}p{2.4cm}>{\centering\arraybackslash}p{2.5cm}>{\centering\arraybackslash}X}
+\toprule
+\textbf{Paper} & \textbf{Temporal Memory} & \textbf{Risk-Aware / Reward} & \textbf{Turnover Control} & \textbf{Continuous Allocation} & \textbf{Controlled Ablation} \\
+\midrule
+Millea (2021) \citep{millea2021deep} & & \cmark~\textit{(risk-aware rewards discussed)} & & & \\
+Zou et al. (2023) \citep{zou2023novel} & \cmark & & & & \\
+Huang et al. (2024) \citep{huang2024self} & & \cmark & & & \\
+Liu et al. (2024) \citep{liu2024dynamic} & & & & \cmark~\textit{(portfolio weights)} & \\
+Wang \& Liu (2025) \citep{wang2025risk} & & \cmark~\textit{(risk-sensitive reward)} & \cmark & \cmark & \\
+Yang et al. (2022) \citep{yang2022selective} & & & & \cmark~\textit{(Dirichlet distribution)} & \\
+\midrule
+\textbf{This work} & \cmark & \cmark~\textit{(DSR)} & \cmark~\textit{(turnover penalty)} & \cmark & \cmark \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{POMDP Formulation of Daily Portfolio Allocation}
+\label{sec:pomdp_formulation}
+We formulate daily portfolio allocation as a Partially Observable Markov Decision Process (POMDP), defined by the 7-tuple:
+\begin{equation}
+\mathcal{P} = \langle \mathcal{S}, \mathcal{A}, \mathcal{T}, \mathcal{R}, \Omega, \mathcal{O}, \gamma \rangle,
+\end{equation}
+where $\mathcal{S}$ is the state space, $\mathcal{A}$ is the action space, $\mathcal{T}$ represents transition dynamics, $\mathcal{R}$ is the reward function, $\Omega$ is the observation space, $\mathcal{O}$ is the observation probability distribution, and $\gamma \in [0, 1)$ is the discount factor.
+
+\subsection{Why Daily Financial Trading is a POMDP}
+In standard reinforcement learning, a Markov Decision Process assumes the Markov property: the future state depends solely on the current state and action, $\mathbb{P}(\mathbf{s}_{t+1} \mid \mathbf{s}_t, \mathbf{a}_t) = \mathbb{P}(\mathbf{s}_{t+1} \mid \mathbf{s}_t, \dots, \mathbf{s}_0)$. In financial markets, this assumption fails when applied directly to observable market indicators:
+\begin{enumerate}
+    \item \textbf{Unobservable True State $\mathcal{S}$:} The complete economic state of the financial system encompasses global macroeconomic variables, institutional limit order book depth, private liquidity flows, insider order placement, and market participant psychology. These state variables are inherently unobservable to an algorithmic agent operating from public exchange feeds.
+    \item \textbf{Partial and Noisy Observation $\Omega$:} The agent perceives only an observation vector $\mathbf{o}_t \in \Omega$ generated via the observation model $\mathcal{O}(\mathbf{o}_t \mid \mathbf{s}_t)$, consisting of daily open, high, low, close prices, trading volumes, and derived technical indicators.
+    \item \textbf{Non-Markovian Indicator Dynamics:} An identical instantaneous technical indicator vector (e.g., RSI = 65, MACD crossover) can lead to vastly different subsequent price trajectories depending on latent macroeconomic conditions (e.g., an early bull breakout vs.\ an institutional distribution top).
+\end{enumerate}
+Because instantaneous observations $\mathbf{o}_t$ do not satisfy the Markov property, the agent cannot make optimal decisions based solely on a single-day snapshot. Instead, it must construct an internal belief state $b(\mathbf{s}_t)$ over the history of observations $\mathbf{F}_t = [\mathbf{o}_{t-W+1}, \dots, \mathbf{o}_t]$. In this work, recurrent neural networks (LSTM) are employed to learn this internal temporal summary $\mathbf{h}_t \approx b(\mathbf{s}_t)$ end-to-end, directly mitigating partial observability.
+
+\subsection{Action Space $\mathcal{A}$ and Simplex Manifold}
+The portfolio consists of $N = 10$ risky equities and $1$ risk-free cash account, yielding an action dimension of $M = N + 1 = 11$. The action vector $\mathbf{a}_t = [a_{t,1}, \dots, a_{t,N+1}]^\top$ represents target portfolio weights, strictly constrained to the standard unit simplex:
+\begin{equation}
+\label{eq:simplex_constraint}
+\mathcal{A} \equiv \Delta^N = \left\{ \mathbf{w}_t \in \mathbb{R}^{N+1} \;\middle|\; w_{i,t} \ge 0 \; \forall i, \quad \sum_{i=1}^{N} w_{i,t} + w_{\text{cash},t} = 1 \right\}.
+\end{equation}
+Following \citet{yang2022selective}, this constraint is enforced directly by parameterising the actor network over a multivariate Dirichlet distribution, eliminating the need for heuristic projection or unconstrained Gaussian clipping.

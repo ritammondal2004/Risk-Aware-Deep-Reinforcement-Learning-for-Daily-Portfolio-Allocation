@@ -1,0 +1,31 @@
+\chapter{Conclusion}
+\label{ch:conclusion}
+
+\section{Summary of Research Findings}
+This B.Tech.\ project developed, implemented, and empirically evaluated a continuous Actor--Critic Deep Reinforcement Learning framework for daily portfolio allocation across ten major equities on the National Stock Exchange of India. By formulating the policy over a multivariate Dirichlet distribution, the agent generated continuous target allocations that strictly preserved the portfolio simplex manifold. Through an extensive, strictly controlled four-stage ablation study (M1--M4) evaluated across four rolling walk-forward folds and three random seeds (2018--2025), this study isolated the individual contributions of temporal memory, risk-sensitive rewards, and turnover regularisation.
+
+\section{Answers to Research Questions}
+We conclude by providing direct, evidence-based answers to the four core research questions:
+
+\begin{itemize}
+    \setlength{\itemsep}{3pt}
+    \setlength{\parskip}{1pt}
+    \item \textbf{RQ1 (Temporal Architecture):} \textit{Does an LSTM-based recurrent encoder improve out-of-sample risk-adjusted returns and policy stability compared to an MLP encoder?}
+    
+    \textbf{Answer: Yes, unequivocally.} Transitioning from the instantaneous MLP (M1) to the sequence-aware LSTM (M2) improved the out-of-sample Sharpe ratio by $+0.201$ (from $0.714$ to $0.915$, 95\% CI $[+0.156, +0.246]$) with consistent improvements across all four folds ($4/4$). Moreover, the LSTM reduced daily turnover from $0.186$ to $0.080$ and cut total transaction costs by more than half (from $9.68\%$ to $4.27\%$), demonstrating that temporal memory is essential for filtering market noise and preventing counterproductive daily portfolio churning.
+
+    \item \textbf{RQ2 (Risk-Adjusted Reward):} \textit{Does transitioning from raw net return to the Differential Sharpe Ratio (DSR) lead to improved Sharpe ratios and reduced drawdowns?}
+    
+    \textbf{Answer: Partially, with nuanced trade-offs.} The DSR reward (M3) yielded an incremental Sharpe delta of $+0.003$ ($[-0.295, +0.222]$) relative to M2. While DSR demonstrated strong performance in later regimes (Sharpe $1.328$ in Fold 3 and $1.164$ in Fold 4), its online variance estimation slightly depressed cumulative profit during aggressive bull markets ($26.93\%$ vs.\ $28.23\%$).
+
+    \item \textbf{RQ3 (Turnover Regularisation):} \textit{Does augmenting the reward with an explicit quadratic turnover penalty effectively suppress portfolio turnover and transaction costs without destroying wealth accumulation?}
+    
+    \textbf{Answer: Yes, decisively.} Incorporating the quadratic turnover penalty in Model M4 suppressed average daily turnover from $0.079$ to $0.019$ ($[-0.082, -0.044]$, improved in $12/12$ pairs), reducing transaction costs to just $0.97\%$ of starting capital. Crucially, M4 delivered the shallowest maximum drawdown of any evaluated model ($-16.04\%$, an improvement of $+3.90\%$ over M3), successfully demonstrating that explicit turnover regularisation stabilizes portfolio execution under proportional transaction costs.
+
+    \item \textbf{RQ4 (Benchmark Competitiveness):} \textit{Can a model-free continuous actor-critic agent outperform a passively rebalanced equal-weight benchmark in a high-friction Indian equity universe?}
+    
+    \textbf{Answer: No.} The passive Equal-Weight benchmark achieved superior cumulative return ($36.48\%$) and Sharpe ratio ($1.131$). Our gap decomposition revealed that this underperformance was predominantly driven by \textit{cash drag} ($-42.35\%$ in M4) caused by the policy's learned risk-averse allocation to cash ($32.4\%$) during an extended secular bull market. In asset universes characterised by strong macroeconomic upward drift, overcoming the beta advantage and negligible cost ($0.61\%$) of passive 1/N diversification remains an formidable challenge for active reinforcement learning agents.
+\end{itemize}
+
+\section{Concluding Remarks}
+In summary, this research demonstrates that deep reinforcement learning can autonomously discover disciplined risk-management and cost-conscious trading policies in real financial markets. While active outperformance against passive broad-market equities is bounded by cash drag and execution costs, the controlled ablation methodology established in this thesis provides a rigorous scientific template for future investigations in quantitative financial machine learning.

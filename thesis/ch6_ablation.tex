@@ -1,0 +1,53 @@
+\chapter{Controlled Ablation Study Design}
+\label{ch:ablation}
+
+\section{Methodological Rationale for Controlled Ablation}
+In deep reinforcement learning research, empirical comparisons often suffer from reproducibility crises because novel models introduce multiple architectural alterations, revised reward functions, and distinct hyperparameter tunings simultaneously. Under such confounded experimental designs, it is impossible to determine whether empirical gains arise from neural representational power, risk-adjusted reward shaping, or hyperparameter coincidences.
+
+To establish rigorous scientific causality, this research adopts a strict \textit{single-factor controlled ablation study}. Four model configurations (M1 through M4) are constructed such that each consecutive transition alters exactly one algorithmic mechanism while holding all other parameters, random seeds, training budgets, network widths, transaction costs, and data folds strictly invariant.
+
+\section{Specification of Ablation Models M1--M4}
+The four ablation models are defined as follows:
+
+\begin{enumerate}
+    \item \textbf{Model M1 (MLP Baseline + Net Return):} Evaluates a two-layer feedforward MLP observing solely the instantaneous market observation $\mathbf{s}_t \in \mathbb{R}^{141}$. The reward is the realised net rate of return ($r_t = R_{\text{net},t}$) without turnover regularisation ($\lambda_{\text{turn}} = 0$). This serves as the static, non-temporal baseline.
+    \item \textbf{Model M2 (LSTM Recurrent Encoder + Net Return):} Replaces the static MLP with a single-layer LSTM network with hidden dimension $H=512$, processing the sliding 30-day historical window. The reward remains net return ($r_t = R_{\text{net},t}$). Transition M1 $\to$ M2 strictly isolates the impact of \textbf{temporal memory and sequence modeling}.
+    \item \textbf{Model M3 (LSTM Encoder + Differential Sharpe Ratio):} Retains the identical LSTM backbone ($H=512$), but replaces the net return reward with the recursive online Differential Sharpe Ratio ($r_t = D_t$). Transition M2 $\to$ M3 strictly isolates the impact of \textbf{risk-aware reward engineering} against raw return maximisation.
+    \item \textbf{Model M4 (LSTM + DSR + Squared Turnover Regularisation):} Retains the LSTM backbone and DSR reward, augmented by an explicit quadratic penalty on risky asset rebalancing ($r_t = D_t - \lambda_{\text{turn}} \sum_{j=1}^N (w_{j,t}^{\text{target}} - w_{j,t}^{\text{cur}})^2$) with $\lambda_{\text{turn}} = 0.1$. Transition M3 $\to$ M4 strictly isolates the impact of \textbf{explicit turnover regularisation and transaction-friction suppression}.
+\end{enumerate}
+
+Table~\ref{tab:ablation_matrix} summarises the architectural and functional properties of the four configurations.
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\caption{Systematic ablation matrix across models M1 to M4.}
+\label{tab:ablation_matrix}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Configuration Property} & \textbf{Model M1} & \textbf{Model M2} & \textbf{Model M3} & \textbf{Model M4} \\
+\midrule
+Encoder Backbone & MLP (2-layer) & LSTM (1-layer) & LSTM (1-layer) & LSTM (1-layer) \\
+Temporal Window ($W$) & 1 day (last row) & 30 days & 30 days & 30 days \\
+Latent Dimension ($H$) & 512 & 512 & 512 & 512 \\
+Policy Head & Dirichlet $\Delta^{11}$ & Dirichlet $\Delta^{11}$ & Dirichlet $\Delta^{11}$ & Dirichlet $\Delta^{11}$ \\
+Action Threshold ($\tau$) & 0.01 & 0.01 & 0.01 & 0.01 \\
+Reward Formulation & Net Return & Net Return & DSR ($D_t$) & DSR ($D_t$) \\
+Turnover Regularisation & None ($\lambda = 0$) & None ($\lambda = 0$) & None ($\lambda = 0$) & $L_2$ Penalty ($\lambda = 0.1$) \\
+Environment Cost Model & $0.1\%$ per turnover & $0.1\%$ per turnover & $0.1\%$ per turnover & $0.1\%$ per turnover \\
+Training Budget & 300,000 steps & 300,000 steps & 300,000 steps & 300,000 steps \\
+\midrule
+\textbf{Ablation Mechanism} & \textit{Baseline} & \textbf{+ Temporal} & \textbf{+ Risk-Aware} & \textbf{+ Turnover Penalty} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Control Invariants and Verification}
+To guarantee that no hidden variance compromises the ablation comparisons:
+\begin{enumerate}
+    \item \textbf{Weight Initialisation Parity:} In \texttt{src/models.py}, the linear Actor head ($\mathbf{W}_a, \mathbf{b}_a$) and Critic head ($\mathbf{W}_c, \mathbf{b}_c$) are instantiated \textit{before} the encoder network. When initialised under an identical pseudo-random seed, models M1 and M2 possess bitwise identical initial weights in their policy and value heads.
+    \item \textbf{Equal Computational Budget:} All models are trained for exactly 300,000 environment interaction steps with an identical Adam learning rate ($10^{-4}$), rollout horizon (128), and minibatch size (64).
+    \item \textbf{Identical Market Realisation and Costs:} Each model experiences the exact same price sequences, transaction cost deductions ($0.1\%$), and execution mechanics.
+    \item \textbf{Automated Assertion:} The execution harness enforces \texttt{assert\_controlled\_ablation()} at startup, raising an assertion failure if any model transition modifies more than exactly one algorithmic dimension.
+\end{enumerate}
