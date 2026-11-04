@@ -2,30 +2,4 @@
 \label{ch:intro}
 
 \section{Background and Motivation}
-Portfolio allocation is a classic problem in quantitative finance and operations research, concerning the sequential distribution of capital across multiple financial assets to achieve an attractive balance between risk and return. In real equity markets, asset prices exhibit low signal-to-noise ratios, non-stationary return distributions, and time-varying volatility clustering. Furthermore, an investor observing public price and volume records never perceives the complete economic state of the market, but only a noisy, lossy projection of it.
-
-Sequential portfolio rebalancing is inherently path-dependent: the capital available at any decision step depends directly on past allocation choices, the path of intervening asset returns, and the cumulative friction of transaction costs. This sequential structure makes Deep Reinforcement Learning (DRL) an appealing framework, as DRL agents learn policies aimed at optimizing long-term cumulative returns under environmental uncertainty rather than relying solely on isolated, one-step point forecasts.
-
-However, practical algorithmic execution requires careful accounting for trading frictions. Without appropriate regularization, DRL agents operating in continuous action spaces can reallocate excessively from day to day, incurring transaction fees that rapidly erode capital. While prior quantitative finance literature has separately explored recurrent temporal architectures \citep{zou2024novel}, risk-sensitive reward objectives \citep{millea2021deep, wang2025risk}, and dynamic walk-forward evaluation protocols \citep{liu2024dynamic}, these techniques are rarely isolated under identical experimental conditions. When disparate studies use different datasets, transaction fee assumptions, feature definitions, and test periods, it becomes difficult to determine whether reported empirical differences arise from the neural architecture, the reward formulation, the turnover constraint, or the specifics of the data pipeline.
-
-\section{Research Objectives}
-To address this challenge through controlled experimentation, the specific objectives of this B.Tech.\ project are:
-\begin{enumerate}
-    \item \textbf{Controlled Four-Stage Ablation:} To implement a single-factor ablation framework comprising four models---Model M1: PPO with a Multi-Layer Perceptron (MLP) baseline, Model M2: PPO with a recurrent Long Short-Term Memory (LSTM) encoder, Model M3: LSTM-PPO with recursive Differential Sharpe Ratio (DSR) reward, and Model M4: LSTM-PPO with DSR reward and an explicit quadratic weight-change penalty---to isolate the contributions of temporal memory, risk-adjusted reward shaping, and turnover control under identical data, cost, and training budgets.
-    \item \textbf{POMDP Trading Formulation:} To formulate daily portfolio allocation as a Partially Observable Markov Decision Process (POMDP), incorporating causal technical indicators, continuous Dirichlet policy sampling on the unit simplex, and exact transaction-cost accounting.
-    \item \textbf{Rigorous Chronological Evaluation:} To evaluate the four agents across an eight-year walk-forward test protocol (2018--2025) over four folds and three random seeds, comparing their risk-adjusted metrics, trading activity, and transaction costs against a passive Equal-Weight benchmark.
-\end{enumerate}
-
-\section{Research Question}
-This investigation focuses on answering one central research question:
-\begin{quote}
-\itshape
-``How do temporal memory, risk-aware reward shaping, and turnover regularization independently and cumulatively affect the risk-adjusted out-of-sample performance of a PPO-based daily trading agent?''
-\end{quote}
-From this question, four specific comparative aspects are examined:
-\begin{itemize}
-    \item \textbf{RQ1 (Temporal Architecture):} How does an LSTM recurrent encoder alter out-of-sample risk-adjusted return and daily turnover compared with a static MLP baseline?
-    \item \textbf{RQ2 (Risk-Aware Reward Shaping):} What is the empirical effect of replacing net return with the recursive online Differential Sharpe Ratio (DSR)?
-    \item \textbf{RQ3 (Turnover Regularisation):} Does augmenting the reward with a quadratic weight-change penalty reduce turnover and transaction costs, and what is the trade-off with return?
-    \item \textbf{RQ4 (Benchmark Competitiveness):} How do the learned active RL allocation policies compare against a passive, fully-invested Equal-Weight benchmark under identical transaction frictions?
-\end{itemize}
+Daily portfolio allocation requires selecting asset weights repeatedly as prices and market conditions change. These decisions must balance investment returns, financial risk, and transaction costs. A policy based only on current-day indicators may overlook recent market dynamics, while return-based rewards and frequent rebalancing may lead to risky or costly allocations. This study examines three components within a common PPO-based framework: temporal memory through an LSTM encoder, risk-aware reward shaping through the Differential Sharpe Ratio (DSR), and turnover control through a quadratic weight-change penalty. Their contributions are evaluated through four controlled models (M1--M4) using chronological walk-forward testing on ten NSE equities, with an Equal-Weight portfolio as the benchmark.

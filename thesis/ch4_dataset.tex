@@ -2,80 +2,62 @@
 \label{ch:data}
 
 \section{Equity Universe and Data Acquisition}
-The experimental stock universe comprises $N = 10$ prominent large-cap equities actively traded on the National Stock Exchange of India (NSE), spanning diverse economic sectors:
-\begin{enumerate}
-    \setlength{\itemsep}{1pt}
-    \item \textbf{RELIANCE.NS} (Energy and Petrochemicals / Conglomerate)
-    \item \textbf{TCS.NS} (Information Technology Services)
-    \item \textbf{HDFCBANK.NS} (Private Commercial Banking)
-    \item \textbf{ICICIBANK.NS} (Private Commercial Banking)
-    \item \textbf{ITC.NS} (Consumer Goods and Diversified Conglomerate)
-    \item \textbf{HINDUNILVR.NS} (Fast-Moving Consumer Goods)
-    \item \textbf{LT.NS} (Engineering and Infrastructure Construction)
-    \item \textbf{SUNPHARMA.NS} (Pharmaceuticals and Healthcare)
-    \item \textbf{MARUTI.NS} (Automotive Manufacturing)
-    \item \textbf{BHARTIARTL.NS} (Telecommunications and Digital Services)
-\end{enumerate}
-In addition to these ten equities, the portfolio includes an explicit cash asset (Asset 11), providing the agent with the operational flexibility to hold liquidity and de-risk during volatile market phases.
+The experimental asset universe consists of $N = 10$ major large-cap equities actively traded on the National Stock Exchange of India (NSE), spanning diverse economic sectors: Reliance Industries (\texttt{RELIANCE.NS}, Energy/Conglomerate), Tata Consultancy Services (\texttt{TCS.NS}, IT Services), HDFC Bank (\texttt{HDFCBANK.NS}, Commercial Banking), ICICI Bank (\texttt{ICICIBANK.NS}, Commercial Banking), ITC Limited (\texttt{ITC.NS}, Diversified FMCG), Hindustan Unilever (\texttt{HINDUNILVR.NS}, FMCG), Larsen \& Toubro (\texttt{LT.NS}, Engineering \& Infrastructure), Sun Pharmaceutical (\texttt{SUNPHARMA.NS}, Healthcare), Maruti Suzuki (\texttt{MARUTI.NS}, Automotive), and Bharti Airtel (\texttt{BHARTIARTL.NS}, Telecommunications). In addition, an uninvested cash reserve (Asset 11) is included to allow agents to de-risk.
 
-Daily price and volume records were acquired from Yahoo Finance via the \texttt{yfinance} API spanning 1 January 2009 to 31 December 2025. Data acquisition utilized \texttt{auto\_adjust=True}: price series (Open, High, Low, and Close) are backward-adjusted for both stock splits and cash dividends, whereas trading volume is adjusted for splits. Data from 2009--2010 serves as an initial burn-in buffer to initialize 200-day moving averages, ensuring that all technical indicators are fully settled by 1 January 2011. The common trading calendar comprises 3,699 active trading days.
+Daily trading records were acquired from Yahoo Finance via \texttt{yfinance} spanning 1 January 2009 to 31 December 2025. Data acquisition used \texttt{auto\_adjust=True}: Open, High, Low, and Close price series are adjusted backwards for stock splits and cash dividends, while volume is adjusted for splits. Historical data from 2009 to 2010 provides an initial burn-in period to initialise 200-day moving averages, ensuring that all technical features are fully stabilized by 1 January 2011. Across the common trading calendar from 2011 through 2025, there are 3,699 active trading days.
 
-\section{Feature Engineering and Market Indicators}
-For each asset $i \in \{1, \dots, N\}$ on trading day $t$, a compact feature vector $\mathbf{f}_{i,t} \in \mathbb{R}^{13}$ is computed using causal market and technical price transformations. To ensure cross-asset comparability, features are normalized by prevailing prices or rolling averages:
-
-\begin{enumerate}
-    \setlength{\itemsep}{2pt}
-    \item \textbf{Daily Log Return ($f_{1,i,t}$):} $r_{i,t}^{\text{log}} = \ln\left( C_{i,t} / C_{i,t-1} \right)$.
-    \item \textbf{Close-to-Open Relative Return ($f_{2,i,t}$):} $o_{i,t}^{\text{rel}} = C_{i,t} / O_{i,t} - 1$.
-    \item \textbf{High-to-Low Relative Spread ($f_{3,i,t}$):} $hl_{i,t}^{\text{rel}} = H_{i,t} / L_{i,t} - 1$.
-    \item \textbf{Normalized Relative Volume ($f_{4,i,t}$):} $v_{i,t}^{\text{rel}} = \ln\left( V_{i,t} / \text{SMA}_{20}(V_{i,t}) \right)$.
-    \item \textbf{50-day EMA Relative Deviation ($f_{5,i,t}$):} $ema_{50,i,t}^{\text{rel}} = C_{i,t} / \text{EMA}_{50}(C_{i,t}) - 1$, with smoothing multiplier $\alpha_n = \frac{2}{n+1}$.
-    \item \textbf{200-day EMA Relative Deviation ($f_{6,i,t}$):} $ema_{200,i,t}^{\text{rel}} = C_{i,t} / \text{EMA}_{200}(C_{i,t}) - 1$.
-    \item \textbf{Relative Strength Index ($f_{7,i,t}$):} Wilder's 14-period RSI centered around zero:
-    \begin{equation}
-    \text{RS}_{i,t} = \frac{\bar{U}_{i,t}}{\bar{D}_{i,t} + 10^{-8}}, \quad \text{RSI}_{i,t} = 100 - \frac{100}{1 + \text{RS}_{i,t}}, \quad f_{7,i,t} = \frac{\text{RSI}_{i,t}}{100} - 0.5.
-    \end{equation}
-    \item \textbf{Moving Average Convergence Divergence ($f_{8,i,t}$):} Normalized trend divergence:
-    \begin{equation}
-    \text{MACD}_{i,t} = \frac{\text{EMA}_{12}(C_{i,t}) - \text{EMA}_{26}(C_{i,t})}{C_{i,t}}.
-    \end{equation}
-    \item \textbf{MACD Signal Line ($f_{9,i,t}$):} $\text{Signal}_{i,t} = \text{EMA}_9(\text{MACD}_{i,t}) / C_{i,t}$.
-    \item \textbf{Average True Range ($f_{10,i,t}$):} Normalized price volatility:
-    \begin{equation}
-    \text{ATR}_{i,t}^{\text{rel}} = \frac{\text{SMA}_{14}(\text{TR}_{i,t})}{C_{i,t}}, \quad \text{where } \text{TR}_t = \max(H_t - L_t, |H_t - C_{t-1}|, |L_t - C_{t-1}|).
-    \end{equation}
-    \item \textbf{Bollinger Band \%B ($f_{11,i,t}$):} Position relative to 2-standard-deviation envelopes:
-    \begin{equation}
-    \%B_{i,t} = \frac{C_{i,t} - \text{LB}_{i,t}}{\text{UB}_{i,t} - \text{LB}_{i,t} + 10^{-8}}.
-    \end{equation}
-    \item \textbf{Bollinger Bandwidth ($f_{12,i,t}$):} Volatility width: $\text{BW}_{i,t} = (\text{UB}_{i,t} - \text{LB}_{i,t}) / \text{MB}_{i,t}$.
-    \item \textbf{Average Directional Index ($f_{13,i,t}$):} Wilder's 14-period normalized trend: $\text{ADX}_{i,t}^{\text{norm}} = \text{ADX}_{14,i,t} / 100$.
-\end{enumerate}
-
-\section{State Representation and Temporal Sequences}
-The instantaneous observation vector concatenates the 13 features across all $N = 10$ equities ($130$ market features) with the current portfolio weight vector $\mathbf{w}_t^{\text{cur}} \in \mathbb{R}^{N+1}$ (10 equities plus cash, 11 weights):
-\begin{align}
-\mathbf{x}_t &= \text{concat}\left(\mathbf{f}_{1,t}, \dots, \mathbf{f}_{N,t}\right) \in \mathbb{R}^{130}, \\
-\mathbf{s}_t &= \left[ \mathbf{x}_t^\top, \; (\mathbf{w}_t^{\text{cur}})^\top \right]^\top \in \mathbb{R}^{141}.
-\end{align}
-The total daily state dimension is $D_{\text{state}} = 141$. For models using recurrent memory (M2--M4), a sliding historical window of $W = 30$ trading days is maintained:
-\begin{equation}
-\mathbf{F}_t = \left[ \mathbf{s}_{t-W+1}, \dots, \mathbf{s}_t \right]^\top \in \mathbb{R}^{30 \times 141}.
-\end{equation}
-Feature standardization is fitted strictly on the training partition of each fold using mean $\boldsymbol{\mu}_{\text{train}}$ and standard deviation $\boldsymbol{\sigma}_{\text{train}}$, with standardized values clipped to $[-5.0, 5.0]$. All features use causal backward operators, preventing look-ahead leakage.
-
-\section{Walk-Forward Evaluation Protocol}
-Following \citet{liu2024dynamic}, models are trained and tested using an 8-year rolling-origin walk-forward protocol across four folds. Each fold consists of 6 years of training data, 1 year of validation data, and 2 years of held-out out-of-sample test data, advancing by 2 years per fold (Table~\ref{tab:folds_overview} and Figure~\ref{fig:walk_forward}).
+\section{Feature Engineering and State Representation}
+For each asset $i \in \{1, \dots, 10\}$ on trading day $t$, a 13-dimensional feature vector $\mathbf{f}_{i,t} \in \mathbb{R}^{13}$ is computed using causal transformations normalized by prevailing prices or rolling baselines, as summarized in Table~\ref{tab:features_summary}.
 
 \begin{table}[htbp]
 \centering
-\small
-\setlength{\tabcolsep}{4pt}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\caption{The 13 technical features computed daily for each equity asset ($i \in \{1,\dots,10\}$).}
+\label{tab:features_summary}
+\begin{tabularx}{\textwidth}{cllX}
+\toprule
+\textbf{Index} & \textbf{Feature Name} & \textbf{Identifier} & \textbf{Mathematical Formulation} \\
+\midrule
+$f_{1,i,t}$ & Daily Log Return & $r_{i,t}^{\text{log}}$ & $\ln(C_{i,t} / C_{i,t-1})$ \\
+$f_{2,i,t}$ & Close-to-Open Relative Return & $o_{i,t}^{\text{rel}}$ & $C_{i,t} / O_{i,t} - 1$ \\
+$f_{3,i,t}$ & High-to-Low Relative Spread & $hl_{i,t}^{\text{rel}}$ & $H_{i,t} / L_{i,t} - 1$ \\
+$f_{4,i,t}$ & Normalized Relative Volume & $v_{i,t}^{\text{rel}}$ & $\ln(V_{i,t} / \text{SMA}_{20}(V_{i,t}))$ \\
+$f_{5,i,t}$ & 50-day EMA Relative Deviation & $ema_{50,i,t}^{\text{rel}}$ & $C_{i,t} / \text{EMA}_{50}(C_{i,t}) - 1$, smoothing $\alpha = 2/(50+1)$ \citep{wang2025risk} \\
+$f_{6,i,t}$ & 200-day EMA Relative Deviation & $ema_{200,i,t}^{\text{rel}}$ & $C_{i,t} / \text{EMA}_{200}(C_{i,t}) - 1$, smoothing $\alpha = 2/(200+1)$ \citep{wang2025risk} \\
+$f_{7,i,t}$ & Relative Strength Index & $\text{RSI}_{i,t}^{\text{norm}}$ & $\text{RSI}_{14,i,t} / 100 - 0.5$, where $\text{RS} = \bar{U}_{14} / (\bar{D}_{14} + 10^{-8})$ \citep{wang2025risk} \\
+$f_{8,i,t}$ & MACD Difference & $\text{MACD}_{i,t}$ & $(\text{EMA}_{12}(C_{i,t}) - \text{EMA}_{26}(C_{i,t})) / C_{i,t}$ \citep{wang2025risk} \\
+$f_{9,i,t}$ & MACD Signal Line & $\text{Signal}_{i,t}$ & $\text{EMA}_9(\text{MACD}_{i,t}) / C_{i,t}$ \citep{wang2025risk} \\
+$f_{10,i,t}$ & Average True Range & $\text{ATR}_{i,t}^{\text{rel}}$ & $\text{SMA}_{14}(\text{TR}_{i,t}) / C_{i,t}$, $\text{TR}_t = \max(H_t-L_t, |H_t-C_{t-1}|, |L_t-C_{t-1}|)$ \citep{wang2025risk} \\
+$f_{11,i,t}$ & Bollinger Band \%B & $\%B_{i,t}$ & $(C_{i,t} - \text{LB}_{i,t}) / (\text{UB}_{i,t} - \text{LB}_{i,t} + 10^{-8})$, bands at $\pm 2\sigma_{20}$ \citep{wang2025risk} \\
+$f_{12,i,t}$ & Bollinger Bandwidth & $\text{BW}_{i,t}$ & $(\text{UB}_{i,t} - \text{LB}_{i,t}) / \text{MB}_{i,t}$ \citep{wang2025risk} \\
+$f_{13,i,t}$ & Average Directional Index & $\text{ADX}_{i,t}^{\text{norm}}$ & $\text{ADX}_{14,i,t} / 100$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The observation vector concatenates the 13 features across all 10 equities ($130$ market features) with current portfolio weights $\mathbf{w}_t^{\text{cur}} \in \mathbb{R}^{11}$ (10 equities and 1 cash):
+\begin{equation}
+\mathbf{x}_t = \text{concat}\left(\mathbf{f}_{1,t}, \dots, \mathbf{f}_{10,t}\right) \in \mathbb{R}^{130}, \quad \mathbf{s}_t = \left[ \mathbf{x}_t^\top, \; (\mathbf{w}_t^{\text{cur}})^\top \right]^\top \in \mathbb{R}^{141}.
+\end{equation}
+For models utilizing temporal memory (M2--M4), the agent receives a sliding historical window spanning time steps $t-T+1$ to $t$ ($T = 30$ trading days) \citep{zou2024novel}:
+\begin{equation}
+\mathbf{F}_t = \left[ \mathbf{s}_{t-T+1}, \mathbf{s}_{t-T+2}, \dots, \mathbf{s}_t \right]^\top \in \mathbb{R}^{T \times 141} = \mathbb{R}^{30 \times 141} \quad \text{\citep{zou2024novel}}.
+\end{equation}
+Feature standardization is fitted strictly on the training partition of each fold using mean $\boldsymbol{\mu}_{\text{train}}$ and standard deviation $\boldsymbol{\sigma}_{\text{train}}$, with standardized values clipped to $[-5.0, 5.0]$. Test partitions use training statistics without leakage.
+
+\section{Walk-Forward Evaluation Protocol}
+Following \citet{liu2024dynamic}, the agents are evaluated using an 8-year rolling-origin walk-forward protocol across four folds. Each fold consists of 6 years of training data, 1 year of validation data, and 2 years of held-out out-of-sample test data, advancing chronologically by 2 years per fold (Table~\ref{tab:folds_overview} and Figure~\ref{fig:walk_forward}).
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
 \caption{Chronological specification of the four walk-forward folds.}
 \label{tab:folds_overview}
 \begin{tabularx}{\textwidth}{c>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}Xcc}
 \toprule
-\textbf{Fold} & \textbf{Training Period (6y)} & \textbf{Validation Period (1y)} & \textbf{Test Period (2y)} & \textbf{Training Trading Days} & \textbf{Test Trading Days} \\
+\textbf{Fold} & \textbf{Training Period (6y)} & \textbf{Validation Period (1y)} & \textbf{Test Period (2y)} & \textbf{Train Days} & \textbf{Test Days} \\
 \midrule
 1 & 2011-01-01 to 2016-12-31 & 2017-01-01 to 2017-12-31 & 2018-01-01 to 2019-12-31 & 1,478 & 489 \\
 2 & 2013-01-01 to 2018-12-31 & 2019-01-01 to 2019-12-31 & 2020-01-01 to 2021-12-31 & 1,475 & 496 \\
@@ -85,15 +67,35 @@ Following \citet{liu2024dynamic}, models are trained and tested using an 8-year 
 \end{tabularx}
 \end{table}
 
-The test periods are non-overlapping and span 2018 through 2025. It is important to distinguish the number of historical trading days in the dataset splits ($\approx 1,478$ training days and $\approx 490$ test days) from the reinforcement learning training budget, which is fixed at 300,000 environment interaction steps across all models.
-
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.92\textwidth]{figures/walk_forward_schematic.png}
-\caption{Chronological four-fold rolling walk-forward evaluation protocol with 6-year training, 1-year validation, and 2-year testing windows, advancing by 2 years per fold (adapted from Liu et al. (2024), Figure 5).}
+\includegraphics[width=0.72\textwidth]{figures/walk_forward_schematic.png}
+\caption{Chronological four-fold rolling walk-forward evaluation protocol with 6-year training, 1-year validation, and 2-year testing windows, advancing by 2 years per fold \citep{liu2024dynamic}.}
 \label{fig:walk_forward}
 \end{figure}
 
-To assess statistical variability, each configuration is trained across three fixed random seeds ($S \in \{0, 1, 2\}$). During training, validation Sharpe ratio is evaluated periodically every 25,000 environment steps, and the checkpoint achieving the highest validation Sharpe ratio is saved. At the conclusion of 300,000 steps, this best-validation checkpoint is restored and evaluated once on the out-of-sample test window. 
+The test windows are mutually disjoint and together tile 2018 through 2025. It is important to distinguish the number of historical trading days in each split ($\approx 1,478$ training days and $\approx 490$ test days) from the reinforcement learning training budget, which is fixed at 300,000 environment interaction steps across all models. Each configuration is trained across three fixed random seeds ($S \in \{0, 1, 2\}$). During training, validation Sharpe ratio is computed every 25,000 steps; the checkpoint achieving the highest validation Sharpe ratio is saved and evaluated once on the unseen test window.
 
-\textit{Methodological Disclosure:} We note that earlier exploratory runs of Model M1 were conducted on Fold 1 test data during preliminary system debugging. We distinguish those preliminary debugging iterations from the final reported runs; test-set feedback was not used to adjust hyperparameters or select architectures.
+\section{Evaluation Measures}
+We evaluate out-of-sample portfolio performance using seven standard financial and operational metrics, summarized in Table~\ref{tab:eval_measures}.
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\caption{Summary of evaluation measures used in out-of-sample portfolio assessment.}
+\label{tab:eval_measures}
+\begin{tabularx}{\textwidth}{p{2.6cm}p{5.4cm}>{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Metric} & \textbf{Mathematical Definition} & \textbf{Interpretation / Citation} \\
+\midrule
+Cumulative Return ($CR$) & $CR = \frac{V_N}{V_0} - 1 = \prod_{t=1}^N (1 + R_{\text{net},t}) - 1$ & Total percentage growth in portfolio wealth \citep{zou2024novel}. \\
+CAGR & $CAGR = (1 + CR)^{252 / N} - 1$ & Annualised geometric rate of return (252 trading days/year). \\
+Sharpe Ratio ($SR$) & $SR = \frac{\bar{r} - r_f}{s_r} \sqrt{252}, \quad r_f = 0$ & Risk-adjusted excess return per unit of volatility \citep{millea2021deep}. \\
+Sortino Ratio & $\text{Sortino} = \frac{\bar{r} - r_f}{\text{downside}} \sqrt{252}, \quad \text{downside} = \sqrt{\frac{1}{N} \sum_{t=1}^N \min(R_{\text{net},t}, 0)^2}$ & Downside risk-adjusted return penalising negative deviations. \\
+Maximum Drawdown & $MDD = \min_{t \in \{1,\dots,N\}} \left( \frac{V_t}{\max_{u \le t} V_u} - 1 \right)$ & Largest peak-to-trough capital loss \citep{zou2024novel}. \\
+Average Turnover & $\overline{\text{Turnover}} = \frac{1}{N} \sum_{t=1}^N \sum_{i=1}^{10} |w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}}|$ & Mean daily weight reallocation across the 10 risky equities \citep{wang2025risk}. \\
+Total Cost Rate & $\text{Cost Rate} = \frac{\sum_{t=1}^N C_t}{V_0} \times 100\%$ & Cumulative transaction fees paid, as a percentage of initial capital $V_0$. \\
+\bottomrule
+\end{tabularx}
+\end{table}

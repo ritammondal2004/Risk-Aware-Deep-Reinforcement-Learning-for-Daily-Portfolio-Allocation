@@ -1,47 +1,47 @@
-\documentclass[11pt,a4paper]{report}
-\usepackage[top=20mm,bottom=20mm,left=22mm,right=18mm]{geometry}
-\usepackage{setspace}\setstretch{1.04}
-\setlength{\parskip}{2.5pt plus 0.5pt minus 0.5pt}
-\setlength{\parindent}{1.3em}
+\documentclass[10pt,a4paper]{report}
+\usepackage[top=18mm,bottom=18mm,left=20mm,right=18mm]{geometry}
+\usepackage{setspace}\setstretch{1.0}
+\setlength{\parskip}{2pt plus 0.5pt minus 0.5pt}
+\setlength{\parindent}{1.2em}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}\graphicspath{{figures/}}
 \usepackage{booktabs,tabularx,multirow}
 \usepackage[table]{xcolor}
 \usepackage{pifont}
 \newcommand{\cmark}{\ding{51}}%
-\usepackage[font=small,labelfont=bf,skip=3pt]{caption}
+\usepackage[font=small,labelfont=bf,skip=2pt]{caption}
 \usepackage{enumerate}
 \usepackage{hyperref}\hypersetup{colorlinks,linkcolor=blue!70!black,citecolor=blue!70!black,urlcolor=blue!70!black}
 \usepackage[numbers,sort&compress]{natbib}
-\setlength{\bibsep}{2.5pt}
+\setlength{\bibsep}{0.5pt}
 \pagestyle{headings}
 
 %% Tighten float spacing
-\setlength{\floatsep}{6pt plus 2pt minus 2pt}
-\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
-\setlength{\intextsep}{6pt plus 2pt minus 2pt}
-\setlength{\abovecaptionskip}{3pt}
-\setlength{\belowcaptionskip}{2pt}
+\setlength{\floatsep}{4pt plus 1pt minus 1pt}
+\setlength{\textfloatsep}{6pt plus 1pt minus 1pt}
+\setlength{\intextsep}{4pt plus 1pt minus 1pt}
+\setlength{\abovecaptionskip}{2pt}
+\setlength{\belowcaptionskip}{1pt}
 
 \usepackage{etoolbox}
 \makeatletter
 %% Continuous chapter layout with clean separation
-\patchcmd{\chapter}{\clearpage}{\par\vspace{14pt}}{}{}
+\patchcmd{\chapter}{\clearpage}{\par\vspace{10pt}}{}{}
 \def\@makechapterhead#1{%
-  \vspace*{4\p@}%
+  \vspace*{2\p@}%
   {\parindent \z@ \raggedright \normalfont
     \ifnum \c@secnumdepth >\m@ne
         \large\bfseries \@chapapp\space \thechapter\quad---\quad #1
         \par\nobreak
-        \vskip 4\p@
+        \vskip 3\p@
     \fi
   }}
 \def\@makeschapterhead#1{%
-  \vspace*{4\p@}%
+  \vspace*{2\p@}%
   {\parindent \z@ \raggedright
     \normalfont
     \large \bfseries #1\par\nobreak
-    \vskip 4\p@
+    \vskip 3\p@
   }}
 \makeatother
 
@@ -56,6 +56,8 @@
 \begin{titlepage}
 \centering
 \vspace*{0.2cm}
+{\LARGE\bfseries Risk-Aware Deep Reinforcement Learning for Daily Portfolio Allocation\par}
+\vspace{1.0cm}
 {\large B.Tech Project-I report submitted to\par}
 \vspace{0.2cm}
 {\large Indian Institute of Technology Kharagpur\par}
@@ -78,7 +80,7 @@
 \vspace{0.2cm}
 {\large\bfseries Dr. Abhishek Sharma\par}
 \vspace{0.6cm}
-\includegraphics[width=3.0cm]{figures/iitkgp_logo.png}\par
+\includegraphics[width=2.8cm]{figures/iitkgp_logo.png}\par
 \vspace{0.6cm}
 {\large\bfseries Department of Industrial and Systems Engineering\par}
 \vspace{0.15cm}
@@ -97,30 +99,30 @@
 \newpage
 \thispagestyle{plain}
 \begin{center}
-\vspace*{1.2cm}
+\vspace*{0.8cm}
 {\large\bfseries DECLARATION\par}
 \end{center}
-\vspace{1.2cm}
+\vspace{0.8cm}
 \noindent I certify that
-\vspace{0.4cm}
+\vspace{0.3cm}
 \begin{enumerate}[(a)]
-  \setlength{\itemsep}{12pt}
+  \setlength{\itemsep}{10pt}
   \item The work contained in this report has been done by me under the guidance of my supervisor.
   \item The work has not been submitted to any other Institute for any degree or diploma.
   \item I have conformed to the norms and guidelines given in the Ethical Code of Conduct of the Institute.
   \item Whenever I have used materials (data, theoretical analysis, figures, and text) from other sources, I have given due credit to them by citing them in the text of the thesis and giving their details in the references. Further, I have taken permission from the copyright owners of the sources, whenever necessary.
 \end{enumerate}
 
-\vspace{3.5cm}
+\vspace{3.0cm}
 \noindent
 \begin{minipage}[t]{0.5\textwidth}
-Date: November 10, 2026\\[6pt]
+Date: November 10, 2026\\[4pt]
 Place: Kharagpur
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.45\textwidth}
 \raggedleft
-(Ritam Mondal)\\[6pt]
+(Ritam Mondal)\\[4pt]
 (23IM30018)
 \end{minipage}
 
@@ -134,18 +136,18 @@ Place: Kharagpur
 {\bfseries INDIAN INSTITUTE OF TECHNOLOGY KHARAGPUR\par}
 \vspace{0.15cm}
 {\bfseries KHARAGPUR -- 721302, INDIA\par}
-\vspace{0.6cm}
-\includegraphics[width=2.6cm]{figures/iitkgp_logo.png}\par
-\vspace{0.6cm}
+\vspace{0.5cm}
+\includegraphics[width=2.4cm]{figures/iitkgp_logo.png}\par
+\vspace{0.5cm}
 {\large\bfseries CERTIFICATE\par}
 \end{center}
-\vspace{0.6cm}
-\noindent This is to certify that the project report entitled ``\textbf{Risk-Aware Deep Reinforcement Learning for Daily Portfolio Allocation: Controlled Ablation of Temporal Memory, Reward Shaping, and Turnover Regularization}'' submitted by \textbf{Ritam Mondal} (Roll No. 23IM30018) to Indian Institute of Technology Kharagpur towards partial fulfilment of requirements for the award of degree of Bachelor of Technology in Industrial and Systems Engineering is a record of bona fide work carried out under my supervision and guidance during Autumn Semester, 2026--27.
+\vspace{0.5cm}
+\noindent This is to certify that the project report entitled ``\textbf{Risk-Aware Deep Reinforcement Learning for Daily Portfolio Allocation}'' submitted by \textbf{Ritam Mondal} (Roll No. 23IM30018) to Indian Institute of Technology Kharagpur towards partial fulfilment of requirements for the award of degree of Bachelor of Technology in Industrial and Systems Engineering is a record of bona fide work carried out under my supervision and guidance during Autumn Semester, 2026--27.
 
-\vspace{3.2cm}
+\vspace{3.0cm}
 \noindent
 \begin{minipage}[t]{0.5\textwidth}
-Date: November 10, 2026\\[6pt]
+Date: November 10, 2026\\[4pt]
 Place: Kharagpur
 \end{minipage}
 \hfill
@@ -166,7 +168,7 @@ Kharagpur -- 721302, India
 \noindent\textbf{Acknowledgement:}\par
 I express my sincere gratitude to my supervisor, Dr. Abhishek Sharma, for his insightful guidance, intellectual mentorship, and continuous encouragement throughout this B.Tech.\ Project. His domain expertise in financial engineering, operations research, and sequential decision processes provided invaluable direction for this study. I also thank the Department of Industrial and Systems Engineering, Indian Institute of Technology Kharagpur, for providing computational facilities, and my peers and family for their continuous support.
 
-\vspace{0.4cm}
+\vspace{0.3cm}
 \noindent\textbf{Abstract:}\par
 Automating daily portfolio allocation via deep reinforcement learning (DRL) requires balancing return generation against market non-stationarity, partial state observability, and execution frictions. Prior literature separately suggests temporal encoders, risk-sensitive rewards, and turnover penalties, but these mechanisms are rarely evaluated under a single controlled setup. This report investigates a four-stage ablation: (i)~Model M1: PPO with a feedforward MLP baseline and net return reward; (ii)~Model M2: PPO with a recurrent LSTM encoder; (iii)~Model M3: LSTM-PPO with recursive Differential Sharpe Ratio (DSR) reward; and (iv)~Model M4: LSTM-PPO with DSR reward and a quadratic weight-change penalty ($\lambda_{\text{turn}} = 0.1$). All agents output continuous Dirichlet allocations over ten liquid National Stock Exchange of India (NSE) equities and an assumed zero-return cash reserve.
 
@@ -194,11 +196,10 @@ Models are evaluated across four chronological walk-forward folds spanning 2018-
 \input{ch5_model}
 \input{ch6_ablation}
 \input{ch7_results}
-\input{ch8_limitations}
-\input{ch9_conclusion}
+\input{ch8_conclusion}
 
 %% ===== BIBLIOGRAPHY =====
-\newpage
+\par\vspace{10pt}
 \bibliographystyle{plainnat}
 \bibliography{references}
 
