@@ -40,7 +40,7 @@ Training Budget & 300,000 steps & 300,000 steps & 300,000 steps & 300,000 steps 
 \section{Control Invariants and Training Algorithm}
 Experimental controls are strictly enforced: (i)~Actor and Critic heads are instantiated prior to the encoder to ensure identical initial head weights across models under the same seed; (ii)~all models train for exactly 300,000 steps with identical Adam learning rate ($10^{-4}$), rollout horizon (128), and batch size (64); (iii)~all models experience identical market sequences and transaction costs; and (iv)~programmatic assertions verify that each transition alters exactly one dimension.
 
-Algorithm~\ref{alg:ppo_portfolio} outlines the complete training procedure implemented in our codebase, positioned directly below within the training methodology.
+Algorithm~1 outlines the complete training procedure implemented in our codebase, positioned directly below within the training methodology.
 
 \begin{figure}[H]
 \centering
@@ -51,21 +51,21 @@ Algorithm~\ref{alg:ppo_portfolio} outlines the complete training procedure imple
 \footnotesize
 \textbf{Input:} Market indicators $\mathbf{X}$, returns $\mathbf{R}$, cost $c_{\text{trans}} = 0.001$, threshold $\tau = 0.01$, penalty $\lambda_{\text{turn}}$, PPO hyperparameters ($\gamma, \lambda_{\text{GAE}}, \epsilon, \eta = 10^{-4}$).\\
 \textbf{Output:} Optimised policy weights $\theta^*$ selected by peak validation Sharpe ratio.\\[3pt]
-\textbf{Initialisation:} Initialise shared Encoder, Actor $\theta$, Critic $\phi$, Adam optimiser; $V_0 \gets 10^6$, $\mathbf{w}_0^{\text{cur}} \gets [0,\dots,0,1]^\top$; DSR moments $A_0 \gets 0, B_0 \gets 0$; step counter $N_{\text{step}} \gets 0$, $SR_{\text{best}} \gets -\infty$.\\[3pt]
+\textbf{Initialisation:} Initialise shared Encoder, Actor $\theta$, Critic $\phi$, Adam optimiser; $V_0 \gets 10^6$, $\mathbf{w}_0^{\text{cur}} \gets [0,\dots,0,1]^\top$; DSR moments $A_0 \gets 0, B_0 \gets 0$; step counter $N_{\text{step}} \gets 0$, $N_{\text{eval}} \gets 25{,}000$, $SR_{\text{best}} \gets -\infty$.\\[3pt]
 \textbf{Procedure:}
 \begin{enumerate}[1:]
     \setlength{\itemsep}{1.5pt}
     \item \textbf{while} $N_{\text{step}} < 300{,}000$ \textbf{do}
     \item \quad Reset rollout buffer $\mathcal{B} \gets \emptyset$.
     \item \quad \textbf{for} $t = 1$ \textbf{to} $T_{\text{rollout}} = 128$ \textbf{do}
-    \item \qquad Compute $\mathbf{h}_t \gets \text{Encoder}(\mathbf{s}_t)$ where $\mathbf{s}_t$ is the state representation (instantaneous observation for M1, or sliding sequence $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$ from $t-T+1$ to $t$ for M2--M4).
+    \item \qquad Compute $\mathbf{h}_t \gets \text{Encoder}(\mathbf{s}_t)$ for M1 (observing instantaneous state $\mathbf{s}_t \in \mathbb{R}^{141}$) or $\text{Encoder}(\mathbf{F}_t)$ for M2--M4 (observing sequence $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$ from $t-T+1$ to $t$).
     \item \qquad Compute $\boldsymbol{\ell}_t \gets \operatorname{clip}(\mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a, -3, 6)$ and concentration parameters $\boldsymbol{\alpha}_t \gets \exp(\boldsymbol{\ell}_t)$.
     \item \qquad Sample raw continuous action $\mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t)$ via Gamma variates; evaluate $lp_t \gets \log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)$ and $V_t \gets V_\phi(\mathbf{s}_t)$.
-    \item \qquad Apply threshold: $\tilde{w}_{i,t} \gets a_{i,t} \cdot \mathbf{1}_{a_{i,t} \ge \tau}$; set target weights $\mathbf{w}_t^{\text{target}} \gets \tilde{\mathbf{w}}_t / \sum_j \tilde{w}_{j,t}$.
+    \item \qquad Apply execution threshold: $\tilde{w}_{i,t} \gets a_{i,t} \cdot \mathbf{1}_{a_{i,t} \ge \tau}$; set executed target weights $\mathbf{w}_t^{\text{target}} \gets \tilde{\mathbf{w}}_t / \sum_j \tilde{w}_{j,t}$.
     \item \qquad Rebalance: $\text{Turnover}_t \gets \sum_{i=1}^{10} |w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}}|$, fee $C_t \gets c_{\text{trans}} V_t \text{Turnover}_t$.
     \item \qquad Advance environment: update wealth $V_{t+1}$, net return $R_{\text{net},t} \gets (V_{t+1}-V_t)/V_t$, and drifted weights $\mathbf{w}_{t+1}^{\text{cur}}$.
     \item \qquad Compute model reward: $r_t \gets R_{\text{net},t}$ (M1, M2); $r_t \gets D_t$ (M3); $r_t \gets D_t - \lambda_{\text{turn}}\sum_{i=1}^{10} (w_{i,t}^{\text{target}}-w_{i,t}^{\text{cur}})^2$ (M4).
-    \item \qquad Store transition $(\mathbf{s}_t, \mathbf{a}_t, lp_t, V_t, r_t)$ in $\mathcal{B}$; $N_{\text{step}} \gets N_{\text{step}} + 1$.
+    \item \qquad Store transition $(\mathbf{s}_t, \mathbf{a}_t, lp_t, V_t, r_t)$ with raw action $\mathbf{a}_t$ in $\mathcal{B}$; $N_{\text{step}} \gets N_{\text{step}} + 1$.
     \item \quad \textbf{end for}
     \item \quad Standardise rewards, compute GAE advantages $\hat{A}_t$ and returns $\hat{V}_t^{\text{target}}$ \citep{schulman2017proximal}.
     \item \quad \textbf{for} $\text{epoch} = 1$ \textbf{to} $10$ \textbf{do}
@@ -74,12 +74,12 @@ Algorithm~\ref{alg:ppo_portfolio} outlines the complete training procedure imple
     \item \qquad\quad Update $(\theta, \phi)$ via Adam ($\eta = 10^{-4}$, grad clip $0.5$) using total loss $\mathcal{L}^{\text{total}}(\theta, \phi)$ (Eq.~\eqref{eq:total_loss}).
     \item \qquad \textbf{end for}
     \item \quad \textbf{end for}
-    \item \quad \textbf{if} $N_{\text{step}} \pmod{25{,}000} = 0$ \textbf{then} evaluate $SR_{\text{val}}$; \textbf{if} $SR_{\text{val}} > SR_{\text{best}}$ \textbf{then} save checkpoint $\theta^* \gets \theta$ \textbf{end if}
+    \item \quad \textbf{if} $N_{\text{step}} \ge N_{\text{eval}}$ \textbf{or} $N_{\text{step}} \ge 300{,}000$ \textbf{then} evaluate $SR_{\text{val}}$; \textbf{if} $SR_{\text{val}} > SR_{\text{best}}$ \textbf{then} save checkpoint $\theta^* \gets \theta$; while $N_{\text{eval}} \le N_{\text{step}}$ do $N_{\text{eval}} \gets N_{\text{eval}} + 25{,}000$ \textbf{end if}
     \item \textbf{end while}
     \item Restore best checkpoint $\theta^*$ for final out-of-sample test evaluation.
 \end{enumerate}
 \vspace{2pt} \hrule
 \end{minipage}
-\caption{Complete PPO training algorithm for continuous Dirichlet portfolio allocation.}
+\caption{Continuous Dirichlet PPO training procedure for daily portfolio allocation.}
 \label{alg:ppo_portfolio}
 \end{figure}

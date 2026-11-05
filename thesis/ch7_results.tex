@@ -50,33 +50,33 @@ To assess whether observed differences are consistent across environments, paire
 \begin{table}[htbp]
 \centering
 \small
-\setlength{\tabcolsep}{5pt}
+\setlength{\tabcolsep}{4.5pt}
 \caption{Paired ablation differences ($b - a$) with 95\% bootstrap confidence intervals across 12 (fold, seed) pairs.}
 \label{tab:ablation_deltas}
-\begin{tabular}{llcccc}
+\begin{tabular}{@{}llcccc@{}}
 \toprule
 \textbf{Ablation Transition} & \textbf{Metric} & \textbf{Mean Delta} & \textbf{95\% CI} & \textbf{Folds Improved} & \textbf{Pairs Improved} \\
 \midrule
-\multirow{4}{*}{\textbf{M1 $\to$ M2} (Temporal Memory)} 
+\multirow{4}{*}{\shortstack[l]{\textbf{M1 $\to$ M2} \\ \footnotesize (Temporal Memory)}} 
 & Sharpe Ratio & $+0.201$ & $[+0.156, +0.246]$ & $4 / 4$ & $9 / 12$ \\
 & Cum. Return (\%) & $+7.61\%$ & $[+4.81\%, +10.01\%]$ & $4 / 4$ & $10 / 12$ \\
 & Daily Turnover & $-0.106$ & $[-0.138, -0.070]$ & $4 / 4$ & $11 / 12$ \\
 & Cost (\% of $V_0$) & $-5.41\%$ & $[-7.37\%, -3.34\%]$ & $4 / 4$ & $11 / 12$ \\
 \midrule
-\multirow{4}{*}{\textbf{M2 $\to$ M3} (DSR Reward)} 
+\multirow{4}{*}{\shortstack[l]{\textbf{M2 $\to$ M3} \\ \footnotesize (DSR Reward)}} 
 & Sharpe Ratio & $+0.003$ & $[-0.295, +0.222]$ & $3 / 4$ & $7 / 12$ \\
 & Cum. Return (\%) & $-1.30\%$ & $[-9.33\%, +4.45\%]$ & $2 / 4$ & $6 / 12$ \\
 & Max Drawdown (\%) & $-1.43\%$ & $[-5.36\%, +0.81\%]$ & $3 / 4$ & $6 / 12$ \\
 & Daily Turnover & $-0.002$ & $[-0.019, +0.014]$ & $2 / 4$ & $7 / 12$ \\
 \midrule
-\multirow{4}{*}{\textbf{M3 $\to$ M4} (Turnover Regularisation)} 
+\multirow{4}{*}{\shortstack[l]{\textbf{M3 $\to$ M4} \\ \footnotesize (Turnover Regularisation)}} 
 & Sharpe Ratio & $+0.005$ & $[-0.236, +0.280]$ & $2 / 4$ & $6 / 12$ \\
 & Cum. Return (\%) & $-5.96\%$ & $[-13.29\%, +3.37\%]$ & $1 / 4$ & $3 / 12$ \\
 & Max Drawdown (\%) & $\mathbf{+3.90\%}$ & $[+1.45\%, +7.00\%]$ & $\mathbf{4 / 4}$ & $\mathbf{10 / 12}$ \\
 & Daily Turnover & $\mathbf{-0.060}$ & $[-0.082, -0.044]$ & $\mathbf{4 / 4}$ & $\mathbf{12 / 12}$ \\
 & Cost (\% of $V_0$) & $\mathbf{-3.17\%}$ & $[-4.01\%, -2.43\%]$ & $\mathbf{4 / 4}$ & $\mathbf{12 / 12}$ \\
 \midrule
-\multirow{4}{*}{\textbf{M1 $\to$ M4} (All Combined)} 
+\multirow{4}{*}{\shortstack[l]{\textbf{M1 $\to$ M4} \\ \footnotesize (All Combined)}} 
 & Sharpe Ratio & $+0.209$ & $[+0.012, +0.386]$ & $3 / 4$ & $8 / 12$ \\
 & Max Drawdown (\%) & $+3.45\%$ & $[+2.52\%, +4.03\%]$ & $4 / 4$ & $8 / 12$ \\
 & Daily Turnover & $-0.167$ & $[-0.190, -0.144]$ & $4 / 4$ & $12 / 12$ \\

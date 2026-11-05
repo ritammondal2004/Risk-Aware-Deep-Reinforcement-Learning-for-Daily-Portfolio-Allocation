@@ -23,15 +23,15 @@ The portfolio allocation agents are developed within an Actor--Critic framework 
 As shown in Figures~\ref{fig:architecture} and~\ref{fig:pipeline}, the actor and critic share an encoder backbone. The actor head outputs Dirichlet distribution parameters, while the critic head estimates the scalar state-value baseline $V_\phi(\mathbf{s}_t)$ for advantage computation.
 
 \section{Encoder Backbones: MLP versus LSTM}
-To evaluate the contribution of temporal sequence modeling, two encoder backbones are compared:
+To evaluate the contribution of temporal sequence modeling, two encoder backbones are compared. Model M1 uses the instantaneous state $\mathbf{s}_t \in \mathbb{R}^{141}$ as input, whereas Models M2--M4 use the historical sequence $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$ as input to the recurrent LSTM encoder:
 \begin{itemize}
-    \item \textbf{MLP Encoder (Model M1):} A static two-layer feedforward network observing solely the instantaneous observation $\mathbf{s}_t \in \mathbb{R}^{141}$. Intermediate latent representations $\mathbf{h}_t \in \mathbb{R}^{512}$ and actor output $\mathbf{z}_t \in \mathbb{R}^{11}$ are computed via:
+    \item \textbf{MLP Encoder (Model M1):} A static two-layer feedforward network observing solely the instantaneous state $\mathbf{s}_t \in \mathbb{R}^{141}$. Intermediate latent representations $\mathbf{h}_t \in \mathbb{R}^{512}$ and actor output $\mathbf{z}_t \in \mathbb{R}^{11}$ are computed via:
     \begin{equation}
     \mathbf{h}_t = \tanh\left( \mathbf{W}_2 \tanh(\mathbf{W}_1 \mathbf{s}_t + \mathbf{b}_1) + \mathbf{b}_2 \right), \quad \mathbf{z}_t = \mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a,
     \end{equation}
     where $\mathbf{W}_1 \in \mathbb{R}^{512 \times 141}$, $\mathbf{W}_2 \in \mathbb{R}^{512 \times 512}$, and $\mathbf{W}_a \in \mathbb{R}^{11 \times 512}$.
     
-    \item \textbf{Recurrent LSTM Encoder (Models M2--M4):} A single-layer Long Short-Term Memory (LSTM) network with hidden size $H = 512$ processing the sliding sequence $\mathbf{F}_t = [\mathbf{s}_{t-T+1}, \dots, \mathbf{s}_t] \in \mathbb{R}^{30 \times 141}$ over time window $t-T+1$ to $t$ ($T = 30$ trading days) \citep{zou2024novel}:
+    \item \textbf{Recurrent LSTM Encoder (Models M2--M4):} A single-layer Long Short-Term Memory (LSTM) network with hidden size $H = 512$ processing the sliding sequence $\mathbf{F}_t = [\mathbf{s}_{t-T+1}, \dots, \mathbf{s}_t] \in \mathbb{R}^{30 \times 141}$ over time window $t-T+1$ to $t$ ($T = 30$ trading days) as input \citep{zou2024novel}:
     \begin{equation}
     (\mathbf{h}_t, \mathbf{c}_t) = \text{LSTM}_\psi(\mathbf{F}_t), \quad \mathbf{z}_t = \mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a \quad \text{\citep{zou2024novel}},
     \end{equation}
@@ -45,7 +45,7 @@ Target portfolio weights must satisfy the unit simplex constraints: $w_{i,t} \ge
 \end{equation}
 During environment rollouts, raw continuous action vectors $\mathbf{a}_t \in \Delta^{10}$ are sampled via normalized Gamma variates: $g_{i,t} \sim \operatorname{Gamma}(\alpha_{i,t}, 1)$ with $a_{i,t} = g_{i,t} / \sum_j g_{j,t}$ \citep{yang2022selective}. During deterministic evaluation, the policy executes the analytical mean $\mathbb{E}[a_{i,t}] = \alpha_{i,t} / \sum_j \alpha_{j,t}$.
 
-To eliminate tiny fractional positions that incur wasteful transaction fees, an execution threshold $\tau = 0.01$ (1\%) is applied: positions below 1\% are zeroed, and surviving weights are renormalised to form target weights $\mathbf{w}_t^{\text{target}}$:
+We explicitly distinguish between the raw action $\mathbf{a}_t$ sampled from the Dirichlet distribution and the executed portfolio weights $\mathbf{w}_t^{\text{target}}$ obtained after thresholding and renormalizing the raw action. To eliminate tiny fractional positions that incur wasteful transaction fees, an execution threshold $\tau = 0.01$ (1\%) is applied: positions below 1\% are zeroed, and surviving weights are renormalised to form executed target weights $\mathbf{w}_t^{\text{target}}$:
 \begin{equation}
 \tilde{w}_{i,t} = a_{i,t} \cdot \mathbf{1}_{a_{i,t} \ge \tau}, \quad w_{i,t}^{\text{target}} = \frac{\tilde{w}_{i,t}}{\sum_{j=1}^{11} \tilde{w}_{j,t}}, \quad \text{where } \mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t) \quad \text{\citep{yang2022selective}}.
 \end{equation}
@@ -55,8 +55,9 @@ The direct probability density of the continuous multivariate Dirichlet distribu
 \boxed{
 \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t) = \frac{\Gamma\left(\sum_{i=1}^{11}\alpha_{i,t}\right)}{\prod_{i=1}^{11}\Gamma(\alpha_{i,t})} \prod_{i=1}^{11} a_{i,t}^{\alpha_{i,t}-1}
 }
+\label{eq:dirichlet_pdf}
 \end{equation}
-where $\mathbf{a}_t$ lies on the 11-dimensional unit portfolio simplex $\Delta^{10}$ and the concentration parameters satisfy $\alpha_{i,t} > 0$. Here $\mathbf{s}_t$ denotes the state input to the policy (the instantaneous market observation $\mathbf{s}_t \in \mathbb{R}^{141}$ for the static feedforward baseline M1, or the sequence-encoded representation for recurrent LSTM models M2--M4 \citep{zou2024novel}). PPO evaluates the policy log-probability $\log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)$ to calculate importance-sampling ratios during optimization.
+where $\mathbf{a}_t$ lies on the 11-dimensional unit portfolio simplex $\Delta^{10}$ and the concentration parameters satisfy $\alpha_{i,t} > 0$. Importantly, Equation~\eqref{eq:dirichlet_pdf} is evaluated strictly for the raw sampled action $\mathbf{a}_t$, rather than the thresholded and renormalized executed weights $\mathbf{w}_t^{\text{target}}$. This preserves an exact, differentiable probability density for evaluating policy log-probabilities $\log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)$ and importance-sampling ratios $\rho_t(\theta)$ during PPO optimization, while the executed weights $\mathbf{w}_t^{\text{target}}$ are used by the environment for portfolio rebalancing. Here $\mathbf{s}_t$ denotes the state input to the policy (the instantaneous market observation $\mathbf{s}_t \in \mathbb{R}^{141}$ for the static feedforward baseline M1, or the sequence-encoded representation for recurrent LSTM models M2--M4 \citep{zou2024novel}).
 
 Rebalancing from current weights $\mathbf{w}_t^{\text{cur}}$ to target weights $\mathbf{w}_t^{\text{target}}$ incurs linear transaction costs proportional to equity turnover ($c_{\text{trans}} = 0.001$, i.e., $0.1\%$): $\text{Turnover}_t = \sum_{i=1}^{10} |w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}}|$, with fee $C_t = c_{\text{trans}} V_t \cdot \text{Turnover}_t$ \citep{zou2024novel}. Portfolio wealth evolves after deducting transaction fees: $V_{t+1} = (V_t - C_t) G_t$, yielding realised net return $R_{\text{net},t} = (V_{t+1} - V_t) / V_t$. Weight drift across trading days is tracked causally using the gross portfolio return factor $G_t$:
 \begin{equation}
@@ -84,7 +85,9 @@ The scalar reward $r_t$ emitted to the agent defines our core ablation dimension
 \section{PPO Objective and Policy Optimization}
 Policy parameters $\theta$ and critic parameters $\phi$ are optimized using Proximal Policy Optimisation \citep{schulman2017proximal}. PPO maximizes the clipped surrogate objective to update the actor policy:
 \begin{equation}
-L^{\text{clip}}(\theta) = \hat{\mathbb{E}}_t \left[ \min\left( \rho_t(\theta) \hat{A}_t, \; \operatorname{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon) \hat{A}_t \right) \right] \quad \text{\citep{schulman2017proximal}},
+\boxed{
+L^{\text{clip}}(\theta) = \hat{\mathbb{E}}_t \left[ \min\left( \rho_t(\theta) \hat{A}_t, \; \operatorname{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon) \hat{A}_t \right) \right]
+} \quad \text{\citep{schulman2017proximal}},
 \label{eq:lclip}
 \end{equation}
 where $\epsilon = 0.2$ is the clipping parameter \citep{schulman2017proximal, zou2024novel}, and the probability ratio $\rho_t(\theta)$ is defined as:
@@ -101,7 +104,7 @@ and the advantage estimate over the rollout horizon is given by:
 \hat{A}_t^{\text{GAE}(\gamma, \lambda)} = \sum_{l=0}^{T_{\text{rollout}} - t - 1} (\gamma \lambda)^l \delta_{t+l}
 }
 \end{equation}
-where $r_t$ is the reward at time $t$, $\gamma = 0.99$ is the discount factor, $\lambda = \lambda_{\text{GAE}} = 0.95$ is the GAE smoothing parameter, $V_\phi(\mathbf{s}_t)$ is the critic's value estimate, $\delta_t$ is the temporal-difference error, and $\hat{A}_t$ is the estimated advantage. In our implementation, the summation limit runs over the rollout buffer of length $T_{\text{rollout}} = 128$ ($l = 0, \dots, T_{\text{rollout}}-t-1$), and terminal-state handling cuts the recursion at segment boundaries by using the bootstrap value $V_\phi(\mathbf{s}_{\text{final}})$ and zeroing subsequent trace accumulation. PPO maximizes this clipped surrogate objective to constrain policy updates within a trusted $[1-\epsilon, 1+\epsilon]$ neighborhood, preventing destructive policy shifts under noisy financial return realizations.
+where $r_t$ is the reward at time $t$, $\gamma = 0.99$ is the discount factor, $\lambda = \lambda_{\text{GAE}} = 0.95$ is the GAE smoothing parameter, $V_\phi(\mathbf{s}_t)$ is the critic's value estimate, $\delta_t$ is the temporal-difference error, and $\hat{A}_t$ is the estimated advantage. In our implementation, the summation limit runs over the rollout buffer of length $T_{\text{rollout}} = 128$ ($l = 0, \dots, T_{\text{rollout}}-t-1$), and terminal-state handling cuts the recursion at segment boundaries by using the bootstrap value $V_\phi(\mathbf{s}_{\text{final}})$ and zeroing subsequent trace accumulation. PPO clipping limits the incentive for excessively large policy-ratio changes, helping stabilize policy optimization.
 
 To jointly train the shared encoder, actor, and critic parameters, the network minimizes the combined multi-task loss function:
 \begin{equation}
@@ -110,12 +113,19 @@ To jointly train the shared encoder, actor, and critic parameters, the network m
 \end{equation}
 where $L^{\text{value}}(\phi) = \hat{\mathbb{E}}_t \left[ (V_\phi(\mathbf{s}_t) - \hat{V}_t^{\text{target}})^2 \right]$ is the mean squared error loss of the state-value baseline critic with weight coefficient $c_1 = 0.5$, and $\mathcal{H}(\pi_\theta) = \hat{\mathbb{E}}_t \left[ \mathcal{H}(\pi_\theta(\cdot \mid \mathbf{s}_t)) \right]$ is the analytical Dirichlet policy entropy bonus with coefficient $c_2 = 0.01$ encouraging distribution exploration. Both hyperparameter values ($c_1 = 0.5$ and $c_2 = 0.01$) are directly adopted from Table 1 of \citet{zou2024novel} in accordance with \citet{schulman2017proximal}.
 
+The actor parameters $\theta$ are updated to maximize the clipped PPO objective, while the critic parameters $\phi$ are updated to minimize the value-function loss. Using the combined loss defined in Equation~\eqref{eq:total_loss}, the optimizer performs:
+\begin{align}
+\theta &\leftarrow \theta - \eta \nabla_\theta \mathcal{L}^{\text{total}}(\theta, \phi), \\
+\phi &\leftarrow \phi - \eta \nabla_\phi \mathcal{L}^{\text{total}}(\theta, \phi).
+\end{align}
+The actor gradient improves the policy using the estimated advantages, while the critic gradient improves value estimates by minimizing prediction error. Since the encoder is shared, it receives gradients from both actor and critic objectives.
+
 For an unclipped transition $J_t(\theta) = \rho_t(\theta) \hat{A}_t$, differentiating with respect to policy parameters $\theta$ yields the actor policy gradient:
 \begin{equation}
 \nabla_\theta J_t(\theta) = \hat{A}_t \nabla_\theta \rho_t(\theta) = \hat{A}_t \frac{\nabla_\theta \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)}{\pi_{\theta_{\text{old}}}(\mathbf{a}_t \mid \mathbf{s}_t)} = \rho_t(\theta) \hat{A}_t \nabla_\theta \log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t) \quad \text{\citep{schulman2017proximal}}.
 \label{eq:policy_grad}
 \end{equation}
-Equation~\eqref{eq:policy_grad} demonstrates that the gradient step is directed by the advantage estimate $\hat{A}_t$ and scaled by the importance weight $\rho_t(\theta)$, adjusting the Dirichlet concentration mapping $\mathbf{s}_t \mapsto \boldsymbol{\alpha}_t$ to shift probability density toward higher-yielding allocations on $\Delta^{10}$ \citep{yang2022selective}. Optimization is carried out via Adam ($\eta = 10^{-4}$) with gradient norm clipping at $0.5$ \citep{zou2024novel} and early stopping when approximate KL divergence exceeds $1.5 \times \text{target\_kl} = 0.03$ \citep{schulman2017proximal}.
+Equation~\eqref{eq:policy_grad} demonstrates that the gradient step is directed by the advantage estimate $\hat{A}_t$ and scaled by the importance weight $\rho_t(\theta)$, adjusting the Dirichlet concentration mapping to shift probability density toward higher-yielding allocations on $\Delta^{10}$ \citep{yang2022selective}, where the shared encoder processes the instantaneous state $\mathbf{s}_t$ for M1 or the historical sequence $\mathbf{F}_t$ for M2--M4. Optimization is carried out via Adam ($\eta = 10^{-4}$) with gradient norm clipping at $0.5$ \citep{zou2024novel} and early stopping when approximate KL divergence exceeds $1.5 \times \text{target\_kl} = 0.03$ \citep{schulman2017proximal}.
 
 \section{PPO Training Parameters}
 Table~\ref{tab:hyperparameters} summarizes all PPO hyperparameters extracted directly from our codebase.

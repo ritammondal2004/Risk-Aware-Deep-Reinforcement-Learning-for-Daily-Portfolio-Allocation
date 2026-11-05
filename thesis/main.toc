@@ -17,7 +17,7 @@
 \contentsline {section}{\numberline {4.4}Evaluation Measures}{5}{section.4.4}%
 \contentsline {chapter}{\numberline {5}Model Architecture and Mathematical Formulation}{5}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Actor--Critic Framework and Policy Choice}{5}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Encoder Backbones: MLP versus LSTM}{5}{section.5.2}%
+\contentsline {section}{\numberline {5.2}Encoder Backbones: MLP versus LSTM}{6}{section.5.2}%
 \contentsline {section}{\numberline {5.3}Continuous Dirichlet Policy and Execution Logic}{6}{section.5.3}%
 \contentsline {section}{\numberline {5.4}Reward Formulations across Models M1 to M4}{7}{section.5.4}%
 \contentsline {section}{\numberline {5.5}PPO Objective and Policy Optimization}{7}{section.5.5}%
