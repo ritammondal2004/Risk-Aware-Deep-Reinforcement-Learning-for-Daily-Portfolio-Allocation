@@ -21,17 +21,17 @@
 \contentsline {section}{\numberline {5.3}Continuous Dirichlet Policy and Execution Logic}{6}{section.5.3}%
 \contentsline {section}{\numberline {5.4}Reward Formulations across Models M1 to M4}{7}{section.5.4}%
 \contentsline {section}{\numberline {5.5}PPO Objective and Policy Optimization}{8}{section.5.5}%
-\contentsline {section}{\numberline {5.6}PPO Training Parameters}{10}{section.5.6}%
-\contentsline {chapter}{\numberline {6}Controlled Ablation Study Design}{10}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Specification of Ablation Models M1--M4}{10}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Control Invariants and Training Algorithm}{11}{section.6.2}%
-\contentsline {chapter}{\numberline {7}Results and Discussion}{12}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Overall Out-of-Sample Performance}{12}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Analysis of Ablation Steps}{12}{section.7.2}%
-\contentsline {subsection}{\numberline {7.2.1}Step 1: Impact of Temporal Memory (M2 versus M1)}{12}{subsection.7.2.1}%
-\contentsline {subsection}{\numberline {7.2.2}Step 2: Impact of Differential Sharpe Ratio (M3 versus M2)}{12}{subsection.7.2.2}%
+\contentsline {section}{\numberline {5.6}PPO Training Parameters}{9}{section.5.6}%
+\contentsline {chapter}{\numberline {6}Controlled Ablation Study Design}{9}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Specification of Ablation Models M1--M4}{9}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Control Invariants and Training Algorithm}{9}{section.6.2}%
+\contentsline {chapter}{\numberline {7}Results and Discussion}{11}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Overall Out-of-Sample Performance}{11}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Analysis of Ablation Steps}{11}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Step 1: Impact of Temporal Memory (M2 versus M1)}{11}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}Step 2: Impact of Differential Sharpe Ratio (M3 versus M2)}{13}{subsection.7.2.2}%
 \contentsline {subsection}{\numberline {7.2.3}Step 3: Impact of Turnover Regularisation (M4 versus M3)}{13}{subsection.7.2.3}%
 \contentsline {section}{\numberline {7.3}Fold-by-Fold Performance Dynamics}{13}{section.7.3}%
-\contentsline {section}{\numberline {7.4}Equal-Weight Benchmark Outperformance and Gap Decomposition}{15}{section.7.4}%
+\contentsline {section}{\numberline {7.4}Equal-Weight Benchmark Outperformance and Gap Decomposition}{14}{section.7.4}%
 \contentsline {section}{\numberline {7.5}M4 Hyperparameter Tuning and Validation Dynamics}{15}{section.7.5}%
-\contentsline {chapter}{\numberline {8}Conclusion}{16}{chapter.8}%
+\contentsline {chapter}{\numberline {8}Conclusion}{15}{chapter.8}%

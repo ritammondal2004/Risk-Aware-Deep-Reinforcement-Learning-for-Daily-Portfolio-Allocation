@@ -30,18 +30,13 @@ Figure~\ref{fig:equity_stitched} illustrates cumulative portfolio profit across 
 
 \begin{figure}[htbp]
 \centering
-\begin{minipage}{0.49\textwidth}
-\centering
-\includegraphics[width=\textwidth]{figures/equity_stitched.png}
+\includegraphics[width=0.85\textwidth]{figures/equity_stitched.png}
 \caption{Cumulative out-of-sample profit across chained test windows (2018--2025, starting capital INR 1,000,000).}
 \label{fig:equity_stitched}
-\end{minipage}\hfill
-\begin{minipage}{0.49\textwidth}
-\centering
-\includegraphics[width=\textwidth]{figures/drawdown.png}
+\vspace{0.4cm}
+\includegraphics[width=0.85\textwidth]{figures/drawdown.png}
 \caption{Out-of-sample portfolio drawdown from running peak across the chained timeline.}
 \label{fig:drawdown}
-\end{minipage}
 \end{figure}
 
 \section{Analysis of Ablation Steps}
@@ -109,7 +104,7 @@ Augmenting the reward with a quadratic penalty ($\lambda_{\text{turn}} = 0.1$) d
 \section{Fold-by-Fold Performance Dynamics}
 Table~\ref{tab:per_fold_results} reports out-of-sample cumulative returns across individual two-year test windows, and Figure~\ref{fig:equity_per_fold} illustrates cumulative profit trajectories over each fold.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \small
 \setlength{\tabcolsep}{6pt}
@@ -129,9 +124,9 @@ Fold 4 (2024--2025) & $15.0 \pm 4.2$ & $18.7 \pm 1.3$ & $24.7 \pm 3.6$ & $15.1 \
 \end{tabular}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.98\textwidth]{figures/equity_per_fold.png}
+\includegraphics[width=0.88\textwidth]{figures/equity_per_fold.png}
 \caption{Cumulative out-of-sample portfolio profit across the four two-year test windows (mean across random seeds; initial capital $V_0 = \text{INR } 1{,}000{,}000$; y-axis denotes profit in INR; January 2026 marks the final tick for data ending December 2025).}
 \label{fig:equity_per_fold}
 \end{figure}
