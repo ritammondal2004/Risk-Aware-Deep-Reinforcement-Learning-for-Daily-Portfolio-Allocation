@@ -58,19 +58,19 @@ Algorithm~\ref{alg:ppo_portfolio} outlines the complete training procedure imple
     \item \textbf{while} $N_{\text{step}} < 300{,}000$ \textbf{do}
     \item \quad Reset rollout buffer $\mathcal{B} \gets \emptyset$.
     \item \quad \textbf{for} $t = 1$ \textbf{to} $T_{\text{rollout}} = 128$ \textbf{do}
-    \item \qquad Compute $\mathbf{h}_t \gets \text{Encoder}(\mathbf{c}_t)$ where $\mathbf{c}_t = \mathbf{s}_t$ (M1) or $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$ from $t-T+1$ to $t$ (M2--M4).
+    \item \qquad Compute $\mathbf{h}_t \gets \text{Encoder}(\mathbf{s}_t)$ where $\mathbf{s}_t$ is the state representation (instantaneous observation for M1, or sliding sequence $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$ from $t-T+1$ to $t$ for M2--M4).
     \item \qquad Compute $\boldsymbol{\ell}_t \gets \operatorname{clip}(\mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a, -3, 6)$ and concentration parameters $\boldsymbol{\alpha}_t \gets \exp(\boldsymbol{\ell}_t)$.
-    \item \qquad Sample raw continuous action $\mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t)$ via Gamma variates; evaluate $lp_t \gets \log \pi_\theta(\mathbf{a}_t \mid \mathbf{c}_t)$ and $V_t \gets V_\phi(\mathbf{c}_t)$.
+    \item \qquad Sample raw continuous action $\mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t)$ via Gamma variates; evaluate $lp_t \gets \log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)$ and $V_t \gets V_\phi(\mathbf{s}_t)$.
     \item \qquad Apply threshold: $\tilde{w}_{i,t} \gets a_{i,t} \cdot \mathbf{1}_{a_{i,t} \ge \tau}$; set target weights $\mathbf{w}_t^{\text{target}} \gets \tilde{\mathbf{w}}_t / \sum_j \tilde{w}_{j,t}$.
     \item \qquad Rebalance: $\text{Turnover}_t \gets \sum_{i=1}^{10} |w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}}|$, fee $C_t \gets c_{\text{trans}} V_t \text{Turnover}_t$.
     \item \qquad Advance environment: update wealth $V_{t+1}$, net return $R_{\text{net},t} \gets (V_{t+1}-V_t)/V_t$, and drifted weights $\mathbf{w}_{t+1}^{\text{cur}}$.
     \item \qquad Compute model reward: $r_t \gets R_{\text{net},t}$ (M1, M2); $r_t \gets D_t$ (M3); $r_t \gets D_t - \lambda_{\text{turn}}\sum_{i=1}^{10} (w_{i,t}^{\text{target}}-w_{i,t}^{\text{cur}})^2$ (M4).
-    \item \qquad Store transition $(\mathbf{c}_t, \mathbf{a}_t, lp_t, V_t, r_t)$ in $\mathcal{B}$; $N_{\text{step}} \gets N_{\text{step}} + 1$.
+    \item \qquad Store transition $(\mathbf{s}_t, \mathbf{a}_t, lp_t, V_t, r_t)$ in $\mathcal{B}$; $N_{\text{step}} \gets N_{\text{step}} + 1$.
     \item \quad \textbf{end for}
     \item \quad Standardise rewards, compute GAE advantages $\hat{A}_t$ and returns $\hat{V}_t^{\text{target}}$ \citep{schulman2017proximal}.
     \item \quad \textbf{for} $\text{epoch} = 1$ \textbf{to} $10$ \textbf{do}
     \item \qquad \textbf{for} each mini-batch $B = 64$ from $\mathcal{B}$ \textbf{do}
-    \item \qquad\quad Evaluate ratio $\rho_i(\theta) \gets \exp(\log \pi_\theta(\mathbf{a}_i \mid \mathbf{c}_i) - lp_i)$ and approximate KL divergence; break if $\text{KL} > 0.03$.
+    \item \qquad\quad Evaluate ratio $\rho_i(\theta) \gets \exp(\log \pi_\theta(\mathbf{a}_i \mid \mathbf{s}_i) - lp_i)$ and approximate KL divergence; break if $\text{KL} > 0.03$.
     \item \qquad\quad Update $(\theta, \phi)$ via Adam ($\eta = 10^{-4}$, grad clip $0.5$) using total loss $\mathcal{L}^{\text{total}}(\theta, \phi)$ (Eq.~\eqref{eq:total_loss}).
     \item \qquad \textbf{end for}
     \item \quad \textbf{end for}
