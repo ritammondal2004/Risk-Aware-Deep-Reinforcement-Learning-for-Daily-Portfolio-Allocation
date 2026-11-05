@@ -8,13 +8,13 @@ The portfolio allocation agents are developed within an Actor--Critic framework 
 \centering
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[height=3.2cm,keepaspectratio]{figures/architecture.png}
+\includegraphics[height=3.8cm,keepaspectratio]{figures/architecture.png}
 \caption{Actor--Critic architecture from state tensor to executed portfolio weights.}
 \label{fig:architecture}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[height=3.2cm,keepaspectratio]{figures/pipeline.png}
+\includegraphics[height=3.8cm,keepaspectratio]{figures/pipeline.png}
 \caption{PPO Dirichlet allocation and environment interaction loop.}
 \label{fig:pipeline}
 \end{minipage}
@@ -39,9 +39,9 @@ To evaluate the contribution of temporal sequence modeling, two encoder backbone
 \end{itemize}
 
 \section{Continuous Dirichlet Policy and Execution Logic}
-Target portfolio weights must satisfy the unit simplex constraints: $w_{i,t} \ge 0$ and $\sum_{i=1}^{11} w_{i,t} = 1$. Following \citet{yang2022selective}, we parameterise the policy using a continuous multivariate Dirichlet distribution. The actor linear output $\mathbf{z}_t \in \mathbb{R}^{11}$ represents unconstrained log-concentrations, clamped to $[-3.0, 6.0]$ and exponentiated to guarantee numerical stability:
+Target portfolio weights must satisfy the unit simplex constraints: $w_{i,t} \ge 0$ and $\sum_{i=1}^{11} w_{i,t} = 1$. Following \citet{yang2022selective}, we parameterise the policy using a continuous multivariate Dirichlet distribution where positive concentration parameters are formulated as $\alpha_{i,t} = \exp(z_{i,t})$. In our implementation, to prevent numerical overflow in Gamma function gradients and prevent distribution collapse onto simplex boundaries, the raw actor logits $\mathbf{z}_t \in \mathbb{R}^{11}$ are clamped to $[-3.0, 6.0]$:
 \begin{equation}
-\boldsymbol{\ell}_t = \operatorname{clip}(\mathbf{z}_t, -3.0, 6.0), \quad \alpha_{i,t} = \exp(\ell_{i,t}) \in [e^{-3}, e^6] \approx [0.0498, 403.43] \quad \text{\citep{yang2022selective}}.
+\boldsymbol{\ell}_t = \operatorname{clip}(\mathbf{z}_t, -3.0, 6.0), \quad \alpha_{i,t} = \exp(\ell_{i,t}) \in [e^{-3}, e^6] \approx [0.0498, 403.43].
 \end{equation}
 During environment rollouts, raw continuous action vectors $\mathbf{a}_t \in \Delta^{10}$ are sampled via normalized Gamma variates: $g_{i,t} \sim \operatorname{Gamma}(\alpha_{i,t}, 1)$ with $a_{i,t} = g_{i,t} / \sum_j g_{j,t}$ \citep{yang2022selective}. During deterministic evaluation, the policy executes the analytical mean $\mathbb{E}[a_{i,t}] = \alpha_{i,t} / \sum_j \alpha_{j,t}$.
 
@@ -49,10 +49,14 @@ To eliminate tiny fractional positions that incur wasteful transaction fees, an 
 \begin{equation}
 \tilde{w}_{i,t} = a_{i,t} \cdot \mathbf{1}_{a_{i,t} \ge \tau}, \quad w_{i,t}^{\text{target}} = \frac{\tilde{w}_{i,t}}{\sum_{j=1}^{11} \tilde{w}_{j,t}}, \quad \text{where } \mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t) \quad \text{\citep{yang2022selective}}.
 \end{equation}
-Importantly, policy log-probabilities for PPO importance sampling are evaluated on the \textit{raw sampled action} $\mathbf{a}_t$ conditioned on state $\mathbf{s}_t$ (or $\mathbf{F}_t$), preserving exact density evaluations:
+
+The direct probability density of the continuous multivariate Dirichlet distribution governing target allocations on the 11-dimensional portfolio simplex $\Delta^{10}$ is given by \citep{yang2022selective}:
 \begin{equation}
-\log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t) = \ln \Gamma\left(\sum_{i=1}^{11} \alpha_{i,t}\right) - \sum_{i=1}^{11} \ln \Gamma(\alpha_{i,t}) + \sum_{i=1}^{11} (\alpha_{i,t} - 1)\ln a_{i,t} \quad \text{\citep{yang2022selective}}.
+\boxed{
+\pi_\theta(\mathbf{a}_t \mid \mathbf{c}_t) = \frac{\Gamma\left(\sum_{i=1}^{11}\alpha_{i,t}\right)}{\prod_{i=1}^{11}\Gamma(\alpha_{i,t})} \prod_{i=1}^{11} a_{i,t}^{\alpha_{i,t}-1}
+}
 \end{equation}
+where $\mathbf{a}_t$ lies on the 11-dimensional unit portfolio simplex $\Delta^{10}$ and the concentration parameters satisfy $\alpha_{i,t} > 0$. The policy conditioning state $\mathbf{c}_t$ denotes the instantaneous market observation $\mathbf{s}_t \in \mathbb{R}^{141}$ for the static feedforward baseline (M1) or the sliding 30-day historical sequence $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$ for the recurrent LSTM models (M2--M4) \citep{zou2024novel}. PPO evaluates the policy log-probability $\log \pi_\theta(\mathbf{a}_t \mid \mathbf{c}_t)$ to calculate importance-sampling ratios during optimization.
 
 Rebalancing from current weights $\mathbf{w}_t^{\text{cur}}$ to target weights $\mathbf{w}_t^{\text{target}}$ incurs linear transaction costs proportional to equity turnover ($c_{\text{trans}} = 0.001$, i.e., $0.1\%$) \citep{zou2024novel}:
 \begin{equation}
@@ -78,45 +82,56 @@ The scalar reward $r_t$ emitted to the agent defines our core ablation dimension
 \end{enumerate}
 
 \section{PPO Objective and Policy Optimization}
-Policy parameters $\theta$ and critic parameters $\phi$ are optimized using PPO's clipped surrogate loss \citep{schulman2017proximal}:
+Policy parameters $\theta$ and critic parameters $\phi$ are optimized using Proximal Policy Optimisation \citep{schulman2017proximal}. PPO maximizes the clipped surrogate objective to update the actor policy:
 \begin{equation}
-\mathcal{L}^{\text{total}}(\theta, \phi) = - \hat{\mathbb{E}}_t \left[ \min\left( \rho_t(\theta) \hat{A}_t, \; \operatorname{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon) \hat{A}_t \right) \right] + c_1 \hat{\mathbb{E}}_t \left[ (V_\phi(\mathbf{s}_t) - \hat{V}_t^{\text{target}})^2 \right] - c_2 \hat{\mathbb{E}}_t \left[ \mathcal{H}(\pi_\theta) \right] \quad \text{\citep{schulman2017proximal}},
+L^{\text{clip}}(\theta) = \hat{\mathbb{E}}_t \left[ \min\left( \rho_t(\theta) \hat{A}_t, \; \operatorname{clip}(\rho_t(\theta), 1-\epsilon, 1+\epsilon) \hat{A}_t \right) \right] \quad \text{\citep{schulman2017proximal}},
+\label{eq:lclip}
+\end{equation}
+where $\epsilon = 0.2$ is the clipping parameter \citep{schulman2017proximal, zou2024novel}, and the probability ratio $\rho_t(\theta)$ is defined as:
+\begin{equation}
+\rho_t(\theta) = \frac{\pi_\theta(\mathbf{a}_t \mid \mathbf{c}_t)}{\pi_{\theta_{\text{old}}}(\mathbf{a}_t \mid \mathbf{c}_t)},
+\end{equation}
+conditioned on instantaneous state $\mathbf{s}_t$ for M1 or the 30-day historical sequence $\mathbf{F}_t$ for recurrent models M2--M4. The advantage $\hat{A}_t$ is estimated using Generalized Advantage Estimation (GAE-$\lambda$) with trace decay $\lambda_{\text{GAE}} = 0.95$ and discount factor $\gamma = 0.99$ \citep{schulman2017proximal}. PPO maximizes this clipped surrogate objective to constrain policy updates within a trusted $[1-\epsilon, 1+\epsilon]$ neighborhood, preventing destructive policy shifts under noisy financial return realizations.
+
+To jointly train the shared encoder, actor, and critic parameters, the network minimizes the combined multi-task loss function:
+\begin{equation}
+\mathcal{L}^{\text{total}}(\theta, \phi) = - L^{\text{clip}}(\theta) + c_1 L^{\text{value}}(\phi) - c_2 \mathcal{H}(\pi_\theta),
 \label{eq:total_loss}
 \end{equation}
-where $\rho_t(\theta) = \exp(\log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t) - \log \pi_{\theta_{\text{old}}}(\mathbf{a}_t \mid \mathbf{s}_t))$ is the importance ratio, $\hat{A}_t$ is the Generalized Advantage Estimator (GAE-$\lambda$) with $\lambda_{\text{GAE}} = 0.95$ and discount $\gamma = 0.99$ \citep{schulman2017proximal}, $c_1 = 0.5$, and $c_2 = 0.01$ weights the analytical Dirichlet entropy bonus $\mathcal{H}(\pi_\theta)$ \citep{zou2024novel}.
+where $L^{\text{value}}(\phi) = \hat{\mathbb{E}}_t \left[ (V_\phi(\mathbf{c}_t) - \hat{V}_t^{\text{target}})^2 \right]$ is the mean squared error loss of the state-value baseline critic with weight coefficient $c_1 = 0.5$, and $\mathcal{H}(\pi_\theta) = \hat{\mathbb{E}}_t \left[ \mathcal{H}(\pi_\theta(\cdot \mid \mathbf{c}_t)) \right]$ is the analytical Dirichlet policy entropy bonus with coefficient $c_2 = 0.01$ encouraging distribution exploration. Both hyperparameter values ($c_1 = 0.5$ and $c_2 = 0.01$) are directly adopted from Table 1 of \citet{zou2024novel} in accordance with \citet{schulman2017proximal}.
 
-For an unclipped transition $J_t(\theta) = \rho_t(\theta) \hat{A}_t$, differentiating with respect to policy parameters $\theta$ yields:
+For an unclipped transition $J_t(\theta) = \rho_t(\theta) \hat{A}_t$, differentiating with respect to policy parameters $\theta$ yields the actor policy gradient:
 \begin{equation}
-\nabla_\theta J_t(\theta) = \hat{A}_t \nabla_\theta \rho_t(\theta) = \hat{A}_t \frac{\nabla_\theta \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)}{\pi_{\theta_{\text{old}}}(\mathbf{a}_t \mid \mathbf{s}_t)} = \rho_t(\theta) \hat{A}_t \nabla_\theta \log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t) \quad \text{\citep{schulman2017proximal}}.
+\nabla_\theta J_t(\theta) = \hat{A}_t \nabla_\theta \rho_t(\theta) = \hat{A}_t \frac{\nabla_\theta \pi_\theta(\mathbf{a}_t \mid \mathbf{c}_t)}{\pi_{\theta_{\text{old}}}(\mathbf{a}_t \mid \mathbf{c}_t)} = \rho_t(\theta) \hat{A}_t \nabla_\theta \log \pi_\theta(\mathbf{a}_t \mid \mathbf{c}_t) \quad \text{\citep{schulman2017proximal}}.
 \label{eq:policy_grad}
 \end{equation}
-Equation~\eqref{eq:policy_grad} shows that the policy gradient is steered by the estimated advantage $\hat{A}_t$ and scaled by the importance ratio $\rho_t(\theta)$, adjusting the Dirichlet concentration mapping $\mathbf{s}_t \mapsto \boldsymbol{\alpha}_t$ to shift probability mass toward superior portfolio allocations on $\Delta^{10}$ \citep{yang2022selective}. Optimization is performed via Adam ($\eta = 10^{-4}$) with gradient clipping at $0.5$ \citep{zou2024novel} and early stopping when approximate KL divergence exceeds $1.5 \times \text{target\_kl} = 0.03$ \citep{schulman2017proximal}.
+Equation~\eqref{eq:policy_grad} demonstrates that the gradient step is directed by the advantage estimate $\hat{A}_t$ and scaled by the importance weight $\rho_t(\theta)$, adjusting the Dirichlet concentration mapping $\mathbf{c}_t \mapsto \boldsymbol{\alpha}_t$ to shift probability density toward higher-yielding allocations on $\Delta^{10}$ \citep{yang2022selective}. Optimization is carried out via Adam ($\eta = 10^{-4}$) with gradient norm clipping at $0.5$ \citep{zou2024novel} and early stopping when approximate KL divergence exceeds $1.5 \times \text{target\_kl} = 0.03$ \citep{schulman2017proximal}.
 
 \section{PPO Training Parameters}
 Table~\ref{tab:hyperparameters} summarizes all PPO hyperparameters extracted directly from our codebase.
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
 \caption{PPO training parameters and operational settings (verified from source code).}
 \label{tab:hyperparameters}
 \begin{tabularx}{\textwidth}{llcX}
 \toprule
 \textbf{Parameter} & \textbf{Description} & \textbf{Value} & \textbf{Selection Basis / Source} \\
 \midrule
-Discount factor ($\gamma$) & Return discount factor & 0.99 & Zou et al. (2024) \citep{zou2024novel} \\
+Discount factor ($\gamma$) & Return discount factor & 0.99 & Zou et al. (2024) \citep{zou2024novel} (Table 1) \\
 GAE parameter ($\lambda_{\text{GAE}}$) & Advantage trace decay & 0.95 & Schulman et al. (2017) \citep{schulman2017proximal} \\
-Rollout horizon ($T_{\text{rollout}}$) & Interaction steps per buffer & 128 & Zou et al. (2024) \citep{zou2024novel} \\
+Rollout horizon ($T_{\text{rollout}}$) & Interaction steps per buffer & 128 & Zou et al. (2024) \citep{zou2024novel} (Table 1) \\
 PPO clipping range ($\epsilon$) & Policy ratio clipping threshold & 0.2 & Schulman et al. (2017) \citep{schulman2017proximal}; Zou et al. (2024) \citep{zou2024novel} \\
-Value coefficient ($c_1$) & Critic loss weight & 0.5 & Zou et al. (2024) \citep{zou2024novel} \\
-Entropy coefficient ($c_2$) & Policy entropy bonus weight & 0.01 & Zou et al. (2024) \citep{zou2024novel} \\
+Value coefficient ($c_1$) & Critic loss weight & 0.5 & Zou et al. (2024) \citep{zou2024novel} (Table 1); Schulman et al. (2017) \\
+Entropy coefficient ($c_2$) & Policy entropy bonus weight & 0.01 & Zou et al. (2024) \citep{zou2024novel} (Table 1); Schulman et al. (2017) \\
 Optimiser & Parameter optimiser & Adam & Zou et al. (2024) \citep{zou2024novel} \\
 Learning rate ($\eta$) & Adam learning rate & $10^{-4}$ & Validation selection (Fold 1; Zou et al. \citep{zou2024novel} test $3\times 10^{-4}$) \\
 Target KL ($\text{target\_kl}$) & Approximate KL early-stop & 0.02 & Schulman et al. (2017) \citep{schulman2017proximal} \\
 Training epochs ($K$) & Update epochs per rollout & 10 & Schulman et al. (2017) \citep{schulman2017proximal} \\
 Mini-batch size ($B$) & Batch size per SGD update & 64 & Schulman et al. (2017) \citep{schulman2017proximal} \\
-Gradient clipping & Maximum gradient norm & 0.5 & Zou et al. (2024) \citep{zou2024novel} \\
+Gradient clipping & Maximum gradient norm & 0.5 & Zou et al. (2024) \citep{zou2024novel} (Table 1) \\
 Reward normalisation & Online reward scaling & Welford Std & Online Welford running standardization \\
 Total environment steps & Training budget per run & 300,000 & Controlled ablation budget across M1--M4 \\
 Validation interval & Checkpoint evaluation frequency & 25,000 & Validation selection interval \\

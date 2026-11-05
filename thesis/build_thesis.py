@@ -28,8 +28,11 @@ def build_all():
         doc = fitz.open(main_pdf)
         print(f"SUCCESS: Built main.pdf with {len(doc)} pages.")
         # Synchronize BTP1_Report_Final.pdf
-        shutil.copyfile(main_pdf, final_pdf)
-        print(f"SUCCESS: Synchronized {final_pdf} ({os.path.getsize(final_pdf)} bytes).")
+        try:
+            shutil.copyfile(main_pdf, final_pdf)
+            print(f"SUCCESS: Synchronized {final_pdf} ({os.path.getsize(final_pdf)} bytes).")
+        except PermissionError:
+            print(f"NOTE: {final_pdf} is currently open in a PDF viewer (locked). main.pdf was successfully built ({len(doc)} pages).")
         return len(doc)
     else:
         print("FAILED to build main.pdf. Output:")

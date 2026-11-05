@@ -6,22 +6,23 @@
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}\graphicspath{{figures/}}
 \usepackage{booktabs,tabularx,multirow}
+\usepackage{float}
 \usepackage[table]{xcolor}
 \usepackage{pifont}
 \newcommand{\cmark}{\ding{51}}%
-\usepackage[font=small,labelfont=bf,skip=2pt]{caption}
+\usepackage[font=small,labelfont=bf,skip=3pt]{caption}
 \usepackage{enumerate}
 \usepackage{hyperref}\hypersetup{colorlinks,linkcolor=blue!70!black,citecolor=blue!70!black,urlcolor=blue!70!black}
 \usepackage[numbers,sort&compress]{natbib}
-\setlength{\bibsep}{0.5pt}
+\setlength{\bibsep}{2pt}
 \pagestyle{headings}
 
-%% Tighten float spacing
-\setlength{\floatsep}{4pt plus 1pt minus 1pt}
-\setlength{\textfloatsep}{6pt plus 1pt minus 1pt}
-\setlength{\intextsep}{4pt plus 1pt minus 1pt}
-\setlength{\abovecaptionskip}{2pt}
-\setlength{\belowcaptionskip}{1pt}
+%% Comfortable float spacing
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{12pt plus 3pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{2pt}
 
 \usepackage{etoolbox}
 \makeatletter
@@ -195,6 +196,7 @@ Models are evaluated across four chronological walk-forward folds spanning 2018-
 \input{ch4_dataset}
 \input{ch5_model}
 \input{ch6_ablation}
+\clearpage
 \input{ch7_results}
 \input{ch8_conclusion}
 

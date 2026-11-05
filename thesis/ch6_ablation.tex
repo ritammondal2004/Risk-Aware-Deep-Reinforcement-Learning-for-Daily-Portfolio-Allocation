@@ -5,17 +5,17 @@
 To evaluate the contribution of each algorithmic component without confounding factors, we adopt a single-factor ablation design. Four model configurations (M1 through M4) are specified such that each successive transition alters exactly one algorithmic mechanism while holding all other parameters, training budgets, random seeds, transaction costs, and data folds strictly invariant:
 \begin{enumerate}
     \item \textbf{Model M1 (MLP Baseline + Net Return):} Two-layer feedforward MLP observing solely instantaneous market observation $\mathbf{s}_t \in \mathbb{R}^{141}$ with net return reward ($r_t = R_{\text{net},t}$) and zero penalty ($\lambda_{\text{turn}} = 0$).
-    \item \textbf{Model M2 (LSTM Recurrent Encoder + Net Return):} Replaces the static MLP with a single-layer LSTM ($H=512$) over sliding window $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$. Reward remains net return ($r_t = R_{\text{net},t}$). Transition M1 $\to$ M2 isolates \textbf{temporal memory and sequence modeling}.
-    \item \textbf{Model M3 (LSTM Encoder + Differential Sharpe Ratio):} Retains the LSTM backbone, replacing net return with the recursive Differential Sharpe Ratio ($r_t = D_t$). Transition M2 $\to$ M3 isolates \textbf{risk-aware reward engineering}.
-    \item \textbf{Model M4 (LSTM + DSR + Quadratic Turnover Regularisation):} Retains the LSTM backbone and DSR reward, augmented by a quadratic weight-change penalty on risky assets ($r_t = D_t - \lambda_{\text{turn}} \sum_{j=1}^{10} (w_{j,t}^{\text{target}} - w_{j,t}^{\text{cur}})^2$) with $\lambda_{\text{turn}} = 0.1$. Transition M3 $\to$ M4 isolates \textbf{turnover regularisation}.
+    \item \textbf{Model M2 (LSTM Recurrent Encoder + Net Return):} Replaces the static MLP with a single-layer LSTM ($H=512$) over sliding window $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$. Reward remains net return ($r_t = R_{\text{net},t}$). Transition M1 $\to$ M2 isolates \textbf{temporal memory and sequence modeling} \citep{zou2024novel}.
+    \item \textbf{Model M3 (LSTM Encoder + Differential Sharpe Ratio):} Retains the LSTM backbone, replacing net return with the recursive Differential Sharpe Ratio ($r_t = D_t$). Transition M2 $\to$ M3 isolates \textbf{risk-aware reward engineering} \citep{millea2021deep}.
+    \item \textbf{Model M4 (LSTM + DSR + Quadratic Turnover Regularisation):} Retains the LSTM backbone and DSR reward, augmented by a quadratic weight-change penalty on risky assets ($r_t = D_t - \lambda_{\text{turn}} \sum_{j=1}^{10} (w_{j,t}^{\text{target}} - w_{j,t}^{\text{cur}})^2$) with $\lambda_{\text{turn}} = 0.1$. Transition M3 $\to$ M4 isolates \textbf{turnover regularisation} \citep{wang2025risk}.
 \end{enumerate}
 
 Table~\ref{tab:ablation_matrix} summarises the systematic ablation matrix across all four configurations.
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
+\small
+\setlength{\tabcolsep}{5pt}
 \caption{Systematic ablation matrix across models M1 to M4.}
 \label{tab:ablation_matrix}
 \begin{tabular}{lcccc}
@@ -38,36 +38,39 @@ Training Budget & 300,000 steps & 300,000 steps & 300,000 steps & 300,000 steps 
 \end{table}
 
 \section{Control Invariants and Training Algorithm}
-Experimental controls are strictly enforced: (i)~Actor and Critic heads are instantiated prior to the encoder to ensure identical initial head weights across models under the same seed; (ii)~all models train for exactly 300,000 steps with identical Adam learning rate ($10^{-4}$), rollout horizon (128), and batch size (64); (iii)~all models experience identical market sequences and transaction costs; and (iv)~programmatic assertions verify that each transition alters exactly one dimension. Algorithm~\ref{alg:ppo_portfolio} details the training workflow.
+Experimental controls are strictly enforced: (i)~Actor and Critic heads are instantiated prior to the encoder to ensure identical initial head weights across models under the same seed; (ii)~all models train for exactly 300,000 steps with identical Adam learning rate ($10^{-4}$), rollout horizon (128), and batch size (64); (iii)~all models experience identical market sequences and transaction costs; and (iv)~programmatic assertions verify that each transition alters exactly one dimension.
 
-\begin{figure}[htbp]
+Algorithm~\ref{alg:ppo_portfolio} outlines the complete training procedure implemented in our codebase, positioned directly below within the training methodology.
+
+\begin{figure}[H]
 \centering
 \begin{minipage}{0.98\textwidth}
 \hrule \vspace{2pt} \hrule \vspace{3pt}
 \noindent\textbf{Algorithm 1: Continuous Dirichlet PPO Daily Portfolio Allocation}
 \vspace{3pt} \hrule \vspace{4pt}
-\scriptsize
+\footnotesize
 \textbf{Input:} Market indicators $\mathbf{X}$, returns $\mathbf{R}$, cost $c_{\text{trans}} = 0.001$, threshold $\tau = 0.01$, penalty $\lambda_{\text{turn}}$, PPO hyperparameters ($\gamma, \lambda_{\text{GAE}}, \epsilon, \eta = 10^{-4}$).\\
-\textbf{Output:} Optimised policy weights $\theta^*$ selected by peak validation Sharpe ratio.\\[2pt]
-\textbf{Initialisation:} Initialise shared Encoder, Actor $\theta$, Critic $\phi$, Adam optimiser; $V_0 \gets 10^6$, $\mathbf{w}_0^{\text{cur}} \gets [0,\dots,0,1]^\top$; DSR moments $A_0 \gets 0, B_0 \gets 0$; step counter $N_{\text{step}} \gets 0$, $SR_{\text{best}} \gets -\infty$.\\[2pt]
+\textbf{Output:} Optimised policy weights $\theta^*$ selected by peak validation Sharpe ratio.\\[3pt]
+\textbf{Initialisation:} Initialise shared Encoder, Actor $\theta$, Critic $\phi$, Adam optimiser; $V_0 \gets 10^6$, $\mathbf{w}_0^{\text{cur}} \gets [0,\dots,0,1]^\top$; DSR moments $A_0 \gets 0, B_0 \gets 0$; step counter $N_{\text{step}} \gets 0$, $SR_{\text{best}} \gets -\infty$.\\[3pt]
 \textbf{Procedure:}
 \begin{enumerate}[1:]
-    \setlength{\itemsep}{0.5pt}
+    \setlength{\itemsep}{1.5pt}
     \item \textbf{while} $N_{\text{step}} < 300{,}000$ \textbf{do}
     \item \quad Reset rollout buffer $\mathcal{B} \gets \emptyset$.
     \item \quad \textbf{for} $t = 1$ \textbf{to} $T_{\text{rollout}} = 128$ \textbf{do}
-    \item \qquad Compute $\mathbf{h}_t \gets \text{Encoder}(\mathbf{s}_t)$ (or $\mathbf{F}_t$), $\boldsymbol{\ell}_t \gets \operatorname{clip}(\mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a, -3, 6)$, and $\boldsymbol{\alpha}_t \gets \exp(\boldsymbol{\ell}_t)$.
-    \item \qquad Sample raw continuous action $\mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t)$; record $lp_t \gets \log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)$ and $V_t \gets V_\phi(\mathbf{s}_t)$.
+    \item \qquad Compute $\mathbf{h}_t \gets \text{Encoder}(\mathbf{c}_t)$ where $\mathbf{c}_t = \mathbf{s}_t$ (M1) or $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$ from $t-T+1$ to $t$ (M2--M4).
+    \item \qquad Compute $\boldsymbol{\ell}_t \gets \operatorname{clip}(\mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a, -3, 6)$ and concentration parameters $\boldsymbol{\alpha}_t \gets \exp(\boldsymbol{\ell}_t)$.
+    \item \qquad Sample raw continuous action $\mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t)$ via Gamma variates; evaluate $lp_t \gets \log \pi_\theta(\mathbf{a}_t \mid \mathbf{c}_t)$ and $V_t \gets V_\phi(\mathbf{c}_t)$.
     \item \qquad Apply threshold: $\tilde{w}_{i,t} \gets a_{i,t} \cdot \mathbf{1}_{a_{i,t} \ge \tau}$; set target weights $\mathbf{w}_t^{\text{target}} \gets \tilde{\mathbf{w}}_t / \sum_j \tilde{w}_{j,t}$.
     \item \qquad Rebalance: $\text{Turnover}_t \gets \sum_{i=1}^{10} |w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}}|$, fee $C_t \gets c_{\text{trans}} V_t \text{Turnover}_t$.
     \item \qquad Advance environment: update wealth $V_{t+1}$, net return $R_{\text{net},t} \gets (V_{t+1}-V_t)/V_t$, and drifted weights $\mathbf{w}_{t+1}^{\text{cur}}$.
     \item \qquad Compute model reward: $r_t \gets R_{\text{net},t}$ (M1, M2); $r_t \gets D_t$ (M3); $r_t \gets D_t - \lambda_{\text{turn}}\sum_{i=1}^{10} (w_{i,t}^{\text{target}}-w_{i,t}^{\text{cur}})^2$ (M4).
-    \item \qquad Store $(\mathbf{s}_t, \mathbf{a}_t, lp_t, V_t, r_t)$ in $\mathcal{B}$; $N_{\text{step}} \gets N_{\text{step}} + 1$.
+    \item \qquad Store transition $(\mathbf{c}_t, \mathbf{a}_t, lp_t, V_t, r_t)$ in $\mathcal{B}$; $N_{\text{step}} \gets N_{\text{step}} + 1$.
     \item \quad \textbf{end for}
-    \item \quad Standardise rewards, compute GAE advantages $\hat{A}_t$ and returns $\hat{V}_t^{\text{target}}$.
+    \item \quad Standardise rewards, compute GAE advantages $\hat{A}_t$ and returns $\hat{V}_t^{\text{target}}$ \citep{schulman2017proximal}.
     \item \quad \textbf{for} $\text{epoch} = 1$ \textbf{to} $10$ \textbf{do}
     \item \qquad \textbf{for} each mini-batch $B = 64$ from $\mathcal{B}$ \textbf{do}
-    \item \qquad\quad Evaluate ratio $\rho_i(\theta) \gets \exp(\log \pi_\theta - lp_i)$ and approximate KL divergence; break if $\text{KL} > 0.03$.
+    \item \qquad\quad Evaluate ratio $\rho_i(\theta) \gets \exp(\log \pi_\theta(\mathbf{a}_i \mid \mathbf{c}_i) - lp_i)$ and approximate KL divergence; break if $\text{KL} > 0.03$.
     \item \qquad\quad Update $(\theta, \phi)$ via Adam ($\eta = 10^{-4}$, grad clip $0.5$) using total loss $\mathcal{L}^{\text{total}}(\theta, \phi)$ (Eq.~\eqref{eq:total_loss}).
     \item \qquad \textbf{end for}
     \item \quad \textbf{end for}
@@ -75,7 +78,7 @@ Experimental controls are strictly enforced: (i)~Actor and Critic heads are inst
     \item \textbf{end while}
     \item Restore best checkpoint $\theta^*$ for final out-of-sample test evaluation.
 \end{enumerate}
-\vspace{1pt} \hrule
+\vspace{2pt} \hrule
 \end{minipage}
 \caption{Complete PPO training algorithm for continuous Dirichlet portfolio allocation.}
 \label{alg:ppo_portfolio}

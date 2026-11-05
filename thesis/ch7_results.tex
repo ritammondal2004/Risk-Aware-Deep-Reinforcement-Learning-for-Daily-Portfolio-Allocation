@@ -6,8 +6,8 @@ Out-of-sample evaluation was conducted across four chronological 2-year test win
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3.5pt}
+\small
+\setlength{\tabcolsep}{6pt}
 \caption{Pooled out-of-sample test performance across 4 folds and 3 seeds (mean $\pm$ standard deviation over seeds).}
 \label{tab:overall_results}
 \begin{tabular}{lcccccc}
@@ -24,19 +24,21 @@ Out-of-sample evaluation was conducted across four chronological 2-year test win
 \end{tabular}
 \end{table}
 
-The primary empirical finding is that the passive Equal-Weight benchmark achieved the highest pooled cumulative return ($36.48\%$) and highest Sharpe ratio ($1.13$), outperforming all four reinforcement learning models. Among active RL agents, M2 and M3 achieved the highest returns ($28.23\%$ and $26.93\%$), while M4 achieved the lowest execution friction ($0.97\%$ cost) and shallowest maximum drawdown ($-16.04\%$). Figure~\ref{fig:equity_stitched} illustrates cumulative portfolio profit across the continuous 2018--2025 timeline (with starting capital $V_0 = \text{INR } 1{,}000{,}000$ reinvested sequentially), and Figure~\ref{fig:drawdown} portrays corresponding peak-to-trough drawdowns.
+The primary empirical finding is that the passive Equal-Weight benchmark achieved the highest pooled cumulative return ($36.48\%$) and highest Sharpe ratio ($1.13$), outperforming all four reinforcement learning models. Among active RL agents, M2 and M3 achieved the highest returns ($28.23\%$ and $26.93\%$), while M4 achieved the lowest execution friction ($0.97\%$ cost) and shallowest maximum drawdown ($-16.04\%$). 
+
+Figure~\ref{fig:equity_stitched} illustrates cumulative portfolio profit across the continuous 2018--2025 timeline (with starting capital $V_0 = \text{INR } 1{,}000{,}000$ reinvested sequentially), and Figure~\ref{fig:drawdown} portrays the corresponding peak-to-trough drawdowns.
 
 \begin{figure}[htbp]
 \centering
-\begin{minipage}{0.48\textwidth}
+\begin{minipage}{0.49\textwidth}
 \centering
-\includegraphics[height=3.4cm,keepaspectratio]{figures/equity_stitched.png}
+\includegraphics[width=\textwidth]{figures/equity_stitched.png}
 \caption{Cumulative out-of-sample profit across chained test windows (2018--2025, starting capital INR 1,000,000).}
 \label{fig:equity_stitched}
 \end{minipage}\hfill
-\begin{minipage}{0.48\textwidth}
+\begin{minipage}{0.49\textwidth}
 \centering
-\includegraphics[height=3.4cm,keepaspectratio]{figures/drawdown.png}
+\includegraphics[width=\textwidth]{figures/drawdown.png}
 \caption{Out-of-sample portfolio drawdown from running peak across the chained timeline.}
 \label{fig:drawdown}
 \end{minipage}
@@ -47,8 +49,8 @@ To assess whether observed differences are consistent across environments, paire
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
+\small
+\setlength{\tabcolsep}{5pt}
 \caption{Paired ablation differences ($b - a$) with 95\% bootstrap confidence intervals across 12 (fold, seed) pairs.}
 \label{tab:ablation_deltas}
 \begin{tabular}{llcccc}
@@ -84,22 +86,22 @@ To assess whether observed differences are consistent across environments, paire
 \end{table}
 
 \subsection{Step 1: Impact of Temporal Memory (M2 versus M1)}
-Transitioning from the MLP baseline (M1) to the LSTM recurrent encoder (M2) represents the clearest improvement in the ablation sequence. The pooled Sharpe ratio increases from $0.714$ to $0.915$ ($+0.201$, 95\% CI $[+0.156, +0.246]$), improving across all four folds ($4/4$). Simultaneously, daily turnover decreases from $0.186$ to $0.080$, cutting cumulative transaction costs from $9.68\%$ to $4.27\%$ of capital. The 30-day LSTM representation provides valuable temporal smoothing relative to the single-day MLP baseline, tracking multi-period trends and reducing counterproductive churning.
+Transitioning from the MLP baseline (M1) to the LSTM recurrent encoder (M2) represents the clearest improvement in the ablation sequence. The pooled Sharpe ratio increases from $0.714$ to $0.915$ ($+0.201$, 95\% CI $[+0.156, +0.246]$), improving across all four folds ($4/4$). Simultaneously, daily turnover decreases from $0.186$ to $0.080$, cutting cumulative transaction costs from $9.68\%$ to $4.27\%$ of capital. The 30-day LSTM representation provides valuable temporal smoothing relative to the single-day MLP baseline \citep{zou2024novel}, tracking multi-period trends and reducing counterproductive churning.
 
 \subsection{Step 2: Impact of Differential Sharpe Ratio (M3 versus M2)}
-Replacing net return with the Differential Sharpe Ratio (M3) produces mixed, regime-dependent effects rather than a uniform improvement. The pooled Sharpe ratio remains flat ($+0.003$, 95\% CI $[-0.295, +0.222]$), pooled return decreases from $28.23\%$ to $26.93\%$, and maximum drawdown widens from $-18.52\%$ to $-19.95\%$. Although M3 achieves strong Sharpe ratios in Folds 3 and 4 ($1.328$ and $1.164$), its recursive variance penalty dampens equity exposure during sustained upward trends, slightly curtailing profit capture.
+Replacing net return with the Differential Sharpe Ratio (M3) produces mixed, regime-dependent effects rather than a uniform improvement. The pooled Sharpe ratio remains flat ($+0.003$, 95\% CI $[-0.295, +0.222]$), pooled return decreases from $28.23\%$ to $26.93\%$, and maximum drawdown widens from $-18.52\%$ to $-19.95\%$. Although M3 achieves strong Sharpe ratios in Folds 3 and 4 ($1.328$ and $1.164$), its recursive variance penalty \citep{millea2021deep} dampens equity exposure during sustained upward trends, slightly curtailing profit capture.
 
 \subsection{Step 3: Impact of Turnover Regularisation (M4 versus M3)}
 Augmenting the reward with a quadratic penalty ($\lambda_{\text{turn}} = 0.1$) demonstrates an operational trade-off:
 \begin{itemize}
     \item \textbf{Friction Reduction:} Daily turnover decreases from $0.079$ to $0.019$ (a 76\% reduction, improved in $12/12$ pairs), reducing costs to $0.97\%$ of starting capital, approaching the passive benchmark ($0.61\%$).
     \item \textbf{Downside Protection:} Maximum drawdown improves by $+3.90\%$ (from $-19.95\%$ to $-16.04\%$, 95\% CI $[+1.45\%, +7.00\%]$), recording the shallowest drawdown among all models, including Equal-Weight ($-18.91\%$).
-    \item \textbf{Return Trade-off:} Conservatism reduces pooled return from $26.93\%$ to $20.97\%$ (improved in $1/4$ folds). Regularisation limits churn and drawdown, but penalises rapid reallocations needed to capture explosive recoveries.
+    \item \textbf{Return Trade-off:} Conservatism reduces pooled return from $26.93\%$ to $20.97\%$ (improved in $1/4$ folds). Regularisation limits churn and drawdown, but penalises rapid reallocations needed to capture explosive recoveries \citep{wang2025risk}.
 \end{itemize}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[height=3.4cm,keepaspectratio]{figures/turnover_cost.png}
+\includegraphics[width=0.70\textwidth]{figures/turnover_cost.png}
 \caption{Average daily turnover and total transaction costs (\% of initial capital $V_0$) across models.}
 \label{fig:turnover_cost}
 \end{figure}
@@ -109,8 +111,8 @@ Table~\ref{tab:per_fold_results} reports out-of-sample cumulative returns across
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
+\small
+\setlength{\tabcolsep}{6pt}
 \caption{Out-of-sample cumulative return (\%) per walk-forward fold (mean $\pm$ standard deviation over seeds).}
 \label{tab:per_fold_results}
 \begin{tabular}{lccccc}
@@ -129,26 +131,29 @@ Fold 4 (2024--2025) & $15.0 \pm 4.2$ & $18.7 \pm 1.3$ & $24.7 \pm 3.6$ & $15.1 \
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.72\textwidth]{figures/equity_per_fold.png}
+\includegraphics[width=0.98\textwidth]{figures/equity_per_fold.png}
 \caption{Cumulative out-of-sample portfolio profit across the four two-year test windows (mean across random seeds; initial capital $V_0 = \text{INR } 1{,}000{,}000$; y-axis denotes profit in INR; January 2026 marks the final tick for data ending December 2025).}
 \label{fig:equity_per_fold}
 \end{figure}
 
 Performance varies across market regimes:
-\textbf{Fold 1 (2018--2019):} Moderate growth; M2 leads RL agents ($17.8\%$), M3 lags ($4.4\%$), and Equal-Weight leads at $24.9\%$. 
-\textbf{Fold 2 (2020--2021):} Pandemic shock and rapid recovery; M2 ($44.8\%$) and M3 ($44.1\%$) capture upside, whereas M4 lags ($28.5\%$) due to constrained repositioning. 
-\textbf{Fold 3 (2022--2023):} Tightening and sector rotation; M3 achieves its highest return ($34.5\%$, Sharpe $1.328$), outperforming M2 ($31.6\%$) and M4 ($28.3\%$). 
-\textbf{Fold 4 (2024--2025):} Secular bull market; M3 delivers $24.7\%$, while M4 ($15.1\%$) remains constrained.
+\begin{itemize}
+    \setlength{\itemsep}{2pt}
+    \item \textbf{Fold 1 (2018--2019):} Moderate growth; M2 leads RL agents ($17.8\%$), M3 lags ($4.4\%$), and Equal-Weight leads at $24.9\%$.
+    \item \textbf{Fold 2 (2020--2021):} Pandemic shock and rapid recovery; M2 ($44.8\%$) and M3 ($44.1\%$) capture upside, whereas M4 lags ($28.5\%$) due to constrained repositioning.
+    \item \textbf{Fold 3 (2022--2023):} Tightening and sector rotation; M3 achieves its highest return ($34.5\%$, Sharpe $1.328$), outperforming M2 ($31.6\%$) and M4 ($28.3\%$).
+    \item \textbf{Fold 4 (2024--2025):} Secular bull market; M3 delivers $24.7\%$, while M4 ($15.1\%$) remains constrained.
+\end{itemize}
 
 \section{Equal-Weight Benchmark Outperformance and Gap Decomposition}
 The passive Equal-Weight benchmark produced higher cumulative returns than every RL model across all test windows. We distinguish between the \textbf{pooled average 2-year fold return} ($36.48\%$ in Table~\ref{tab:overall_results}) and the \textbf{compounded 8-year return across the chained 2018--2025 timeline} ($135.66\%$ in Table~\ref{tab:gap_decomp}).
 
-Table~\ref{tab:gap_decomp} decomposes the chained cumulative return gap between each model and Equal-Weight into two exploratory components: (i)~\textbf{Cash Drag}: return forfeited by holding cash in an upward-trending market (evaluated against a counterfactual ``EW Same Cash'' portfolio); and (ii)~\textbf{Stock Selection and Timing}: difference between model return and ``EW Same Cash'', reflecting active equity weights. Average allocations are presented in Table~\ref{tab:avg_weights}.
+Table~\ref{tab:gap_decomp} decomposes the chained cumulative return gap between each model and Equal-Weight into two exploratory components: (i)~\textbf{Cash Drag}: return forfeited by holding cash in an upward-trending market (evaluated against a counterfactual ``EW Same Cash'' portfolio); and (ii)~\textbf{Stock Selection and Timing}: difference between model return and ``EW Same Cash'', reflecting active equity weights. Average asset allocations are presented in Table~\ref{tab:avg_weights}.
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3.5pt}
+\small
+\setlength{\tabcolsep}{6pt}
 \caption{Exploratory decomposition of cumulative out-of-sample return gap against Equal-Weight (\% points over the chained 2018--2025 timeline).}
 \label{tab:gap_decomp}
 \begin{tabular}{lccccc}
@@ -165,8 +170,8 @@ Table~\ref{tab:gap_decomp} decomposes the chained cumulative return gap between 
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{2.5pt}
+\footnotesize
+\setlength{\tabcolsep}{3.8pt}
 \caption{Average asset allocations across models over the out-of-sample evaluation period.}
 \label{tab:avg_weights}
 \begin{tabular}{lccccccccccc}
@@ -189,18 +194,20 @@ Figure~\ref{fig:m4_sweep} depicts the parameter sweep over $\lambda_{\text{turn}
 
 \begin{figure}[htbp]
 \centering
-\begin{minipage}{0.48\textwidth}
+\begin{minipage}{0.49\textwidth}
 \centering
-\includegraphics[height=2.8cm,keepaspectratio]{figures/m4_lambda_sweep.png}
+\includegraphics[width=\textwidth]{figures/m4_lambda_sweep.png}
 \caption{M4 turnover penalty parameter sweep on Fold 1 validation (chosen $\lambda=0.1$ shaded).}
 \label{fig:m4_sweep}
 \end{minipage}\hfill
-\begin{minipage}{0.48\textwidth}
+\begin{minipage}{0.49\textwidth}
 \centering
-\includegraphics[height=2.8cm,keepaspectratio]{figures/validation_curves.png}
+\includegraphics[width=\textwidth]{figures/validation_curves.png}
 \caption{Validation Sharpe and turnover dynamics over 300,000 steps.}
 \label{fig:val_curves}
 \end{minipage}
 \end{figure}
 
-The preliminary sweep indicated that $\lambda = 0.1$ achieved a favorable trade-off on Fold 1 validation, reducing validation turnover while maintaining Sharpe ratio. At $\lambda = 0.01$, turnover remained elevated ($0.040$), whereas at $\lambda = 0.3$, reallocations were overly restricted. We disclose as an experimental limitation that $\lambda_{\text{turn}} = 0.1$ was selected based on preliminary validation tuning on Fold 1 alone across two seeds and applied frozen across all subsequent folds. Finally, Figure~\ref{fig:val_curves} demonstrates that validation performance peaks between 50,000 and 100,000 steps before degrading, highlighting the necessity of checkpoint selection based on validation Sharpe ratio rather than relying on the final training step.
+The preliminary sweep indicated that $\lambda = 0.1$ achieved a favorable trade-off on Fold 1 validation, reducing validation turnover while maintaining Sharpe ratio. At $\lambda = 0.01$, turnover remained elevated ($0.040$), whereas at $\lambda = 0.3$, reallocations were overly restricted. We disclose as an experimental limitation that $\lambda_{\text{turn}} = 0.1$ was selected based on preliminary validation tuning on Fold 1 alone across two seeds and applied frozen across all subsequent folds. 
+
+Finally, Figure~\ref{fig:val_curves} demonstrates that validation performance peaks between 50,000 and 100,000 steps before degrading, highlighting the necessity of checkpoint selection based on validation Sharpe ratio rather than relying on the final training step.
