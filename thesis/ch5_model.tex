@@ -58,11 +58,10 @@ The direct probability density of the continuous multivariate Dirichlet distribu
 \end{equation}
 where $\mathbf{a}_t$ lies on the 11-dimensional unit portfolio simplex $\Delta^{10}$ and the concentration parameters satisfy $\alpha_{i,t} > 0$. Here $\mathbf{s}_t$ denotes the state input to the policy (the instantaneous market observation $\mathbf{s}_t \in \mathbb{R}^{141}$ for the static feedforward baseline M1, or the sequence-encoded representation for recurrent LSTM models M2--M4 \citep{zou2024novel}). PPO evaluates the policy log-probability $\log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)$ to calculate importance-sampling ratios during optimization.
 
-Rebalancing from current weights $\mathbf{w}_t^{\text{cur}}$ to target weights $\mathbf{w}_t^{\text{target}}$ incurs linear transaction costs proportional to equity turnover ($c_{\text{trans}} = 0.001$, i.e., $0.1\%$) \citep{zou2024novel}:
+Rebalancing from current weights $\mathbf{w}_t^{\text{cur}}$ to target weights $\mathbf{w}_t^{\text{target}}$ incurs linear transaction costs proportional to equity turnover ($c_{\text{trans}} = 0.001$, i.e., $0.1\%$): $\text{Turnover}_t = \sum_{i=1}^{10} |w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}}|$, with fee $C_t = c_{\text{trans}} V_t \cdot \text{Turnover}_t$ \citep{zou2024novel}. Portfolio wealth evolves after deducting transaction fees: $V_{t+1} = (V_t - C_t) G_t$, yielding realised net return $R_{\text{net},t} = (V_{t+1} - V_t) / V_t$. Weight drift across trading days is tracked causally using the gross portfolio return factor $G_t$:
 \begin{equation}
-\text{Turnover}_t = \sum_{i=1}^{10} |w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}}|, \quad C_t = c_{\text{trans}} V_t \cdot \text{Turnover}_t \quad \text{\citep{zou2024novel}}.
+G_t = \sum_{i=1}^{10} w_{i,t}^{\text{target}}(1 + R_{i,t+1}) + w_{\text{cash},t}^{\text{target}}, \quad w_{i,t+1}^{\text{cur}} = \frac{w_{i,t}^{\text{target}}(1 + R_{i,t+1})}{G_t}.
 \end{equation}
-Portfolio wealth evolves after deducting transaction fees: $V_{t+1} = (V_t - C_t) \left[ \sum_{i=1}^{10} w_{i,t}^{\text{target}}(1 + R_{i,t+1}) + w_{\text{cash},t}^{\text{target}} \right]$, yielding realised net return $R_{\text{net},t} = (V_{t+1} - V_t) / V_t$. Weight drift across trading days is tracked causally via $w_{i,t+1}^{\text{cur}} = w_{i,t}^{\text{target}}(1 + R_{i,t+1}) / (1 + R_{\text{net},t})$.
 
 \section{Reward Formulations across Models M1 to M4}
 \label{sec:rewards}
@@ -71,13 +70,14 @@ The scalar reward $r_t$ emitted to the agent defines our core ablation dimension
     \item \textbf{Models M1 and M2 (Net Return):} $r_t = R_{\text{net},t}$. The agent directly maximises realised portfolio return after transaction costs.
     \item \textbf{Model M3 (Differential Sharpe Ratio):} $r_t = D_t$, providing an online, recursive approximation of the Sharpe ratio \citep{millea2021deep}:
     \begin{equation}
-    D_t = \frac{B_{t-1} \Delta A_t - \frac{1}{2} A_{t-1} \Delta B_t}{(B_{t-1} - A_{t-1}^2)^{3/2}} \quad \text{\citep{millea2021deep}},
+    D_t = \frac{B_{t-1} \Delta A_t - \frac{1}{2} A_{t-1} \Delta B_t}{(B_{t-1} - A_{t-1}^2 + \epsilon_{\text{dsr}})^{3/2}} \quad \text{\citep{millea2021deep}},
     \end{equation}
-    where running return moments $A_t$ (first moment) and $B_t$ (second moment) update causally with decay $\eta_{\text{dsr}} = 0.05$ \citep{millea2021deep}:
+    where running return moments $A_t$ (first moment) and $B_t$ (second moment) start at $A_0 = 0, B_0 = 0$ and update causally with decay $\eta_{\text{dsr}} = 0.05$ \citep{millea2021deep}:
     \begin{align}
     \Delta A_t &= R_{\text{net},t} - A_{t-1}, & A_t &= A_{t-1} + \eta_{\text{dsr}} \Delta A_t \quad \text{\citep{millea2021deep}}, \\
     \Delta B_t &= R_{\text{net},t}^2 - B_{t-1}, & B_t &= B_{t-1} + \eta_{\text{dsr}} \Delta B_t \quad \text{\citep{millea2021deep}}.
     \end{align}
+    An epsilon safeguard $\epsilon_{\text{dsr}} = 10^{-8}$ is included in the denominator to prevent division by zero during early steps or flat periods.
     \item \textbf{Model M4 (DSR + Quadratic Turnover Regularisation):} $r_t = D_t - \lambda_{\text{turn}} \sum_{i=1}^{10} (w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}})^2$, with $\lambda_{\text{turn}} = 0.1$ \citep{wang2025risk}. The quadratic penalty penalises large reallocations during policy training to suppress excessive churning.
 \end{enumerate}
 
