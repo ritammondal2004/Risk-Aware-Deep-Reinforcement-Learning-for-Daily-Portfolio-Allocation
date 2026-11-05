@@ -151,7 +151,11 @@
 \citation{schulman2017proximal}
 \citation{schulman2017proximal}
 \citation{schulman2017proximal,zou2024novel}
-\citation{schulman2017proximal}
+\citation{schulman2016high}
+\@writefile{toc}{\contentsline {section}{\numberline {5.4}Reward Formulations across Models M1 to M4}{7}{section.5.4}\protected@file@percent }
+\newlabel{sec:rewards}{{5.4}{7}{Reward Formulations across Models M1 to M4}{section.5.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.5}PPO Objective and Policy Optimization}{7}{section.5.5}\protected@file@percent }
+\newlabel{eq:lclip}{{5.10}{7}{PPO Objective and Policy Optimization}{equation.5.10}{}}
 \citation{zou2024novel}
 \citation{schulman2017proximal}
 \citation{schulman2017proximal}
@@ -161,12 +165,6 @@
 \citation{yang2022selective}
 \citation{zou2024novel}
 \citation{schulman2017proximal}
-\@writefile{toc}{\contentsline {section}{\numberline {5.4}Reward Formulations across Models M1 to M4}{7}{section.5.4}\protected@file@percent }
-\newlabel{sec:rewards}{{5.4}{7}{Reward Formulations across Models M1 to M4}{section.5.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.5}PPO Objective and Policy Optimization}{7}{section.5.5}\protected@file@percent }
-\newlabel{eq:lclip}{{5.10}{7}{PPO Objective and Policy Optimization}{equation.5.10}{}}
-\newlabel{eq:total_loss}{{5.12}{7}{PPO Objective and Policy Optimization}{equation.5.12}{}}
-\newlabel{eq:policy_grad}{{5.13}{7}{PPO Objective and Policy Optimization}{equation.5.13}{}}
 \citation{zou2024novel}
 \citation{schulman2017proximal}
 \citation{zou2024novel}
@@ -183,7 +181,8 @@
 \citation{zou2024novel}
 \citation{millea2021deep}
 \citation{wang2025risk}
-\citation{schulman2017proximal}
+\newlabel{eq:total_loss}{{5.14}{8}{PPO Objective and Policy Optimization}{equation.5.14}{}}
+\newlabel{eq:policy_grad}{{5.15}{8}{PPO Objective and Policy Optimization}{equation.5.15}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5.6}PPO Training Parameters}{8}{section.5.6}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {5.1}{\ignorespaces PPO training parameters and operational settings (verified from source code).}}{8}{table.caption.9}\protected@file@percent }
 \newlabel{tab:hyperparameters}{{5.1}{8}{PPO training parameters and operational settings (verified from source code)}{table.caption.9}{}}
@@ -192,58 +191,60 @@
 \@writefile{lot}{\addvspace {10\p@ }}
 \newlabel{ch:ablation}{{6}{8}{Controlled Ablation Study Design}{chapter.6}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {6.1}Specification of Ablation Models M1--M4}{8}{section.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6.2}Control Invariants and Training Algorithm}{8}{section.6.2}\protected@file@percent }
+\citation{schulman2017proximal}
 \@writefile{lot}{\contentsline {table}{\numberline {6.1}{\ignorespaces Systematic ablation matrix across models M1 to M4.}}{9}{table.caption.10}\protected@file@percent }
 \newlabel{tab:ablation_matrix}{{6.1}{9}{Systematic ablation matrix across models M1 to M4}{table.caption.10}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces Complete PPO training algorithm for continuous Dirichlet portfolio allocation.}}{9}{figure.caption.11}\protected@file@percent }
-\newlabel{alg:ppo_portfolio}{{6.1}{9}{Complete PPO training algorithm for continuous Dirichlet portfolio allocation}{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.2}Control Invariants and Training Algorithm}{9}{section.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces Complete PPO training algorithm for continuous Dirichlet portfolio allocation.}}{10}{figure.caption.11}\protected@file@percent }
+\newlabel{alg:ppo_portfolio}{{6.1}{10}{Complete PPO training algorithm for continuous Dirichlet portfolio allocation}{figure.caption.11}{}}
 \citation{zou2024novel}
 \citation{millea2021deep}
-\@writefile{toc}{\contentsline {chapter}{\numberline {7}Results and Discussion}{10}{chapter.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {7}Results and Discussion}{11}{chapter.7}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{ch:results}{{7}{10}{Results and Discussion}{chapter.7}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7.1}Overall Out-of-Sample Performance}{10}{section.7.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7.1}{\ignorespaces Pooled out-of-sample test performance across 4 folds and 3 seeds (mean $\pm $ standard deviation over seeds).}}{10}{table.caption.12}\protected@file@percent }
-\newlabel{tab:overall_results}{{7.1}{10}{Pooled out-of-sample test performance across 4 folds and 3 seeds (mean $\pm $ standard deviation over seeds)}{table.caption.12}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7.1}{\ignorespaces Cumulative out-of-sample profit across chained test windows (2018--2025, starting capital INR 1,000,000).}}{10}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:equity_stitched}{{7.1}{10}{Cumulative out-of-sample profit across chained test windows (2018--2025, starting capital INR 1,000,000)}{figure.caption.13}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7.2}{\ignorespaces Out-of-sample portfolio drawdown from running peak across the chained timeline.}}{10}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:drawdown}{{7.2}{10}{Out-of-sample portfolio drawdown from running peak across the chained timeline}{figure.caption.13}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7.2}Analysis of Ablation Steps}{10}{section.7.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.1}Step 1: Impact of Temporal Memory (M2 versus M1)}{10}{subsection.7.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.2}Step 2: Impact of Differential Sharpe Ratio (M3 versus M2)}{10}{subsection.7.2.2}\protected@file@percent }
+\newlabel{ch:results}{{7}{11}{Results and Discussion}{chapter.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7.1}Overall Out-of-Sample Performance}{11}{section.7.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7.1}{\ignorespaces Pooled out-of-sample test performance across 4 folds and 3 seeds (mean $\pm $ standard deviation over seeds).}}{11}{table.caption.12}\protected@file@percent }
+\newlabel{tab:overall_results}{{7.1}{11}{Pooled out-of-sample test performance across 4 folds and 3 seeds (mean $\pm $ standard deviation over seeds)}{table.caption.12}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7.1}{\ignorespaces Cumulative out-of-sample profit across chained test windows (2018--2025, starting capital INR 1,000,000).}}{11}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:equity_stitched}{{7.1}{11}{Cumulative out-of-sample profit across chained test windows (2018--2025, starting capital INR 1,000,000)}{figure.caption.13}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7.2}{\ignorespaces Out-of-sample portfolio drawdown from running peak across the chained timeline.}}{11}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:drawdown}{{7.2}{11}{Out-of-sample portfolio drawdown from running peak across the chained timeline}{figure.caption.13}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7.2}Analysis of Ablation Steps}{11}{section.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.1}Step 1: Impact of Temporal Memory (M2 versus M1)}{11}{subsection.7.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.2}Step 2: Impact of Differential Sharpe Ratio (M3 versus M2)}{11}{subsection.7.2.2}\protected@file@percent }
 \citation{wang2025risk}
-\@writefile{lot}{\contentsline {table}{\numberline {7.2}{\ignorespaces Paired ablation differences ($b - a$) with 95\% bootstrap confidence intervals across 12 (fold, seed) pairs.}}{11}{table.caption.14}\protected@file@percent }
-\newlabel{tab:ablation_deltas}{{7.2}{11}{Paired ablation differences ($b - a$) with 95\% bootstrap confidence intervals across 12 (fold, seed) pairs}{table.caption.14}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.3}Step 3: Impact of Turnover Regularisation (M4 versus M3)}{11}{subsection.7.2.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {7.3}{\ignorespaces Average daily turnover and total transaction costs (\% of initial capital $V_0$) across models.}}{11}{figure.caption.15}\protected@file@percent }
-\newlabel{fig:turnover_cost}{{7.3}{11}{Average daily turnover and total transaction costs (\% of initial capital $V_0$) across models}{figure.caption.15}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7.3}Fold-by-Fold Performance Dynamics}{11}{section.7.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7.3}{\ignorespaces Out-of-sample cumulative return (\%) per walk-forward fold (mean $\pm $ standard deviation over seeds).}}{12}{table.caption.16}\protected@file@percent }
-\newlabel{tab:per_fold_results}{{7.3}{12}{Out-of-sample cumulative return (\%) per walk-forward fold (mean $\pm $ standard deviation over seeds)}{table.caption.16}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7.4}{\ignorespaces Cumulative out-of-sample portfolio profit across the four two-year test windows (mean across random seeds; initial capital $V_0 = \text  {INR } 1{,}000{,}000$; y-axis denotes profit in INR; January 2026 marks the final tick for data ending December 2025).}}{12}{figure.caption.17}\protected@file@percent }
-\newlabel{fig:equity_per_fold}{{7.4}{12}{Cumulative out-of-sample portfolio profit across the four two-year test windows (mean across random seeds; initial capital $V_0 = \text {INR } 1{,}000{,}000$; y-axis denotes profit in INR; January 2026 marks the final tick for data ending December 2025)}{figure.caption.17}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7.4}Equal-Weight Benchmark Outperformance and Gap Decomposition}{13}{section.7.4}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {7.4}{\ignorespaces Exploratory decomposition of cumulative out-of-sample return gap against Equal-Weight (\% points over the chained 2018--2025 timeline).}}{13}{table.caption.18}\protected@file@percent }
-\newlabel{tab:gap_decomp}{{7.4}{13}{Exploratory decomposition of cumulative out-of-sample return gap against Equal-Weight (\% points over the chained 2018--2025 timeline)}{table.caption.18}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7.5}{\ignorespaces Average asset allocations across models over the out-of-sample evaluation period.}}{13}{table.caption.19}\protected@file@percent }
-\newlabel{tab:avg_weights}{{7.5}{13}{Average asset allocations across models over the out-of-sample evaluation period}{table.caption.19}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7.5}M4 Hyperparameter Tuning and Validation Dynamics}{13}{section.7.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7.2}{\ignorespaces Paired ablation differences ($b - a$) with 95\% bootstrap confidence intervals across 12 (fold, seed) pairs.}}{12}{table.caption.14}\protected@file@percent }
+\newlabel{tab:ablation_deltas}{{7.2}{12}{Paired ablation differences ($b - a$) with 95\% bootstrap confidence intervals across 12 (fold, seed) pairs}{table.caption.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2.3}Step 3: Impact of Turnover Regularisation (M4 versus M3)}{12}{subsection.7.2.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7.3}{\ignorespaces Average daily turnover and total transaction costs (\% of initial capital $V_0$) across models.}}{12}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:turnover_cost}{{7.3}{12}{Average daily turnover and total transaction costs (\% of initial capital $V_0$) across models}{figure.caption.15}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7.3}Fold-by-Fold Performance Dynamics}{12}{section.7.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7.3}{\ignorespaces Out-of-sample cumulative return (\%) per walk-forward fold (mean $\pm $ standard deviation over seeds).}}{13}{table.caption.16}\protected@file@percent }
+\newlabel{tab:per_fold_results}{{7.3}{13}{Out-of-sample cumulative return (\%) per walk-forward fold (mean $\pm $ standard deviation over seeds)}{table.caption.16}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7.4}{\ignorespaces Cumulative out-of-sample portfolio profit across the four two-year test windows (mean across random seeds; initial capital $V_0 = \text  {INR } 1{,}000{,}000$; y-axis denotes profit in INR; January 2026 marks the final tick for data ending December 2025).}}{13}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:equity_per_fold}{{7.4}{13}{Cumulative out-of-sample portfolio profit across the four two-year test windows (mean across random seeds; initial capital $V_0 = \text {INR } 1{,}000{,}000$; y-axis denotes profit in INR; January 2026 marks the final tick for data ending December 2025)}{figure.caption.17}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7.4}Equal-Weight Benchmark Outperformance and Gap Decomposition}{14}{section.7.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7.4}{\ignorespaces Exploratory decomposition of cumulative out-of-sample return gap against Equal-Weight (\% points over the chained 2018--2025 timeline).}}{14}{table.caption.18}\protected@file@percent }
+\newlabel{tab:gap_decomp}{{7.4}{14}{Exploratory decomposition of cumulative out-of-sample return gap against Equal-Weight (\% points over the chained 2018--2025 timeline)}{table.caption.18}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7.5}{\ignorespaces Average asset allocations across models over the out-of-sample evaluation period.}}{14}{table.caption.19}\protected@file@percent }
+\newlabel{tab:avg_weights}{{7.5}{14}{Average asset allocations across models over the out-of-sample evaluation period}{table.caption.19}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7.5}M4 Hyperparameter Tuning and Validation Dynamics}{14}{section.7.5}\protected@file@percent }
 \bibstyle{plainnat}
 \bibdata{references}
 \bibcite{liu2024dynamic}{{1}{2024}{{Liu et~al.}}{{Liu, Xia, Yang, Gao, Zha, Zhu, Wang, Wang, and Guo}}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7.5}{\ignorespaces M4 turnover penalty parameter sweep on Fold 1 validation (chosen $\lambda =0.1$ shaded).}}{14}{figure.caption.20}\protected@file@percent }
-\newlabel{fig:m4_sweep}{{7.5}{14}{M4 turnover penalty parameter sweep on Fold 1 validation (chosen $\lambda =0.1$ shaded)}{figure.caption.20}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7.6}{\ignorespaces Validation Sharpe and turnover dynamics over 300,000 steps.}}{14}{figure.caption.20}\protected@file@percent }
-\newlabel{fig:val_curves}{{7.6}{14}{Validation Sharpe and turnover dynamics over 300,000 steps}{figure.caption.20}{}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {8}Conclusion}{14}{chapter.8}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7.5}{\ignorespaces M4 turnover penalty parameter sweep on Fold 1 validation (chosen $\lambda =0.1$ shaded).}}{15}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:m4_sweep}{{7.5}{15}{M4 turnover penalty parameter sweep on Fold 1 validation (chosen $\lambda =0.1$ shaded)}{figure.caption.20}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7.6}{\ignorespaces Validation Sharpe and turnover dynamics over 300,000 steps.}}{15}{figure.caption.20}\protected@file@percent }
+\newlabel{fig:val_curves}{{7.6}{15}{Validation Sharpe and turnover dynamics over 300,000 steps}{figure.caption.20}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {8}Conclusion}{15}{chapter.8}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\newlabel{ch:conclusion}{{8}{14}{Conclusion}{chapter.8}{}}
+\newlabel{ch:conclusion}{{8}{15}{Conclusion}{chapter.8}{}}
 \bibcite{millea2021deep}{{2}{2021}{{Millea}}{{}}}
-\bibcite{schulman2017proximal}{{3}{2017}{{Schulman et~al.}}{{Schulman, Wolski, Dhariwal, Radford, and Klimov}}}
-\bibcite{wang2025risk}{{4}{2025}{{Wang and Liu}}{{}}}
-\bibcite{yang2022selective}{{5}{2022}{{Yang et~al.}}{{Yang, Park, and Lee}}}
-\bibcite{zou2024novel}{{6}{2024}{{Zou et~al.}}{{Zou, Lou, Wang, and Liu}}}
-\gdef \@abspage@last{20}
+\bibcite{schulman2016high}{{3}{2016}{{Schulman et~al.}}{{Schulman, Moritz, Levine, Jordan, and Abbeel}}}
+\bibcite{schulman2017proximal}{{4}{2017}{{Schulman et~al.}}{{Schulman, Wolski, Dhariwal, Radford, and Klimov}}}
+\bibcite{wang2025risk}{{5}{2025}{{Wang and Liu}}{{}}}
+\bibcite{yang2022selective}{{6}{2022}{{Yang et~al.}}{{Yang, Park, and Lee}}}
+\bibcite{zou2024novel}{{7}{2024}{{Zou et~al.}}{{Zou, Lou, Wang, and Liu}}}
+\gdef \@abspage@last{21}

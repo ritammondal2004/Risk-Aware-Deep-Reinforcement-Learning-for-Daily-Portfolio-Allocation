@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  5 NOV 2026 17:33
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  5 NOV 2026 20:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -584,24 +584,24 @@ Package pdftex.def Info: figures/pipeline.png  used on input line 17.
 [5 <./figures/walk_forward_schematic.png>] [6 <./figures/architecture.png (PNG 
 copy)> <./figures/pipeline.png (PNG copy)>] [7]) (ch6_ablation.tex
 Chapter 6.
-
+[8]
 Overfull \hbox (3.62001pt too wide) in paragraph at lines 21--38
  [][] 
  []
 
-[8]) [9] (ch7_results.tex
+) [9] [10] (ch7_results.tex
 Chapter 7.
 
 Overfull \hbox (56.08704pt too wide) in paragraph at lines 13--25
  [][] 
  []
 
-<figures/equity_stitched.png, id=536, 612.74635pt x 335.53929pt>
+<figures/equity_stitched.png, id=543, 612.74635pt x 335.53929pt>
 File: figures/equity_stitched.png Graphic file (type png)
 <use figures/equity_stitched.png>
 Package pdftex.def Info: figures/equity_stitched.png  used on input line 35.
 (pdftex.def)             Requested size: 239.80252pt x 131.31546pt.
-<figures/drawdown.png, id=537, 616.35986pt x 268.94765pt>
+<figures/drawdown.png, id=544, 616.35986pt x 268.94765pt>
 File: figures/drawdown.png Graphic file (type png)
 <use figures/drawdown.png>
 Package pdftex.def Info: figures/drawdown.png  used on input line 41.
@@ -611,27 +611,27 @@ Overfull \hbox (83.32259pt too wide) in paragraph at lines 56--86
  [][] 
  []
 
-[10
+[11
 
  <./figures/equity_stitched.png> <./figures/drawdown.png>]
-<figures/turnover_cost.png, id=553, 787.743pt x 281.33679pt>
+<figures/turnover_cost.png, id=560, 787.743pt x 281.33679pt>
 File: figures/turnover_cost.png Graphic file (type png)
 <use figures/turnover_cost.png>
 Package pdftex.def Info: figures/turnover_cost.png  used on input line 104.
 (pdftex.def)             Requested size: 342.56969pt x 122.34616pt.
-<figures/equity_per_fold.png, id=556, 1648.1575pt x 961.5925pt>
+<figures/equity_per_fold.png, id=563, 1648.1575pt x 961.5925pt>
 File: figures/equity_per_fold.png Graphic file (type png)
 <use figures/equity_per_fold.png>
 Package pdftex.def Info: figures/equity_per_fold.png  used on input line 134.
 (pdftex.def)             Requested size: 479.59758pt x 279.80841pt.
- [11 <./figures/turnover_cost.png>] [12 <./figures/equity_per_fold.png (PNG cop
+ [12 <./figures/turnover_cost.png>] [13 <./figures/equity_per_fold.png (PNG cop
 y)>]
-<figures/m4_lambda_sweep.png, id=575, 722.7pt x 505.89pt>
+<figures/m4_lambda_sweep.png, id=582, 722.7pt x 505.89pt>
 File: figures/m4_lambda_sweep.png Graphic file (type png)
 <use figures/m4_lambda_sweep.png>
 Package pdftex.def Info: figures/m4_lambda_sweep.png  used on input line 199.
 (pdftex.def)             Requested size: 239.80252pt x 167.8628pt.
-<figures/validation_curves.png, id=576, 855.88329pt x 280.30435pt>
+<figures/validation_curves.png, id=583, 855.88329pt x 280.30435pt>
 File: figures/validation_curves.png Graphic file (type png)
 <use figures/validation_curves.png>
 Package pdftex.def Info: figures/validation_curves.png  used on input line 205.
@@ -640,8 +640,8 @@ Package pdftex.def Info: figures/validation_curves.png  used on input line 205.
 )
 (ch8_conclusion.tex
 Chapter 8.
-[13]) (main.bbl [14 <./figures/m4_lambda_sweep.png> <./figures/validation_curve
-s.png>]) [15] (main.aux)
+[14]) (main.bbl [15 <./figures/m4_lambda_sweep.png> <./figures/validation_curve
+s.png>]) [16] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -650,10 +650,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: B354E08D4E15E2507DAA2EDDEEA1FB98;6892.
  ) 
 Here is how much of TeX's memory you used:
- 13287 strings out of 467871
- 209393 string characters out of 5418861
- 656611 words of memory out of 5000000
- 41803 multiletter control sequences out of 15000+600000
+ 13294 strings out of 467871
+ 209519 string characters out of 5418861
+ 647690 words of memory out of 5000000
+ 41806 multiletter control sequences out of 15000+600000
  643741 words of font info for 97 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,17n,83p,984b,565s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -698,9 +698,9 @@ msfonts/cm/cmti9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/p
 ublic/amsfonts/cm/cmtt10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts
 /type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/DELL/AppData/Local/Programs
 /MiKTeX/fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on main.pdf (20 pages, 5738062 bytes).
+Output written on main.pdf (21 pages, 5743449 bytes).
 PDF statistics:
- 778 PDF objects out of 1000 (max. 8388607)
- 138 named destinations out of 1000 (max. 500000)
+ 787 PDF objects out of 1000 (max. 8388607)
+ 142 named destinations out of 1000 (max. 500000)
  299 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -78,7 +78,7 @@ The scalar reward $r_t$ emitted to the agent defines our core ablation dimension
     \Delta B_t &= R_{\text{net},t}^2 - B_{t-1}, & B_t &= B_{t-1} + \eta_{\text{dsr}} \Delta B_t \quad \text{\citep{millea2021deep}}.
     \end{align}
     An epsilon safeguard $\epsilon_{\text{dsr}} = 10^{-8}$ is included in the denominator to prevent division by zero during early steps or flat periods.
-    \item \textbf{Model M4 (DSR + Quadratic Turnover Regularisation):} $r_t = D_t - \lambda_{\text{turn}} \sum_{i=1}^{10} (w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}})^2$, with $\lambda_{\text{turn}} = 0.1$ \citep{wang2025risk}. The quadratic penalty penalises large reallocations during policy training to suppress excessive churning.
+    \item \textbf{Model M4 (DSR + Quadratic Turnover Regularisation):} $r_t = D_t - \lambda_{\text{turn}} \sum_{i=1}^{10} (w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}})^2$, with $\lambda_{\text{turn}} = 0.1$ ($\lambda_{\text{turn}} = 0.1$ was selected through preliminary fine-tuning during training using validation performance) \citep{wang2025risk}. The quadratic penalty penalises large reallocations during policy training to suppress excessive churning.
 \end{enumerate}
 
 \section{PPO Objective and Policy Optimization}
@@ -91,7 +91,17 @@ where $\epsilon = 0.2$ is the clipping parameter \citep{schulman2017proximal, zo
 \begin{equation}
 \rho_t(\theta) = \frac{\pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)}{\pi_{\theta_{\text{old}}}(\mathbf{a}_t \mid \mathbf{s}_t)},
 \end{equation}
-conditioned on state $\mathbf{s}_t$ (instantaneous observation for M1 or the sequence-encoded representation for recurrent models M2--M4). The advantage $\hat{A}_t$ is estimated using Generalized Advantage Estimation (GAE-$\lambda$) with trace decay $\lambda_{\text{GAE}} = 0.95$ and discount factor $\gamma = 0.99$ \citep{schulman2017proximal}. PPO maximizes this clipped surrogate objective to constrain policy updates within a trusted $[1-\epsilon, 1+\epsilon]$ neighborhood, preventing destructive policy shifts under noisy financial return realizations.
+conditioned on state $\mathbf{s}_t$ (instantaneous observation for M1 or the sequence-encoded representation for recurrent models M2--M4). The advantage $\hat{A}_t$ is computed using Generalized Advantage Estimation (GAE) \citep{schulman2016high}. The temporal-difference error at step $t$ is:
+\begin{equation}
+\delta_t = r_t + \gamma V_\phi(\mathbf{s}_{t+1}) - V_\phi(\mathbf{s}_t),
+\end{equation}
+and the advantage estimate over the rollout horizon is given by:
+\begin{equation}
+\boxed{
+\hat{A}_t^{\text{GAE}(\gamma, \lambda)} = \sum_{l=0}^{T_{\text{rollout}} - t - 1} (\gamma \lambda)^l \delta_{t+l}
+}
+\end{equation}
+where $r_t$ is the reward at time $t$, $\gamma = 0.99$ is the discount factor, $\lambda = \lambda_{\text{GAE}} = 0.95$ is the GAE smoothing parameter, $V_\phi(\mathbf{s}_t)$ is the critic's value estimate, $\delta_t$ is the temporal-difference error, and $\hat{A}_t$ is the estimated advantage. In our implementation, the summation limit runs over the rollout buffer of length $T_{\text{rollout}} = 128$ ($l = 0, \dots, T_{\text{rollout}}-t-1$), and terminal-state handling cuts the recursion at segment boundaries by using the bootstrap value $V_\phi(\mathbf{s}_{\text{final}})$ and zeroing subsequent trace accumulation. PPO maximizes this clipped surrogate objective to constrain policy updates within a trusted $[1-\epsilon, 1+\epsilon]$ neighborhood, preventing destructive policy shifts under noisy financial return realizations.
 
 To jointly train the shared encoder, actor, and critic parameters, the network minimizes the combined multi-task loss function:
 \begin{equation}

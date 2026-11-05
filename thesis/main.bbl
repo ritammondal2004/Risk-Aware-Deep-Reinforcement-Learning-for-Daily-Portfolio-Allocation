@@ -1,4 +1,4 @@
-\begin{thebibliography}{6}
+\begin{thebibliography}{7}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -19,6 +19,15 @@ Adrian Millea.
 \newblock Deep reinforcement learning for trading---a critical survey.
 \newblock \emph{Data}, 6\penalty0 (11):\penalty0 119, 2021.
 \newblock \doi{10.3390/data6110119}.
+
+\bibitem[Schulman et~al.(2016)Schulman, Moritz, Levine, Jordan, and
+  Abbeel]{schulman2016high}
+John Schulman, Philipp Moritz, Sergey Levine, Michael Jordan, and Pieter
+  Abbeel.
+\newblock High-dimensional continuous control using generalized advantage
+  estimation.
+\newblock \emph{arXiv preprint arXiv:1506.02438}, 2016.
+\newblock URL \url{https://arxiv.org/abs/1506.02438}.
 
 \bibitem[Schulman et~al.(2017)Schulman, Wolski, Dhariwal, Radford, and
   Klimov]{schulman2017proximal}
