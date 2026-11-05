@@ -60,7 +60,14 @@ Algorithm~1 outlines the complete training procedure implemented in our codebase
     \item \quad \textbf{for} $t = 1$ \textbf{to} $T_{\text{rollout}} = 128$ \textbf{do}
     \item \qquad Compute $\mathbf{h}_t \gets \text{Encoder}(\mathbf{s}_t)$ for M1 (observing instantaneous state $\mathbf{s}_t \in \mathbb{R}^{141}$) or $\text{Encoder}(\mathbf{F}_t)$ for M2--M4 (observing sequence $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$ from $t-T+1$ to $t$).
     \item \qquad Compute $\boldsymbol{\ell}_t \gets \operatorname{clip}(\mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a, -3, 6)$ and concentration parameters $\boldsymbol{\alpha}_t \gets \exp(\boldsymbol{\ell}_t)$.
-    \item \qquad Sample raw continuous action $\mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t)$ via Gamma variates; evaluate $lp_t \gets \log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)$ and $V_t \gets V_\phi(\mathbf{s}_t)$.
+    \item \qquad Sample raw continuous action $\mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t)$ via Gamma variates; evaluate:
+    \[
+    \begin{aligned}
+    lp_t &\gets \log\pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t), \quad V_t \gets V_\phi(\mathbf{s}_t), &&\text{for M1}, \\
+    lp_t &\gets \log\pi_\theta(\mathbf{a}_t \mid \mathbf{F}_t), \quad V_t \gets V_\phi(\mathbf{F}_t), &&\text{for M2--M4},
+    \end{aligned}
+    \]
+    where $\mathbf{F}_t$ is the 30-day historical sequence processed by the shared LSTM encoder.
     \item \qquad Apply execution threshold: $\tilde{w}_{i,t} \gets a_{i,t} \cdot \mathbf{1}_{a_{i,t} \ge \tau}$; set executed target weights $\mathbf{w}_t^{\text{target}} \gets \tilde{\mathbf{w}}_t / \sum_j \tilde{w}_{j,t}$.
     \item \qquad Rebalance: $\text{Turnover}_t \gets \sum_{i=1}^{10} |w_{i,t}^{\text{target}} - w_{i,t}^{\text{cur}}|$, fee $C_t \gets c_{\text{trans}} V_t \text{Turnover}_t$.
     \item \qquad Advance environment: update wealth $V_{t+1}$, net return $R_{\text{net},t} \gets (V_{t+1}-V_t)/V_t$, and drifted weights $\mathbf{w}_{t+1}^{\text{cur}}$.

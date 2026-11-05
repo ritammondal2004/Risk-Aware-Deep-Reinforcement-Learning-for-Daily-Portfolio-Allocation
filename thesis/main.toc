@@ -21,10 +21,10 @@
 \contentsline {section}{\numberline {5.3}Continuous Dirichlet Policy and Execution Logic}{6}{section.5.3}%
 \contentsline {section}{\numberline {5.4}Reward Formulations across Models M1 to M4}{7}{section.5.4}%
 \contentsline {section}{\numberline {5.5}PPO Objective and Policy Optimization}{7}{section.5.5}%
-\contentsline {section}{\numberline {5.6}PPO Training Parameters}{8}{section.5.6}%
-\contentsline {chapter}{\numberline {6}Controlled Ablation Study Design}{8}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Specification of Ablation Models M1--M4}{8}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Control Invariants and Training Algorithm}{9}{section.6.2}%
+\contentsline {section}{\numberline {5.6}PPO Training Parameters}{9}{section.5.6}%
+\contentsline {chapter}{\numberline {6}Controlled Ablation Study Design}{9}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Specification of Ablation Models M1--M4}{9}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Control Invariants and Training Algorithm}{10}{section.6.2}%
 \contentsline {chapter}{\numberline {7}Results and Discussion}{11}{chapter.7}%
 \contentsline {section}{\numberline {7.1}Overall Out-of-Sample Performance}{11}{section.7.1}%
 \contentsline {section}{\numberline {7.2}Analysis of Ablation Steps}{11}{section.7.2}%

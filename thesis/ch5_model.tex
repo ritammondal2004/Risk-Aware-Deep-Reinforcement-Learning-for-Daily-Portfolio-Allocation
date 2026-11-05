@@ -73,7 +73,7 @@ The scalar reward $r_t$ emitted to the agent defines our core ablation dimension
     \begin{equation}
     D_t = \frac{B_{t-1} \Delta A_t - \frac{1}{2} A_{t-1} \Delta B_t}{(B_{t-1} - A_{t-1}^2 + \epsilon_{\text{dsr}})^{3/2}} \quad \text{\citep{millea2021deep}},
     \end{equation}
-    where running return moments $A_t$ (first moment) and $B_t$ (second moment) start at $A_0 = 0, B_0 = 0$ and update causally with decay $\eta_{\text{dsr}} = 0.05$ \citep{millea2021deep}:
+    where running return moments $A_t$ (first moment) and $B_t$ (second moment) start at $A_0 = 0, B_0 = 0$ and update causally with decay $\eta_{\text{dsr}} = 0.01$ \citep{millea2021deep}:
     \begin{align}
     \Delta A_t &= R_{\text{net},t} - A_{t-1}, & A_t &= A_{t-1} + \eta_{\text{dsr}} \Delta A_t \quad \text{\citep{millea2021deep}}, \\
     \Delta B_t &= R_{\text{net},t}^2 - B_{t-1}, & B_t &= B_{t-1} + \eta_{\text{dsr}} \Delta B_t \quad \text{\citep{millea2021deep}}.
@@ -127,10 +127,11 @@ For an unclipped transition $J_t(\theta) = \rho_t(\theta) \hat{A}_t$, differenti
 \end{equation}
 Equation~\eqref{eq:policy_grad} demonstrates that the gradient step is directed by the advantage estimate $\hat{A}_t$ and scaled by the importance weight $\rho_t(\theta)$, adjusting the Dirichlet concentration mapping to shift probability density toward higher-yielding allocations on $\Delta^{10}$ \citep{yang2022selective}, where the shared encoder processes the instantaneous state $\mathbf{s}_t$ for M1 or the historical sequence $\mathbf{F}_t$ for M2--M4. Optimization is carried out via Adam ($\eta = 10^{-4}$) with gradient norm clipping at $0.5$ \citep{zou2024novel} and early stopping when approximate KL divergence exceeds $1.5 \times \text{target\_kl} = 0.03$ \citep{schulman2017proximal}.
 
+\newpage
 \section{PPO Training Parameters}
 Table~\ref{tab:hyperparameters} summarizes all PPO hyperparameters extracted directly from our codebase.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
