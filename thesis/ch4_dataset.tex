@@ -11,8 +11,9 @@ For each asset $i \in \{1, \dots, 10\}$ on trading day $t$, a 13-dimensional fea
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
+\small
+\renewcommand{\arraystretch}{1.18}
+\setlength{\tabcolsep}{4.5pt}
 \caption{The 13 technical features computed daily for each equity asset ($i \in \{1,\dots,10\}$).}
 \label{tab:features_summary}
 \begin{tabularx}{\textwidth}{cllX}
@@ -51,8 +52,9 @@ Following \citet{liu2024dynamic}, the agents are evaluated using an 8-year rolli
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
+\small
+\renewcommand{\arraystretch}{1.18}
+\setlength{\tabcolsep}{4.5pt}
 \caption{Chronological specification of the four walk-forward folds.}
 \label{tab:folds_overview}
 \begin{tabularx}{\textwidth}{c>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}Xcc}
@@ -81,11 +83,12 @@ We evaluate out-of-sample portfolio performance using seven standard financial a
 
 \begin{table}[htbp]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
+\small
+\renewcommand{\arraystretch}{1.18}
+\setlength{\tabcolsep}{4.5pt}
 \caption{Summary of evaluation measures used in out-of-sample portfolio assessment.}
 \label{tab:eval_measures}
-\begin{tabularx}{\textwidth}{p{2.6cm}p{5.4cm}>{\raggedright\arraybackslash}X}
+\begin{tabularx}{\textwidth}{p{2.6cm}p{5.5cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Metric} & \textbf{Mathematical Definition} & \textbf{Interpretation / Citation} \\
 \midrule

@@ -25,10 +25,12 @@ As shown in Figures~\ref{fig:architecture} and~\ref{fig:pipeline}, the actor and
 \section{Encoder Backbones: MLP versus LSTM}
 To evaluate the contribution of temporal sequence modeling, two encoder backbones are compared. Model M1 uses the instantaneous state $\mathbf{s}_t \in \mathbb{R}^{141}$ as input, whereas Models M2--M4 use the historical sequence $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$ as input to the recurrent LSTM encoder:
 \begin{itemize}
-    \item \textbf{MLP Encoder (Model M1):} A static two-layer feedforward network observing solely the instantaneous state $\mathbf{s}_t \in \mathbb{R}^{141}$. Intermediate latent representations $\mathbf{h}_t \in \mathbb{R}^{512}$ and actor output $\mathbf{z}_t \in \mathbb{R}^{11}$ are computed via:
-    \begin{equation}
-    \mathbf{h}_t = \tanh\left( \mathbf{W}_2 \tanh(\mathbf{W}_1 \mathbf{s}_t + \mathbf{b}_1) + \mathbf{b}_2 \right), \quad \mathbf{z}_t = \mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a,
-    \end{equation}
+    \item \textbf{MLP Encoder (Model M1):} A static two-layer feedforward network observing solely the instantaneous state $\mathbf{s}_t \in \mathbb{R}^{141}$. Intermediate latent representations $\mathbf{h}_{1,t}, \mathbf{h}_t \in \mathbb{R}^{512}$ and actor output $\mathbf{z}_t \in \mathbb{R}^{11}$ are computed via:
+    \begin{align}
+    \mathbf{h}_{1,t} &= \tanh(\mathbf{W}_1 \mathbf{s}_t + \mathbf{b}_1), \\
+    \mathbf{h}_t &= \tanh(\mathbf{W}_2 \mathbf{h}_{1,t} + \mathbf{b}_2), \\
+    \mathbf{z}_t &= \mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a,
+    \end{align}
     where $\mathbf{W}_1 \in \mathbb{R}^{512 \times 141}$, $\mathbf{W}_2 \in \mathbb{R}^{512 \times 512}$, and $\mathbf{W}_a \in \mathbb{R}^{11 \times 512}$.
     
     \item \textbf{Recurrent LSTM Encoder (Models M2--M4):} A single-layer Long Short-Term Memory (LSTM) network with hidden size $H = 512$ processing the sliding sequence $\mathbf{F}_t = [\mathbf{s}_{t-T+1}, \dots, \mathbf{s}_t] \in \mathbb{R}^{30 \times 141}$ over time window $t-T+1$ to $t$ ($T = 30$ trading days) as input \citep{zou2024novel}:
@@ -45,9 +47,18 @@ Target portfolio weights must satisfy the unit simplex constraints: $w_{i,t} \ge
 \end{equation}
 During environment rollouts, raw continuous action vectors $\mathbf{a}_t \in \Delta^{10}$ are sampled via normalized Gamma variates: $g_{i,t} \sim \operatorname{Gamma}(\alpha_{i,t}, 1)$ with $a_{i,t} = g_{i,t} / \sum_j g_{j,t}$ \citep{yang2022selective}. During deterministic evaluation, the policy executes the analytical mean $\mathbb{E}[a_{i,t}] = \alpha_{i,t} / \sum_j \alpha_{j,t}$.
 
-We explicitly distinguish between the raw action $\mathbf{a}_t$ sampled from the Dirichlet distribution and the executed portfolio weights $\mathbf{w}_t^{\text{target}}$ obtained after thresholding and renormalizing the raw action. To eliminate tiny fractional positions that incur wasteful transaction fees, an execution threshold $\tau = 0.01$ (1\%) is applied: positions below 1\% are zeroed, and surviving weights are renormalised to form executed target weights $\mathbf{w}_t^{\text{target}}$:
+We explicitly distinguish between the raw action $\mathbf{a}_t$ sampled from the Dirichlet distribution and the executed portfolio weights $\mathbf{w}_t^{\text{target}}$ obtained after thresholding and renormalizing the raw action. To eliminate tiny fractional positions that incur wasteful transaction fees, an execution threshold $\tau = 0.01$ (1\%) is applied: allocations below this threshold are set to zero, while the remaining allocations are renormalized to sum to one:
 \begin{equation}
-\tilde{w}_{i,t} = a_{i,t} \cdot \mathbf{1}_{a_{i,t} \ge \tau}, \quad w_{i,t}^{\text{target}} = \frac{\tilde{w}_{i,t}}{\sum_{j=1}^{11} \tilde{w}_{j,t}}, \quad \text{where } \mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t) \quad \text{\citep{yang2022selective}}.
+\widetilde{w}_{i,t} =
+\begin{cases}
+a_{i,t}, & a_{i,t} \ge \tau, \\
+0, & a_{i,t} < \tau,
+\end{cases}
+\qquad i = 1, \dots, 11
+\end{equation}
+Then, the executed target weights are obtained via the normalization equation:
+\begin{equation}
+w_{i,t}^{\text{target}} = \frac{\widetilde{w}_{i,t}}{\displaystyle\sum_{j=1}^{11} \widetilde{w}_{j,t}}, \quad \text{where } \mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t) \quad \text{\citep{yang2022selective}}.
 \end{equation}
 
 The direct probability density of the continuous multivariate Dirichlet distribution governing target allocations on the 11-dimensional portfolio simplex $\Delta^{10}$ is given by \citep{yang2022selective}:
