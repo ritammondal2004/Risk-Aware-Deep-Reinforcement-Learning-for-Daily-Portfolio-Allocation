@@ -1,0 +1,769 @@
+% =====================================================================
+% B.Tech Project-I report, IIT Kharagpur (Ritam Mondal, 23IM30018)
+% Risk-Aware Deep Reinforcement Learning for Daily Portfolio Allocation
+% Build:  pdflatex main; bibtex main; pdflatex main; pdflatex main
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,left=2.1cm,right=2.1cm,top=2.2cm,bottom=2.0cm]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{booktabs,array,multirow,tabularx}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{float}\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{natbib}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\bibliographystyle{plainnat}
+\setcitestyle{numbers,square}
+
+\captionsetup{font=small,labelfont=bf,skip=5pt}
+\setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
+\linespread{0.94}\setlength{\parskip}{2pt}\usepackage[expansion=false]{microtype}\setlength{\headheight}{14pt}\emergencystretch=2em
+\setlength{\parindent}{0pt}
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+\setlength{\abovedisplayskip}{6pt}\setlength{\belowdisplayskip}{6pt}
+
+% ---- numbering: \section plays the role of a chapter ----------------
+\numberwithin{equation}{section}
+\numberwithin{table}{section}
+\numberwithin{figure}{section}
+\numberwithin{algorithm}{section}
+\titleformat{\section}[hang]{\bfseries\large}{Chapter~\thesection\quad---\quad}{0pt}{}
+\titleformat{\subsection}[hang]{\bfseries\large}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}[hang]{\bfseries\normalsize}{\thesubsubsection}{0.8em}{}
+\titlespacing*{\section}{0pt}{12pt}{5pt}
+\titlespacing*{\subsection}{0pt}{8pt}{3pt}
+\titlespacing*{\subsubsection}{0pt}{6pt}{2pt}
+
+% ---- page style ------------------------------------------------------
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\itshape\small\nouppercase{\rightmark}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\sectionmark}[1]{\markright{\MakeUppercase{Chapter \thesection. #1}}}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}}
+
+% ---- notation shortcuts ---------------------------------------------
+\newcommand{\E}{\hat{\mathbb{E}}}
+\newcommand{\F}{\mathbf{F}}
+\newcommand{\bs}{\mathbf{s}}
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\balpha}{\bm{\alpha}}
+\newcommand{\Rnet}{R_{\mathrm{net}}}
+
+\begin{document}
+
+% =====================================================================
+% TITLE PAGE
+% =====================================================================
+\thispagestyle{empty}
+\begin{center}
+\vspace*{0cm}
+{\LARGE\bfseries Risk-Aware Deep Reinforcement Learning for Daily\\[4pt] Portfolio Allocation\par}
+\vspace{1.4cm}
+{\large B.Tech Project-I report submitted to\\[3pt] Indian Institute of Technology Kharagpur\\[3pt]
+{\normalsize in partial fulfilment for the award of the degree of}\par}
+\vspace{0.7cm}
+{\large\bfseries Bachelor of Technology (B. Tech)\par}
+\vspace{0.2cm}{\normalsize in}\vspace{0.2cm}\par
+{\large Industrial and Systems Engineering\par}
+\vspace{0.5cm}{\normalsize by}\par\vspace{0.4cm}
+{\large\bfseries Ritam Mondal\\ (23IM30018)\par}
+\vspace{0.6cm}
+{\normalsize Under the supervision of\par}\vspace{0.4cm}
+{\large\bfseries Dr. Abhishek Sharma\par}
+\vspace{0.8cm}
+\includegraphics[height=2.9cm]{figures/iitkgp_logo.png}\par
+\vspace{0.7cm}
+{\large\bfseries Department of Industrial and Systems Engineering\par}
+{\large Indian Institute of Technology Kharagpur\par}
+{\normalsize Autumn Semester, 2026--27\\ November 2026\par}
+\end{center}
+\clearpage
+
+\pagenumbering{roman}
+
+% =====================================================================
+% DECLARATION
+% =====================================================================
+\begin{center}\vspace*{0.3cm}{\large\bfseries DECLARATION}\end{center}
+\vspace{0.4cm}
+I certify that\par\vspace{0.6cm}
+\begin{enumerate}[label=(\alph*),itemsep=10pt,leftmargin=2.2em]
+\item The work contained in this report has been done by me under the guidance of my supervisor.
+\item The work has not been submitted to any other Institute for any degree or diploma.
+\item I have conformed to the norms and guidelines given in the Ethical Code of Conduct of the Institute.
+\item Whenever I have used materials (data, theoretical analysis, figures, and text) from other sources, I have given due credit to them by citing them in the text of the thesis and giving their details in the references. Further, I have taken permission from the copyright owners of the sources, whenever necessary.
+\end{enumerate}
+\vspace{1.2cm}
+\noindent Date: November 10, 2026\hfill (Ritam Mondal)\\
+Place: Kharagpur\hfill (23IM30018)
+\vspace{1.2cm}\hrule\vspace{0.8cm}
+
+
+% =====================================================================
+% CERTIFICATE
+% =====================================================================
+\begin{center}
+{\small\bfseries DEPARTMENT OF INDUSTRIAL AND SYSTEMS ENGINEERING\\
+INDIAN INSTITUTE OF TECHNOLOGY KHARAGPUR\\
+KHARAGPUR -- 721302, INDIA\par}
+\vspace{0.6cm}
+\includegraphics[height=1.8cm]{figures/iitkgp_logo.png}\par
+\vspace{0.3cm}
+{\large\bfseries CERTIFICATE}
+\end{center}
+\vspace{0.5cm}
+This is to certify that the project report entitled ``\textbf{Risk-Aware Deep Reinforcement Learning for Daily Portfolio Allocation}'' submitted by \textbf{Ritam Mondal} (Roll No.\ 23IM30018) to Indian Institute of Technology Kharagpur towards partial fulfilment of requirements for the award of degree of Bachelor of Technology in Industrial and Systems Engineering is a record of bona fide work carried out under my supervision and guidance during Autumn Semester, 2026--27.
+\vspace{1.5cm}
+
+\noindent\begin{minipage}[t]{0.4\textwidth}
+Date: November 10, 2026\\
+Place: Kharagpur
+\end{minipage}\hfill
+\begin{minipage}[t]{0.55\textwidth}\raggedleft
+Dr.\ Abhishek Sharma\\
+Department of Industrial and Systems Engineering\\
+Indian Institute of Technology Kharagpur\\
+Kharagpur -- 721302, India
+\end{minipage}
+\clearpage
+
+% =====================================================================
+% ACKNOWLEDGEMENT AND ABSTRACT
+% =====================================================================
+\phantomsection\addcontentsline{toc}{section}{Acknowledgement and Abstract}
+{\large\bfseries Acknowledgement and Abstract}\par\vspace{4pt}
+\textbf{Acknowledgement:}\par
+I express my sincere gratitude to my supervisor, Dr.\ Abhishek Sharma, for his insightful guidance, intellectual mentorship, and continuous encouragement throughout this B.Tech.\ Project. His domain expertise in financial engineering, operations research, and sequential decision processes provided invaluable direction for this study. I also thank the Department of Industrial and Systems Engineering, Indian Institute of Technology Kharagpur, for providing computational facilities, and my peers and family for their continuous support.
+
+\textbf{Abstract:}\par
+Automating daily portfolio allocation via deep reinforcement learning (DRL) requires balancing return generation against market non-stationarity, partial state observability, and execution frictions. Prior literature separately suggests temporal encoders, risk-sensitive rewards, and turnover penalties, but these mechanisms are rarely evaluated under a single controlled setup. This report investigates a four-stage ablation: (i) Model M1: PPO with a feedforward MLP baseline and net return reward; (ii) Model M2: PPO with a recurrent LSTM encoder; (iii) Model M3: LSTM-PPO with recursive Differential Sharpe Ratio (DSR) reward; and (iv) Model M4: LSTM-PPO with DSR reward and a quadratic weight-change penalty ($\lambda_{\mathrm{turn}}=0.1$). All agents output continuous Dirichlet allocations over ten liquid National Stock Exchange of India (NSE) equities and an assumed zero-return cash reserve.
+
+Models are evaluated across four chronological walk-forward folds spanning 2018--2025 across three random seeds under realistic proportional transaction costs (0.1\%). In our experimental setup, the LSTM encoder (M2) improves upon the MLP baseline (M1) in pooled Sharpe ratio (0.92 vs.\ 0.71) and cumulative return (28.2\% vs.\ 20.6\%). The DSR reward (M3) demonstrates mixed, regime-dependent effects without an overall advantage over M2. Turnover regularisation (M4) effectively curtails daily turnover (cutting costs from 4.14\% to 0.97\% of capital) and achieves the shallowest maximum drawdown ($-16.04\%$), but trades off cumulative return. Crucially, the passive Equal-Weight benchmark outperforms all RL models in pooled return (36.48\%) and Sharpe ratio (1.13), driven by continuous broad-market exposure in a secular bull market and cash drag from the agents' learned liquidity holdings.
+
+\textbf{Keywords:} Deep Reinforcement Learning, Portfolio Allocation, Proximal Policy Optimisation, Dirichlet Distribution, Differential Sharpe Ratio, Turnover Regularisation, Walk-Forward Validation.
+\vspace{6pt}
+
+
+% =====================================================================
+% CONTENTS
+% =====================================================================
+{\large\bfseries Contents}\par\vspace{-8pt}
+{\small\setcounter{tocdepth}{1}\tableofcontents}
+\clearpage
+
+\pagenumbering{arabic}
+
+% =====================================================================
+\section{Introduction}\label{ch:intro}
+% =====================================================================
+\subsection{Background and Motivation}
+Daily portfolio allocation requires selecting asset weights repeatedly as prices and market conditions change. These decisions must balance investment returns, financial risk, and transaction costs. A policy based only on current-day indicators may overlook recent market dynamics, while return-based rewards and frequent rebalancing may lead to risky or costly allocations. This study examines three components within a common PPO-based framework: temporal memory through an LSTM encoder, risk-aware reward shaping through the Differential Sharpe Ratio (DSR), and turnover control through a quadratic weight-change penalty. Their contributions are evaluated through four controlled models (M1--M4) using chronological walk-forward testing on ten NSE equities, with an Equal-Weight portfolio as the benchmark.
+
+% =====================================================================
+\section{Literature Review}\label{ch:lit}
+% =====================================================================
+The application of deep reinforcement learning to algorithmic trading and portfolio management has developed rapidly across policy optimisation, sequence modeling, risk-aware rewards, and evaluation standards. This chapter presents a focused review of the core literature directly motivating our research.
+
+\textbf{Schulman et al.\ (2017)} \cite{schulman2017} developed Proximal Policy Optimisation (PPO), introducing a clipped surrogate objective that restricts policy update ratios within an $\epsilon$-neighbourhood around the previous policy. This provides stable gradient updates in continuous control environments without the excessive hyperparameter sensitivity of earlier policy gradient methods. While PPO provides an effective actor--critic foundation, its application to continuous multi-asset portfolio management requires adapting the action distribution to the portfolio simplex and formulating risk-sensitive rewards.
+
+\textbf{Zou et al.\ (2024)} \cite{zou2024} proposed an equity trading architecture that combines a recurrent LSTM encoder with PPO policy optimization. Using a 30-day historical window and a 512-dimensional hidden representation, their system showed that multi-day sequential features capture price momentum more effectively than single-day snapshots. However, their policy rewards focused on nominal trading profit for individual equities rather than risk-adjusted continuous portfolio allocation across a multi-asset universe.
+
+\textbf{Millea (2021)} \cite{millea2021} provided a survey of reinforcement learning in quantitative trading, emphasizing the need for standardised evaluation protocols and risk-sensitive objective functions. The author reviewed the Differential Sharpe Ratio (DSR), which updates running first and second return moments recursively to reward risk-adjusted returns online. While DSR provides an analytical alternative to raw returns, its empirical interaction with recurrent encoders and execution frictions under standard actor--critic methods warrants systematic evaluation.
+
+\textbf{Liu et al.\ (2024)} \cite{liu2024} introduced the FinRL-Meta framework, establishing dynamic market environments and a rolling walk-forward evaluation protocol. Their rolling train--validation--test scheme advances windows chronologically across market cycles, directly mitigating look-ahead bias and macroeconomic regime shifts. Although their work established rigorous financial testing standards, their continuous portfolio experiments evaluated fixed configurations without isolating the separate impacts of sequence encoders or turnover penalties.
+
+\textbf{Wang and Liu (2025)} \cite{wang2025} developed a risk-sensitive reinforcement learning framework for portfolio allocation across volatile market regimes, incorporating downside risk penalties and turnover control into policy learning. Their results confirmed that penalising volatility and trading frictions preserves capital during market downturns. However, because their experiments modified the sequence backbone, reward function, and trading constraints simultaneously, the individual contribution of each mechanism was not isolated.
+
+\textbf{Yang et al.\ (2022)} \cite{yang2022} introduced a continuous portfolio allocation algorithm parameterised over a multivariate Dirichlet distribution. Unlike heuristic Gaussian clipping or post-hoc Softmax normalization, sampling actions from a Dirichlet distribution inherently constrains target portfolio allocations to the unit simplex manifold. While their study demonstrated the mathematical appeal of Dirichlet policies in off-policy trading, it did not investigate recurrent temporal representations or explicit transaction-cost regularization.
+
+% =====================================================================
+\section{Research Gap and Problem Formulation}\label{ch:gap}
+% =====================================================================
+\subsection{Identified Research Gap}
+While significant progress has been made across temporal modeling, risk-aware reward design, and evaluation standards, existing studies in financial reinforcement learning typically evaluate these mechanisms in isolation. In the reviewed literature, different papers employ distinct equity universes, divergent transaction-cost assumptions, and incompatible backtesting horizons. Moreover, when advanced models are proposed, multiple architectural changes, loss modifications, and execution constraints are frequently introduced simultaneously. Consequently, it remains difficult to determine whether reported performance improvements arise from the recurrent sequence encoder, the risk-adjusted reward structure, the turnover regulariser, or specific dataset artifacts. Table~\ref{tab:gap} positions this study relative to the reviewed literature, highlighting the single-factor controlled ablation methodology adopted here.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Positioning of this work relative to the reviewed literature.}\label{tab:gap}
+\begin{tabular}{@{}p{3.3cm}p{1.6cm}p{2.5cm}p{1.9cm}p{2.5cm}p{1.9cm}@{}}
+\toprule
+Paper & Temporal Memory & Risk-Aware / Reward & Turnover Control & Continuous Allocation & Controlled Ablation\\
+\midrule
+Schulman et al.\ (2017) \cite{schulman2017} & & & & $\checkmark$ (PPO benchmark) & \\
+Millea (2021) \cite{millea2021} & & $\checkmark$ (DSR survey) & & & \\
+Zou et al.\ (2024) \cite{zou2024} & $\checkmark$ & & & & \\
+Liu et al.\ (2024) \cite{liu2024} & & & & $\checkmark$ (portfolio weights) & \\
+Wang \& Liu (2025) \cite{wang2025} & & $\checkmark$ (risk-sensitive) & $\checkmark$ & $\checkmark$ & \\
+Yang et al.\ (2022) \cite{yang2022} & & & & $\checkmark$ (Dirichlet policy) & \\
+\midrule
+\textbf{This work} & $\checkmark$ & $\checkmark$ (DSR) & $\checkmark$ (turnover penalty) & $\checkmark$ & $\checkmark$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Research Objectives}
+To address this gap through controlled empirical evaluation, the specific objectives of this project are:
+\begin{enumerate}
+\item \textbf{Controlled Four-Stage Ablation:} To implement a single-factor ablation framework consisting of four models (M1: MLP + net return; M2: LSTM + net return; M3: LSTM + DSR; M4: LSTM + DSR + quadratic penalty) to isolate the separate contributions of temporal memory, risk-aware reward shaping, and turnover regularisation.
+\item \textbf{POMDP Trading Formulation:} To formulate daily portfolio allocation as a Partially Observable Markov Decision Process (POMDP), incorporating causal technical indicators, continuous Dirichlet policy sampling on the simplex manifold, and realistic transaction-cost deduction.
+\item \textbf{Rigorous Chronological Evaluation:} To evaluate all agents across an eight-year walk-forward test protocol (2018--2025) spanning four folds and three random seeds, comparing performance against a passive Equal-Weight benchmark.
+\end{enumerate}
+
+\subsection{Research Questions}
+This investigation focuses on answering one central research question:
+\begin{quote}\itshape
+``How do temporal memory, risk-aware reward shaping, and turnover regularization independently and cumulatively affect the risk-adjusted out-of-sample performance of a PPO-based daily trading agent?''
+\end{quote}
+We investigate four specific sub-questions:
+\begin{itemize}
+\item \textbf{RQ1 (Temporal Architecture):} How does an LSTM recurrent encoder alter out-of-sample risk-adjusted return and daily turnover compared with a static MLP baseline?
+\item \textbf{RQ2 (Risk-Aware Reward Shaping):} What is the empirical effect of replacing net return with the recursive online Differential Sharpe Ratio (DSR)?
+\item \textbf{RQ3 (Turnover Regularisation):} Does augmenting the reward with a quadratic weight-change penalty reduce turnover and transaction costs, and what is the trade-off with return?
+\item \textbf{RQ4 (Benchmark Competitiveness):} How do the learned active RL allocation policies compare against a passive, fully-invested Equal-Weight benchmark under identical transaction frictions?
+\end{itemize}
+
+\subsection{Stock Market Environment and POMDP Formulation}
+We model the trading process as an interaction between an agent and a simulated stock-market environment. At the close of each trading day $t$, the agent observes historical market information and current asset holdings, decides on target portfolio weights, and executes trades. The environment deducts proportional transaction costs, updates portfolio wealth based on subsequent price changes, and emits a scalar reward. This environment operates as an offline historical simulation rather than a live execution system.
+
+Because daily market observations provide an incomplete reflection of the broader economic system, we formalise the allocation task as a Partially Observable Markov Decision Process (POMDP) \cite{millea2021}, defined by the 7-tuple:
+\begin{equation}
+\mathcal{P}=\langle\mathcal{S},\mathcal{A},\mathcal{T},\mathcal{R},\Omega,\mathcal{O},\gamma\rangle\ \cite{millea2021},
+\end{equation}
+where $\mathcal{S}$ is the unobservable true market state, $\mathcal{A}$ is the action space, $\mathcal{T}$ represents transition dynamics, $\mathcal{R}$ is the reward function, $\Omega$ is the observation space, $\mathcal{O}$ is the observation probability distribution, and $\gamma\in[0,1)$ is the discount factor.
+
+In real financial markets, the true state $\mathcal{S}$ includes unobservable variables such as order-book queues, private liquidity flows, macroeconomic expectations, and trader sentiment. The agent only receives an observation vector $\bs_t\in\Omega$ drawn from $\mathcal{O}(\bs_t\mid S_t)$, consisting of public OHLCV data and technical indicators. Because single-day observations do not satisfy the Markov property, recurrent neural networks (LSTM) are employed to summarize historical observation sequences $\F_t=[\bs_{t-T+1},\dots,\bs_t]$ spanning time steps $t-T+1$ to $t$ into a learned internal representation $\mathbf{h}_t$, directly mitigating partial observability \cite{zou2024}.
+
+\subsubsection{State Space}
+The instantaneous observed market and portfolio state at trading day $t$ is denoted by:
+\begin{equation}
+\bs_t\in\mathbb{R}^{141}.
+\end{equation}
+Its 141 dimensions are composed of:
+\begin{itemize}
+\item 13 technical features computed for each of the $N=10$ equities ($13\times10=130$ market features).
+\item 11 current portfolio weights $\bw_t^{\mathrm{cur}}\in\mathbb{R}^{11}$, representing the allocations held in the 10 risky equities and 1 uninvested cash account at the start of day $t$.
+\end{itemize}
+Thus, $\bs_t=[\mathbf{x}_t^\top,(\bw_t^{\mathrm{cur}})^\top]^\top$, where $\mathbf{x}_t\in\mathbb{R}^{130}$ contains market indicators and $\bw_t^{\mathrm{cur}}\in\mathbb{R}^{11}$ captures the portfolio state.
+
+\subsubsection{Action Space}
+The action vector $\ba_t$ represents target portfolio allocations across the 10 risky equities and 1 cash asset:
+\begin{equation}
+\ba_t=[a_{1,t},a_{2,t},\dots,a_{10,t},a_{\mathrm{cash},t}]^\top\in\Delta^{10}\ \cite{yang2022},
+\end{equation}
+where $\Delta^{10}$ denotes the 11-dimensional unit simplex manifold \cite{yang2022}:
+\begin{equation}
+\Delta^{10}=\Bigl\{\ba_t\in\mathbb{R}^{11}\ \Big|\ a_{i,t}\ge0\ \forall i\in\{1,\dots,11\},\ \sum_{i=1}^{11}a_{i,t}=1\Bigr\}\ \cite{yang2022}.
+\end{equation}
+Every target weight is non-negative, all weights sum to one, short selling is prohibited, and cash is treated as an explicit allocation leg that allows the agent to de-risk. Following Yang et al.\ \cite{yang2022}, this constraint is satisfied by parameterising the policy over a continuous multivariate Dirichlet distribution.
+
+\subsubsection{Reward Design}
+The scalar reward $r_t$ emitted by the environment guides policy learning and defines our ablation dimensions:
+\begin{itemize}
+\item \textbf{Models M1 and M2 (Net Return):} Reward equals the realised net portfolio rate of return after deducting transaction fees: $r_t=\Rnet{}_{,t}$.
+\item \textbf{Model M3 (Differential Sharpe Ratio):} Reward equals the recursive online Differential Sharpe Ratio: $r_t=D_t$, penalising return variance \cite{millea2021}.
+\item \textbf{Model M4 (DSR + Quadratic Penalty):} Reward equals the DSR reward minus an explicit quadratic weight-change regulariser on risky assets: $r_t=D_t-\lambda_{\mathrm{turn}}\sum_{i=1}^{10}(w_{i,t}^{\mathrm{target}}-w_{i,t}^{\mathrm{cur}})^2$, in the spirit of the rebalancing penalty of \cite{wang2025}.
+\end{itemize}
+The detailed mathematical formulations of these rewards are presented in Section~\ref{sec:reward}.
+
+% =====================================================================
+\section{Dataset and Experimental Methodology}\label{ch:data}
+% =====================================================================
+\subsection{Equity Universe and Data Acquisition}
+The experimental asset universe consists of $N=10$ major large-cap equities actively traded on the National Stock Exchange of India (NSE), spanning diverse economic sectors: Reliance Industries (\texttt{RELIANCE.NS}, Energy/Conglomerate), Tata Consultancy Services (\texttt{TCS.NS}, IT Services), HDFC Bank (\texttt{HDFCBANK.NS}, Commercial Banking), ICICI Bank (\texttt{ICICIBANK.NS}, Commercial Banking), ITC Limited (\texttt{ITC.NS}, Diversified FMCG), Hindustan Unilever (\texttt{HINDUNILVR.NS}, FMCG), Larsen \& Toubro (\texttt{LT.NS}, Engineering \& Infrastructure), Sun Pharmaceutical (\texttt{SUNPHARMA.NS}, Healthcare), Maruti Suzuki (\texttt{MARUTI.NS}, Automotive), and Bharti Airtel (\texttt{BHARTIARTL.NS}, Telecommunications). In addition, an uninvested cash reserve (Asset 11) is included to allow agents to de-risk.
+
+Daily trading records were acquired from Yahoo Finance via \texttt{yfinance} spanning 1 January 2009 to 31 December 2025. Data acquisition used \texttt{auto\_adjust=True}: Open, High, Low, and Close price series are adjusted backwards for stock splits and cash dividends, while volume is adjusted for splits. Historical data from 2009 to 2010 provides an initial burn-in period to initialise 200-day moving averages, ensuring that all technical features are fully stabilized by 1 January 2011. Across the common trading calendar from 2011 through 2025, there are 3,699 active trading days.
+
+\subsection{Feature Engineering and State Representation}
+For each asset $i\in\{1,\dots,10\}$ on trading day $t$, a 13-dimensional feature vector $\mathbf{f}_{i,t}\in\mathbb{R}^{13}$ is computed using causal transformations normalized by prevailing prices or rolling baselines, as summarized in Table~\ref{tab:features}.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{The 13 technical features computed daily for each equity asset ($i\in\{1,\dots,10\}$).}\label{tab:features}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{1.1cm}p{3.3cm}p{2.5cm}p{8.6cm}@{}}
+\toprule
+Index & Feature Name & Identifier & Mathematical Formulation\\
+\midrule
+$f_{1,i,t}$ & Daily Log Return & $r^{\log}_{i,t}$ & $\ln(C_{i,t}/C_{i,t-1})$\\
+$f_{2,i,t}$ & Close-to-Open Relative Return & $o^{\mathrm{rel}}_{i,t}$ & $C_{i,t}/O_{i,t}-1$\\
+$f_{3,i,t}$ & High-to-Low Relative Spread & $hl^{\mathrm{rel}}_{i,t}$ & $H_{i,t}/L_{i,t}-1$\\
+$f_{4,i,t}$ & Normalized Relative Volume & $v^{\mathrm{rel}}_{i,t}$ & $\ln(V_{i,t}/\mathrm{SMA}_{20}(V_{i,t}))$\\
+$f_{5,i,t}$ & 50-day EMA Relative Deviation & $\mathrm{ema}^{\mathrm{rel}}_{50,i,t}$ & $C_{i,t}/\mathrm{EMA}_{50}(C_{i,t})-1$, smoothing $\alpha=2/(50+1)$ \cite{wang2025}\\
+$f_{6,i,t}$ & 200-day EMA Relative Deviation & $\mathrm{ema}^{\mathrm{rel}}_{200,i,t}$ & $C_{i,t}/\mathrm{EMA}_{200}(C_{i,t})-1$, smoothing $\alpha=2/(200+1)$ \cite{wang2025}\\
+$f_{7,i,t}$ & Relative Strength Index & $\mathrm{RSI}^{\mathrm{norm}}_{i,t}$ & $\mathrm{RSI}_{14,i,t}/100-0.5$, where $\mathrm{RS}=\bar U_{14}/(\bar D_{14}+10^{-8})$ \cite{wang2025}\\
+$f_{8,i,t}$ & MACD Difference & $\mathrm{MACD}_{i,t}$ & $(\mathrm{EMA}_{12}(C_{i,t})-\mathrm{EMA}_{26}(C_{i,t}))/C_{i,t}$ \cite{wang2025}\\
+$f_{9,i,t}$ & MACD Signal Line & $\mathrm{Signal}_{i,t}$ & $\mathrm{EMA}_{9}(\mathrm{MACD}_{i,t})/C_{i,t}$ \cite{wang2025}\\
+$f_{10,i,t}$ & Average True Range & $\mathrm{ATR}^{\mathrm{rel}}_{i,t}$ & $\mathrm{SMA}_{14}(\mathrm{TR}_{i,t})/C_{i,t}$, $\mathrm{TR}_t=\max(H_t-L_t,|H_t-C_{t-1}|,|L_t-C_{t-1}|)$ \cite{wang2025}\\
+$f_{11,i,t}$ & Bollinger Band \%B & $\%B_{i,t}$ & $(C_{i,t}-\mathrm{LB}_{i,t})/(\mathrm{UB}_{i,t}-\mathrm{LB}_{i,t}+10^{-8})$, bands at $\pm2\sigma_{20}$ \cite{wang2025}\\
+$f_{12,i,t}$ & Bollinger Bandwidth & $\mathrm{BW}_{i,t}$ & $(\mathrm{UB}_{i,t}-\mathrm{LB}_{i,t})/\mathrm{MB}_{i,t}$ \cite{wang2025}\\
+$f_{13,i,t}$ & Average Directional Index & $\mathrm{ADX}^{\mathrm{norm}}_{i,t}$ & $\mathrm{ADX}_{14,i,t}/100$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The observation vector concatenates the 13 features across all 10 equities (130 market features) with current portfolio weights $\bw_t^{\mathrm{cur}}\in\mathbb{R}^{11}$ (10 equities and 1 cash):
+\begin{equation}
+\mathbf{x}_t=\mathrm{concat}(\mathbf{f}_{1,t},\dots,\mathbf{f}_{10,t})\in\mathbb{R}^{130},\qquad \bs_t=\bigl[\mathbf{x}_t^\top,(\bw_t^{\mathrm{cur}})^\top\bigr]^\top\in\mathbb{R}^{141}.
+\end{equation}
+For models utilizing temporal memory (M2--M4), the agent receives a sliding historical window spanning time steps $t-T+1$ to $t$ ($T=30$ trading days) \cite{zou2024}:
+\begin{equation}
+\F_t=[\bs_{t-T+1},\bs_{t-T+2},\dots,\bs_t]^\top\in\mathbb{R}^{T\times141}=\mathbb{R}^{30\times141}\ \cite{zou2024}.
+\end{equation}
+Feature standardization is fitted strictly on the training partition of each fold using mean $\bm{\mu}^{\mathrm{train}}$ and standard deviation $\bm{\sigma}^{\mathrm{train}}$, with standardized values clipped to $[-5.0,5.0]$ (an implementation setting). Test partitions use training statistics without leakage.
+
+\subsection{Walk-Forward Evaluation Protocol}
+Following Liu et al.\ \cite{liu2024}, the agents are evaluated using an 8-year rolling-origin walk-forward protocol across four folds. Each fold consists of 6 years of training data, 1 year of validation data, and 2 years of held-out out-of-sample test data, advancing chronologically by 2 years per fold (Table~\ref{tab:folds} and Figure~\ref{fig:wf}). The test windows are mutually disjoint and together tile 2018 through 2025. It is important to distinguish the number of historical trading days in each split ($\approx1{,}478$ training days and $\approx490$ test days) from the reinforcement learning training budget, which is fixed at 300,000 environment interaction steps across all models. Each configuration is trained across three fixed random seeds ($S\in\{0,1,2\}$). During training, validation Sharpe ratio is computed every 25,000 steps; the checkpoint achieving the highest validation Sharpe ratio is saved and evaluated once on the unseen test window.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Chronological specification of the four walk-forward folds.}\label{tab:folds}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}cllllcc@{}}
+\toprule
+Fold & Training Period (6y) & Validation Period (1y) & Test Period (2y) & Train Days & Test Days\\
+\midrule
+1 & 2011-01-01 to 2016-12-31 & 2017-01-01 to 2017-12-31 & 2018-01-01 to 2019-12-31 & 1,478 & 489\\
+2 & 2013-01-01 to 2018-12-31 & 2019-01-01 to 2019-12-31 & 2020-01-01 to 2021-12-31 & 1,475 & 496\\
+3 & 2015-01-01 to 2020-12-31 & 2021-01-01 to 2021-12-31 & 2022-01-01 to 2023-12-31 & 1,476 & 495\\
+4 & 2017-01-01 to 2022-12-31 & 2023-01-01 to 2023-12-31 & 2024-01-01 to 2025-12-31 & 1,479 & 494\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/fig4_1_walkforward.png}
+\caption{Chronological four-fold rolling walk-forward evaluation protocol with 6-year training, 1-year validation, and 2-year testing windows, advancing by 2 years per fold \cite{liu2024}.}\label{fig:wf}
+\end{figure}
+
+\subsection{Evaluation Measures}
+We evaluate out-of-sample portfolio performance using seven standard financial and operational metrics, summarized in Table~\ref{tab:metrics}.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Summary of evaluation measures used in out-of-sample portfolio assessment.}\label{tab:metrics}
+\begin{tabular}{@{}p{2.5cm}p{6.1cm}p{6.3cm}@{}}
+\toprule
+Metric & Mathematical Definition & Interpretation / Citation\\
+\midrule
+Cumulative Return (CR) & $\mathrm{CR}=\dfrac{V_N}{V_0}-1=\prod_{t=1}^{N}(1+R_{\mathrm{net},t})-1$ & Total percentage growth in portfolio wealth \cite{zou2024}.\\[6pt]
+CAGR & $\mathrm{CAGR}=(1+\mathrm{CR})^{252/N}-1$ & Annualised geometric rate of return (252 trading days/year).\\[3pt]
+Sharpe Ratio (SR) & $\mathrm{SR}=\dfrac{\bar r-r_f}{s_r}\sqrt{252},\ r_f=0$ & Risk-adjusted excess return per unit of volatility \cite{millea2021}.\\[6pt]
+Sortino Ratio & $\mathrm{Sortino}=\dfrac{\bar r-r_f}{\mathrm{downside}}\sqrt{252}$, $\mathrm{downside}=\sqrt{\tfrac1N\sum_{t=1}^{N}\min(R_{\mathrm{net},t},0)^2}$ & Downside risk-adjusted return penalising negative deviations.\\[8pt]
+Maximum Drawdown & $\mathrm{MDD}=\min_{t\in\{1,\dots,N\}}\Bigl(\dfrac{V_t}{\max_{u\le t}V_u}-1\Bigr)$ & Largest peak-to-trough capital loss \cite{zou2024}.\\[8pt]
+Average Turnover & $\mathrm{Turnover}=\dfrac1N\sum_{t=1}^{N}\sum_{i=1}^{10}|w_{i,t}^{\mathrm{target}}-w_{i,t}^{\mathrm{cur}}|$ & Mean daily weight reallocation across the 10 risky equities \cite{wang2025}.\\[8pt]
+Total Cost Rate & $\mathrm{Cost\ Rate}=\dfrac{\sum_{t=1}^{N}C_t}{V_0}\times100\%$ & Cumulative transaction fees paid, as a percentage of initial capital $V_0$.\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =====================================================================
+\section{Model Architecture and Mathematical Formulation}\label{ch:model}
+% =====================================================================
+\subsection{Actor--Critic Framework and Policy Choice}
+The portfolio allocation agents are developed within an Actor--Critic framework and optimized using Proximal Policy Optimisation (PPO) \cite{schulman2017}. PPO is selected because: (i) it natively supports continuous stochastic distributions on the unit simplex manifold via the Dirichlet distribution \cite{yang2022}; (ii) the Dirichlet closed-form probability density enables exact evaluation of importance sampling ratios; (iii) the clipped surrogate objective prevents catastrophic policy shifts in noisy financial environments \cite{schulman2017}; and (iv) it provides a modular architecture allowing controlled ablation of temporal encoders, reward functions, and regularization penalties. As shown in Figures~\ref{fig:arch} and~\ref{fig:loop}, the actor and critic share an encoder backbone. The actor head outputs Dirichlet distribution parameters, while the critic head estimates the scalar state-value baseline $V_\phi(\F_t)$ for advantage computation.
+
+\subsection{Encoder Backbones: MLP versus LSTM}
+To evaluate the contribution of temporal sequence modeling, two encoder backbones are compared:
+\begin{itemize}
+\item \textbf{MLP Encoder (Model M1):} A static two-layer feedforward network observing solely the instantaneous observation $\bs_t\in\mathbb{R}^{141}$ (the last row of $\F_t$). Intermediate latent representations $\mathbf{h}_t\in\mathbb{R}^{512}$ and actor output $\mathbf{z}_t\in\mathbb{R}^{11}$ are computed via:
+\begin{equation}
+\mathbf{h}_t=\tanh\bigl(\mathbf{W}_2\tanh(\mathbf{W}_1\bs_t+\mathbf{b}_1)+\mathbf{b}_2\bigr),\qquad \mathbf{z}_t=\mathbf{W}_a\mathbf{h}_t+\mathbf{b}_a,
+\end{equation}
+where $\mathbf{W}_1\in\mathbb{R}^{512\times141}$, $\mathbf{W}_2\in\mathbb{R}^{512\times512}$, and $\mathbf{W}_a\in\mathbb{R}^{11\times512}$.
+\item \textbf{Recurrent LSTM Encoder (Models M2--M4):} A single-layer Long Short-Term Memory (LSTM) network with hidden size $H=512$ processing the sliding sequence $\F_t=[\bs_{t-T+1},\dots,\bs_t]\in\mathbb{R}^{30\times141}$ over time window $t-T+1$ to $t$ ($T=30$ trading days) \cite{zou2024}:
+\begin{equation}
+(\mathbf{h}_t,\mathbf{c}_t)=\mathrm{LSTM}_\psi(\F_t),\qquad \mathbf{z}_t=\mathbf{W}_a\mathbf{h}_t+\mathbf{b}_a\ \cite{zou2024},
+\end{equation}
+where $\mathbf{h}_t\in\mathbb{R}^{512}$ is the final hidden state summarizing the 30-day temporal trajectory from time step $t-T+1$ to $t$.
+\end{itemize}
+For uniform notation, the policy $\pi_\theta(\cdot\mid\F_t)$ and the critic $V_\phi(\F_t)$ are written as functions of the observation sequence $\F_t$ for all four models; for the MLP model (M1) they depend on $\F_t$ only through its last row $\bs_t$.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/fig5_1_architecture.png}
+\caption{Actor--Critic architecture from state tensor to executed portfolio weights.}\label{fig:arch}
+\end{figure}
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/fig5_2_loop.png}
+\caption{PPO Dirichlet allocation and environment interaction loop.}\label{fig:loop}
+\end{figure}
+
+\subsection{Continuous Dirichlet Policy and Execution Logic}\label{sec:dirichlet}
+Target portfolio weights must satisfy the unit simplex constraints: $w_{i,t}\ge0$ and $\sum_{i=1}^{11}w_{i,t}=1$. Following Yang et al.\ \cite{yang2022}, we parameterise the policy using a continuous multivariate Dirichlet distribution. The actor linear output $\mathbf{z}_t\in\mathbb{R}^{11}$ represents unconstrained log-concentrations, clamped to $[-3.0,6.0]$ (an implementation setting) and exponentiated to guarantee positivity and numerical stability:
+\begin{equation}
+\ell_t=\mathrm{clip}(\mathbf{z}_t,-3.0,6.0),\qquad \alpha_{i,t}=\exp(\ell_{i,t})\in[e^{-3},e^{6}]\approx[0.0498,403.43]\ \cite{yang2022}.\label{eq:alpha}
+\end{equation}
+During environment rollouts, raw continuous action vectors $\ba_t\in\Delta^{10}$ are sampled via normalized Gamma variates: $g_{i,t}\sim\mathrm{Gamma}(\alpha_{i,t},1)$ with $a_{i,t}=g_{i,t}/\sum_j g_{j,t}$ \cite{yang2022}. During deterministic evaluation, the policy executes the analytical mean $\mathbb{E}[a_{i,t}]=\alpha_{i,t}/\sum_j\alpha_{j,t}$.
+
+To eliminate tiny fractional positions that incur wasteful transaction fees, an execution threshold $\tau=0.01$ (1\%) (an implementation setting) is applied: positions below 1\% are zeroed, and surviving weights are renormalised to form target weights $\bw_t^{\mathrm{target}}$:
+\begin{equation}
+\tilde w_{i,t}=a_{i,t}\cdot\mathbf{1}_{a_{i,t}\ge\tau},\qquad w_{i,t}^{\mathrm{target}}=\frac{\tilde w_{i,t}}{\sum_{j=1}^{11}\tilde w_{j,t}},\quad\text{where }\ba_t\sim\mathrm{Dirichlet}(\balpha_t).\label{eq:thresh}
+\end{equation}
+Importantly, the policy density used by PPO is evaluated on the \emph{raw} sampled action $\ba_t$ (before thresholding), conditioned on the observation sequence $\F_t$ (for the MLP model, only through its last row $\bs_t$). The policy is the Dirichlet density on the portfolio simplex,
+\begin{equation}
+\boxed{\;\pi_\theta(\ba_t\mid\F_t)=\frac{\Gamma\!\left(\sum_{i=1}^{11}\alpha_{i,t}\right)}{\prod_{i=1}^{11}\Gamma(\alpha_{i,t})}\prod_{i=1}^{11}a_{i,t}^{\alpha_{i,t}-1}\;}\label{eq:dirichlet}
+\end{equation}
+where $\Gamma(\cdot)$ is the Gamma function, $\ba_t$ lies on the 11-dimensional portfolio simplex $\Delta^{10}$, and $\alpha_{i,t}>0$ are the concentration parameters produced by the actor from $\F_t$ via Eq.~\eqref{eq:alpha} \cite{yang2022}. PPO uses the logarithm of this density, $\log\pi_\theta(\ba_t\mid\F_t)$, evaluated on the stored raw action, to calculate its importance-sampling ratio (Eq.~\eqref{eq:ratio}).
+
+Rebalancing from current weights $\bw_t^{\mathrm{cur}}$ to target weights $\bw_t^{\mathrm{target}}$ incurs linear transaction costs proportional to equity turnover ($c_{\mathrm{trans}}=0.001$, i.e., 0.1\%) \cite{zou2024}:
+\begin{equation}
+\mathrm{Turnover}_t=\sum_{i=1}^{10}|w_{i,t}^{\mathrm{target}}-w_{i,t}^{\mathrm{cur}}|,\qquad C_t=c_{\mathrm{trans}}V_t\cdot\mathrm{Turnover}_t\ \cite{zou2024}.
+\end{equation}
+Portfolio wealth evolves after deducting transaction fees: $V_{t+1}=(V_t-C_t)\bigl[\sum_{i=1}^{10}w_{i,t}^{\mathrm{target}}(1+R_{i,t+1})+w_{\mathrm{cash},t}^{\mathrm{target}}\bigr]$, yielding realised net return $\Rnet{}_{,t}=(V_{t+1}-V_t)/V_t$. Weight drift across trading days is tracked causally via $w_{i,t+1}^{\mathrm{cur}}=w_{i,t}^{\mathrm{target}}(1+R_{i,t+1})/(1+\Rnet{}_{,t})$.
+
+\subsection{Reward Formulations across Models M1 to M4}\label{sec:reward}
+The scalar reward $r_t$ emitted to the agent defines our core ablation dimensions:
+\begin{enumerate}
+\item \textbf{Models M1 and M2 (Net Return):} $r_t=\Rnet{}_{,t}$. The agent directly maximises realised portfolio return after transaction costs.
+\item \textbf{Model M3 (Differential Sharpe Ratio):} $r_t=D_t$, providing an online, recursive approximation of the Sharpe ratio \cite{millea2021}:
+\begin{equation}
+D_t=\frac{B_{t-1}\Delta A_t-\tfrac12A_{t-1}\Delta B_t}{(B_{t-1}-A_{t-1}^2+\varepsilon_{\mathrm{dsr}})^{3/2}}\ \cite{millea2021},\label{eq:dsr}
+\end{equation}
+where running return moments $A_t$ (first moment) and $B_t$ (second moment) update causally with adaptation rate $\eta_{\mathrm{dsr}}=0.01$ and stabiliser $\varepsilon_{\mathrm{dsr}}=10^{-8}$ (implementation settings; the recursion itself follows \cite{millea2021}), both starting at zero in every episode:
+\begin{align}
+\Delta A_t&=\Rnet{}_{,t}-A_{t-1}, & A_t&=A_{t-1}+\eta_{\mathrm{dsr}}\Delta A_t\ \cite{millea2021},\\
+\Delta B_t&=\Rnet{}_{,t}^{\,2}-B_{t-1}, & B_t&=B_{t-1}+\eta_{\mathrm{dsr}}\Delta B_t\ \cite{millea2021}.
+\end{align}
+\item \textbf{Model M4 (DSR + Quadratic Turnover Regularisation):} $r_t=D_t-\lambda_{\mathrm{turn}}\sum_{i=1}^{10}(w_{i,t}^{\mathrm{target}}-w_{i,t}^{\mathrm{cur}})^2$, with $\lambda_{\mathrm{turn}}=0.1$ (selected on Fold-1 validation data, Section~\ref{sec:tuning}; the idea of a rebalancing penalty follows \cite{wang2025}). The quadratic penalty penalises large reallocations during policy training to suppress excessive churning.
+\end{enumerate}
+
+\subsection{PPO Objective and Policy Optimization}
+Policy parameters $\theta$ and critic parameters $\phi$ are optimized with PPO \cite{schulman2017}. Let
+\begin{equation}
+\rho_t(\theta)=\frac{\pi_\theta(\ba_t\mid\F_t)}{\pi_{\theta_{\mathrm{old}}}(\ba_t\mid\F_t)}=\exp\bigl(\log\pi_\theta(\ba_t\mid\F_t)-\log\pi_{\theta_{\mathrm{old}}}(\ba_t\mid\F_t)\bigr)\ \cite{schulman2017}\label{eq:ratio}
+\end{equation}
+be the importance ratio between the policy being optimised and the policy that collected the data, both evaluated on the stored raw action $\ba_t$ (Eq.~\eqref{eq:dirichlet}). With $\hat A_t$ the Generalized Advantage Estimator (GAE-$\lambda$) with $\lambda_{\mathrm{GAE}}=0.95$ discount $\gamma=0.99$ \cite{zou2024}, and clipping range $\epsilon=0.2$ \cite{schulman2017,zou2024}, the PPO clipped surrogate objective \cite{schulman2017} is
+\begin{equation}
+L^{\mathrm{clip}}(\theta)=\E_t\Bigl[\min\Bigl(\rho_t(\theta)\hat A_t,\ \mathrm{clip}\bigl(\rho_t(\theta),1-\epsilon,1+\epsilon\bigr)\hat A_t\Bigr)\Bigr]\ \cite{schulman2017}.\label{eq:clip}
+\end{equation}
+PPO maximises this clipped surrogate objective to update the actor policy: actions with positive advantage become more probable, but the clip removes any incentive to move the ratio outside $[1-\epsilon,1+\epsilon]$, which keeps each update close to the data-collecting policy \cite{schulman2017}.
+
+Because the actor and critic share an encoder, they are trained together by minimising one total loss,
+\begin{equation}
+L^{\mathrm{total}}(\theta,\phi)=-L^{\mathrm{clip}}(\theta)+c_1L^{\mathrm{value}}(\phi)-c_2H(\pi_\theta)\ \cite{schulman2017,zou2024},\label{eq:total}
+\end{equation}
+where $L^{\mathrm{value}}$ is the mean squared error between the critic estimate $V_\phi(\F_t)$ and the GAE return target $\hat V_t^{\mathrm{target}}$, and $H(\pi_\theta)$ is the analytical entropy of the Dirichlet policy, whose bonus discourages premature collapse of the allocation distribution. The loss weights $c_1=0.5$ and $c_2=0.01$ are the critic-loss and distribution-entropy weights reported in Table~1 of Zou et al.\ \cite{zou2024}.
+
+For an unclipped transition $J_t(\theta)=\rho_t(\theta)\hat A_t$, differentiating with respect to policy parameters $\theta$ yields:
+\begin{equation}
+\nabla_\theta J_t(\theta)=\hat A_t\nabla_\theta\rho_t(\theta)=\hat A_t\frac{\nabla_\theta\pi_\theta(\ba_t\mid\F_t)}{\pi_{\theta_{\mathrm{old}}}(\ba_t\mid\F_t)}=\rho_t(\theta)\hat A_t\nabla_\theta\log\pi_\theta(\ba_t\mid\F_t)\ \cite{schulman2017}.\label{eq:grad}
+\end{equation}
+Equation~\eqref{eq:grad} shows that the policy gradient is steered by the estimated advantage $\hat A_t$ and scaled by the importance ratio $\rho_t(\theta)$, adjusting the Dirichlet concentration mapping $\F_t\mapsto\balpha_t$ to shift probability mass toward superior portfolio allocations on $\Delta^{10}$ \cite{yang2022}. Optimization is performed via Adam ($\eta=10^{-4}$) with gradient clipping at 0.5 \cite{zou2024}; as an implementation safeguard, the epoch loop stops early when the approximate KL divergence exceeds $1.5\times\mathrm{target\_kl}=0.03$.
+
+\subsection{PPO Training Parameters}
+Table~\ref{tab:ppo} summarizes the PPO hyperparameters and operational settings extracted directly from our codebase, with the source of each value.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{PPO training parameters and operational settings (verified from source code).}\label{tab:ppo}
+\renewcommand{\arraystretch}{1.05}\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{3.6cm}p{4.0cm}p{1.6cm}p{6.0cm}@{}}
+\toprule
+Parameter & Description & Value & Selection Basis / Source\\
+\midrule
+Discount factor ($\gamma$) & Return discount factor & 0.99 & Zou et al.\ (2024) \cite{zou2024}\\
+GAE parameter ($\lambda_{\mathrm{GAE}}$) & Advantage trace decay & 0.95 & Schulman et al.\ (2017) \cite{schulman2017}\\
+Rollout horizon ($T_{\mathrm{rollout}}$) & Interaction steps per buffer & 128 & Zou et al.\ (2024) \cite{zou2024}\\
+PPO clipping range ($\epsilon$) & Policy ratio clipping threshold & 0.2 & Schulman et al.\ \cite{schulman2017}; Zou et al.\ \cite{zou2024}\\
+Value coefficient ($c_1$) & Critic loss weight & 0.5 & Zou et al.\ (2024) \cite{zou2024}, Table 1\\
+Entropy coefficient ($c_2$) & Policy entropy bonus weight & 0.01 & Zou et al.\ (2024) \cite{zou2024}, Table 1\\
+Optimiser & Parameter optimiser & Adam & Zou et al.\ (2024) \cite{zou2024}\\
+Learning rate ($\eta$) & Adam learning rate & $10^{-4}$ & Validation selection (Fold 1); Zou et al.\ \cite{zou2024} use $3\times10^{-4}$\\
+Target KL (\texttt{target\_kl}) & Approximate KL early-stop & 0.02 & Implementation safeguard (not specified in \cite{schulman2017} or \cite{zou2024})\\
+Training epochs ($K$) & Update epochs per rollout & 10 & Schulman et al.\ (2017) \cite{schulman2017}\\
+Mini-batch size ($B$) & Batch size per SGD update & 64 & Schulman et al.\ (2017) \cite{schulman2017}\\
+Gradient clipping & Maximum gradient norm & 0.5 & Zou et al.\ (2024) \cite{zou2024}\\
+Reward normalisation & Online reward scaling & Welford Std & Implementation setting (online Welford running standardisation)\\
+Total environment steps & Training budget per run & 300,000 & Controlled ablation budget across M1--M4\\
+Validation interval & Checkpoint evaluation frequency & 25,000 & Validation selection interval\\
+Transaction cost ($c_{\mathrm{trans}}$) & Proportional cost per unit turnover & 0.001 & Zou et al.\ (2024) \cite{zou2024} (0.1\% per transaction)\\
+Execution threshold ($\tau$) & Minimum raw weight kept & 0.01 & Implementation setting\\
+Log-concentration clamp & Bounds of $\ell_t$ & $[-3,6]$ & Implementation setting\\
+Window length ($T$), hidden size ($H$) & Sequence length; LSTM units & 30; 512 & Zou et al.\ (2024) \cite{zou2024}\\
+DSR rate ($\eta_{\mathrm{dsr}}$) & Moment adaptation rate & 0.01 & Implementation setting; recursion from \cite{millea2021}\\
+Turnover penalty ($\lambda_{\mathrm{turn}}$) & M4 penalty weight & 0.1 & Fold-1 validation sweep (Section~\ref{sec:tuning})\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =====================================================================
+\section{Controlled Ablation Study Design}\label{ch:ablation}
+% =====================================================================
+\subsection{Specification of Ablation Models M1--M4}
+To evaluate the contribution of each algorithmic component without confounding factors, we adopt a single-factor ablation design. Four model configurations (M1 through M4) are specified such that each successive transition alters exactly one algorithmic mechanism while holding all other parameters, training budgets, random seeds, transaction costs, and data folds strictly invariant:
+\begin{enumerate}
+\item \textbf{Model M1 (MLP Baseline + Net Return):} Two-layer feedforward MLP observing solely instantaneous market observation $\bs_t\in\mathbb{R}^{141}$ with net return reward ($r_t=\Rnet{}_{,t}$) and zero penalty ($\lambda_{\mathrm{turn}}=0$).
+\item \textbf{Model M2 (LSTM Recurrent Encoder + Net Return):} Replaces the static MLP with a single-layer LSTM ($H=512$) over sliding window $\F_t\in\mathbb{R}^{30\times141}$. Reward remains net return ($r_t=\Rnet{}_{,t}$). Transition M1 $\to$ M2 isolates temporal memory and sequence modeling.
+\item \textbf{Model M3 (LSTM Encoder + Differential Sharpe Ratio):} Retains the LSTM backbone, replacing net return with the recursive Differential Sharpe Ratio ($r_t=D_t$). Transition M2 $\to$ M3 isolates risk-aware reward engineering.
+\item \textbf{Model M4 (LSTM + DSR + Quadratic Turnover Regularisation):} Retains the LSTM backbone and DSR reward, augmented by a quadratic weight-change penalty on risky assets ($r_t=D_t-\lambda_{\mathrm{turn}}\sum_{j=1}^{10}(w_{j,t}^{\mathrm{target}}-w_{j,t}^{\mathrm{cur}})^2$) with $\lambda_{\mathrm{turn}}=0.1$. Transition M3 $\to$ M4 isolates turnover regularisation.
+\end{enumerate}
+Table~\ref{tab:ablation} summarises the systematic ablation matrix across all four configurations.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Systematic ablation matrix across models M1 to M4.}\label{tab:ablation}
+\footnotesize\setlength{\tabcolsep}{3pt}\newcolumntype{C}{>{\centering\arraybackslash}p{3.2cm}}
+\begin{tabular}{@{}p{3.0cm}CCCC@{}}
+\toprule
+Configuration Property & Model M1 & Model M2 & Model M3 & Model M4\\
+\midrule
+Encoder Backbone & MLP (2-layer) & LSTM (1-layer) & LSTM (1-layer) & LSTM (1-layer)\\
+Temporal Window ($T$) & 1 day (last row) & 30 days & 30 days & 30 days\\
+Latent Dimension ($H$) & 512 & 512 & 512 & 512\\
+Policy Head & Dirichlet $\Delta^{10}$ & Dirichlet $\Delta^{10}$ & Dirichlet $\Delta^{10}$ & Dirichlet $\Delta^{10}$\\
+Action Threshold ($\tau$) & 0.01 & 0.01 & 0.01 & 0.01\\
+Reward Formulation & Net Return & Net Return & DSR ($D_t$) & DSR ($D_t$)\\
+Turnover Regularisation & None ($\lambda=0$) & None ($\lambda=0$) & None ($\lambda=0$) & Quadratic Penalty ($\lambda=0.1$)\\
+Environment Cost Model & 0.1\% per turnover & 0.1\% per turnover & 0.1\% per turnover & 0.1\% per turnover\\
+Training Budget & 300,000 steps & 300,000 steps & 300,000 steps & 300,000 steps\\
+Ablation Mechanism & Baseline & + Temporal Memory & + Risk-Aware Reward & + Turnover Penalty\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Control Invariants and Training Algorithm}
+Experimental controls are strictly enforced: (i) Actor and Critic heads are instantiated prior to the encoder to ensure identical initial head weights across models under the same seed; (ii) all models train for exactly 300,000 steps with identical Adam learning rate ($10^{-4}$), rollout horizon (128), and batch size (64); (iii) all models experience identical market sequences and transaction costs; and (iv) programmatic assertions verify that each transition alters exactly one dimension. Algorithm~\ref{alg:ppo} details the training workflow.
+
+\begin{algorithm}[H]
+\caption{Continuous Dirichlet PPO Daily Portfolio Allocation}\label{alg:ppo}
+\footnotesize
+\begin{algorithmic}[1]
+\Require Market indicators $X$, returns $R$, cost $c_{\mathrm{trans}}=0.001$, threshold $\tau=0.01$, penalty $\lambda_{\mathrm{turn}}$, DSR rate $\eta_{\mathrm{dsr}}=0.01$, PPO hyperparameters ($\gamma,\lambda_{\mathrm{GAE}},\epsilon,\eta=10^{-4}$).
+\Ensure Optimised policy weights $\theta^*$ selected by peak validation Sharpe ratio.
+\State \textbf{Initialise} shared Encoder, Actor $\theta$, Critic $\phi$, Adam optimiser; $V_0\gets10^6$, $\bw_0^{\mathrm{cur}}\gets[0,\dots,0,1]^\top$; DSR moments $A_0\gets0$, $B_0\gets0$; step counter $N_{\mathrm{step}}\gets0$, $\mathrm{SR}_{\mathrm{best}}\gets-\infty$.
+\While{$N_{\mathrm{step}}<300{,}000$}
+  \State Reset rollout buffer $\mathcal{B}\gets\emptyset$.
+  \For{$t=1$ \textbf{to} $T_{\mathrm{rollout}}=128$}
+    \State Compute $\mathbf{h}_t\gets\mathrm{Encoder}(\F_t)$ (MLP: last row $\bs_t$ only), $\ell_t\gets\mathrm{clip}(\mathbf{W}_a\mathbf{h}_t+\mathbf{b}_a,-3,6)$, and $\balpha_t\gets\exp(\ell_t)$.
+    \State Sample raw continuous action $\ba_t\sim\mathrm{Dirichlet}(\balpha_t)$; record $lp_t\gets\log\pi_\theta(\ba_t\mid\F_t)$ (Eq.~\ref{eq:dirichlet}) and $V_t\gets V_\phi(\F_t)$.
+    \State Apply threshold: $\tilde w_{i,t}\gets a_{i,t}\mathbf{1}_{a_{i,t}\ge\tau}$; set target weights $\bw_t^{\mathrm{target}}\gets\tilde{\bw}_t/\sum_j\tilde w_{j,t}$.
+    \State Rebalance: $\mathrm{Turnover}_t\gets\sum_{i=1}^{10}|w_{i,t}^{\mathrm{target}}-w_{i,t}^{\mathrm{cur}}|$, fee $C_t\gets c_{\mathrm{trans}}V_t\,\mathrm{Turnover}_t$.
+    \State Advance environment: update wealth $V_{t+1}$, net return $\Rnet{}_{,t}\gets(V_{t+1}-V_t)/V_t$, and drifted weights $\bw_{t+1}^{\mathrm{cur}}$.
+    \State Compute model reward: $r_t\gets\Rnet{}_{,t}$ (M1, M2); $r_t\gets D_t$ (M3); $r_t\gets D_t-\lambda_{\mathrm{turn}}\sum_{i=1}^{10}(w_{i,t}^{\mathrm{target}}-w_{i,t}^{\mathrm{cur}})^2$ (M4).
+    \State Store $(\F_t,\ba_t,lp_t,V_t,r_t)$ in $\mathcal{B}$; $N_{\mathrm{step}}\gets N_{\mathrm{step}}+1$.
+  \EndFor
+  \State Standardise rewards, compute GAE advantages $\hat A_t$ and returns $\hat V_t^{\mathrm{target}}$.
+  \For{epoch $=1$ \textbf{to} $10$}
+    \For{each mini-batch of size $B=64$ from $\mathcal{B}$}
+      \State Evaluate ratio $\rho_i(\theta)\gets\exp(\log\pi_\theta-lp_i)$ (Eq.~\ref{eq:ratio}) and approximate KL divergence; \textbf{break} if KL $>0.03$.
+      \State Update $(\theta,\phi)$ via Adam ($\eta=10^{-4}$, grad clip 0.5), minimising $L^{\mathrm{total}}(\theta,\phi)$ (Eq.~\ref{eq:total}), which contains $-L^{\mathrm{clip}}$ (Eq.~\ref{eq:clip}).
+    \EndFor
+  \EndFor
+  \If{$N_{\mathrm{step}}\bmod25{,}000=0$} evaluate $\mathrm{SR}_{\mathrm{val}}$; \textbf{if} $\mathrm{SR}_{\mathrm{val}}>\mathrm{SR}_{\mathrm{best}}$ \textbf{then} save checkpoint $\theta^*\gets\theta$ \textbf{end if}
+  \EndIf
+\EndWhile
+\State Restore best checkpoint $\theta^*$ for final out-of-sample test evaluation.
+\end{algorithmic}
+\end{algorithm}
+
+% =====================================================================
+\section{Results and Discussion}\label{ch:results}
+% =====================================================================
+\subsection{Overall Out-of-Sample Performance}
+Out-of-sample evaluation was conducted across four chronological 2-year test windows spanning 2018 through 2025. Table~\ref{tab:overall} reports the pooled test performance metrics (averaged across four folds and three random seeds) for Models M1--M4 alongside the passive Equal-Weight (EW) benchmark.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Pooled out-of-sample test performance across 4 folds and 3 seeds (mean $\pm$ standard deviation over seeds).}\label{tab:overall}
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Model & Cum.\ Return (\%) & CAGR (\%) & Sharpe Ratio & Sortino & Max DD (\%) & Cost (\% of $V_0$)\\
+\midrule
+M1 (MLP) & 20.62 $\pm$ 5.14 & 9.90 $\pm$ 2.31 & 0.71 $\pm$ 0.13 & 1.03 $\pm$ 0.20 & $-$19.50 $\pm$ 1.04 & 9.68 $\pm$ 0.10\\
+M2 (LSTM) & 28.23 $\pm$ 2.03 & 13.37 $\pm$ 0.88 & 0.92 $\pm$ 0.07 & 1.34 $\pm$ 0.09 & $-$18.52 $\pm$ 1.35 & 4.27 $\pm$ 1.44\\
+M3 (+ DSR) & 26.93 $\pm$ 3.27 & 12.68 $\pm$ 1.56 & 0.92 $\pm$ 0.11 & 1.34 $\pm$ 0.17 & $-$19.95 $\pm$ 0.81 & 4.14 $\pm$ 1.15\\
+M4 (+ Turn.\ Pen.) & 20.97 $\pm$ 4.19 & 10.09 $\pm$ 1.85 & 0.92 $\pm$ 0.17 & 1.37 $\pm$ 0.26 & $-$16.04 $\pm$ 1.72 & 0.97 $\pm$ 0.15\\
+Equal-Weight & 36.48 & 17.08 & 1.13 & 1.66 & $-$18.91 & 0.61\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The primary empirical finding is that the passive Equal-Weight benchmark achieved the highest pooled cumulative return (36.48\%) and highest Sharpe ratio (1.13), outperforming all four reinforcement learning models. Among active RL agents, M2 and M3 achieved the highest returns (28.23\% and 26.93\%), while M4 achieved the lowest execution friction (0.97\% cost) and shallowest maximum drawdown ($-16.04\%$). Figure~\ref{fig:cum} illustrates cumulative portfolio profit across the continuous 2018--2025 timeline (with starting capital $V_0=$ INR 1,000,000 reinvested sequentially), and Figure~\ref{fig:dd} portrays corresponding peak-to-trough drawdowns.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/fig7_1_cumprofit.png}
+\caption{Cumulative out-of-sample profit across chained test windows (2018--2025, starting capital INR 1,000,000).}\label{fig:cum}
+\end{figure}
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/fig7_2_drawdown.png}
+\caption{Out-of-sample portfolio drawdown from running peak across the chained timeline.}\label{fig:dd}
+\end{figure}
+
+\subsection{Analysis of Ablation Steps}
+To assess whether observed differences are consistent across environments, paired differences ($b-a$) were computed across all 12 (fold, seed) evaluation pairs. Table~\ref{tab:delta} reports the paired mean deltas and 95\% bootstrap confidence intervals (obtained by resampling whole folds with replacement across 10,000 bootstrap draws).
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Paired ablation differences ($b-a$) with 95\% bootstrap confidence intervals across 12 (fold, seed) pairs.}\label{tab:delta}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{3.0cm}lcccc@{}}
+\toprule
+Ablation Transition & Metric & Mean Delta & 95\% CI & Folds Improved & Pairs Improved\\
+\midrule
+\multirow{4}{3cm}{M1 $\to$ M2 (Temporal Memory)} & Sharpe Ratio & $+0.201$ & [$+0.156$, $+0.246$] & 4/4 & 9/12\\
+ & Cum.\ Return (\%) & $+7.61\%$ & [$+4.81\%$, $+10.01\%$] & 4/4 & 10/12\\
+ & Daily Turnover & $-0.106$ & [$-0.138$, $-0.070$] & 4/4 & 11/12\\
+ & Cost (\% of $V_0$) & $-5.41\%$ & [$-7.37\%$, $-3.34\%$] & 4/4 & 11/12\\
+\midrule
+\multirow{4}{3cm}{M2 $\to$ M3 (DSR Reward)} & Sharpe Ratio & $+0.003$ & [$-0.295$, $+0.222$] & 3/4 & 7/12\\
+ & Cum.\ Return (\%) & $-1.30\%$ & [$-9.33\%$, $+4.45\%$] & 2/4 & 6/12\\
+ & Max Drawdown (\%) & $-1.43\%$ & [$-5.36\%$, $+0.81\%$] & 3/4 & 6/12\\
+ & Daily Turnover & $-0.002$ & [$-0.019$, $+0.014$] & 2/4 & 7/12\\
+\midrule
+\multirow{5}{3cm}{M3 $\to$ M4 (Turnover Regularisation)} & Sharpe Ratio & $+0.005$ & [$-0.236$, $+0.280$] & 2/4 & 6/12\\
+ & Cum.\ Return (\%) & $-5.96\%$ & [$-13.29\%$, $+3.37\%$] & 1/4 & 3/12\\
+ & Max Drawdown (\%) & $+3.90\%$ & [$+1.45\%$, $+7.00\%$] & 4/4 & 10/12\\
+ & Daily Turnover & $-0.060$ & [$-0.082$, $-0.044$] & 4/4 & 12/12\\
+ & Cost (\% of $V_0$) & $-3.17\%$ & [$-4.01\%$, $-2.43\%$] & 4/4 & 12/12\\
+\midrule
+\multirow{4}{3cm}{M1 $\to$ M4 (All Combined)} & Sharpe Ratio & $+0.209$ & [$+0.012$, $+0.386$] & 3/4 & 8/12\\
+ & Max Drawdown (\%) & $+3.45\%$ & [$+2.52\%$, $+4.03\%$] & 4/4 & 8/12\\
+ & Daily Turnover & $-0.167$ & [$-0.190$, $-0.144$] & 4/4 & 12/12\\
+ & Cost (\% of $V_0$) & $-8.71\%$ & [$-10.07\%$, $-7.27\%$] & 4/4 & 12/12\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Step 1: Impact of Temporal Memory (M2 versus M1)}
+Transitioning from the MLP baseline (M1) to the LSTM recurrent encoder (M2) represents the clearest improvement in the ablation sequence. The pooled Sharpe ratio increases from 0.714 to 0.915 ($+0.201$, 95\% CI [$+0.156$, $+0.246$]), improving across all four folds (4/4). Simultaneously, daily turnover decreases from 0.186 to 0.080, cutting cumulative transaction costs from 9.68\% to 4.27\% of capital. The 30-day LSTM representation provides valuable temporal smoothing relative to the single-day MLP baseline, tracking multi-period trends and reducing counterproductive churning.
+
+\subsubsection{Step 2: Impact of Differential Sharpe Ratio (M3 versus M2)}
+Replacing net return with the Differential Sharpe Ratio (M3) produces mixed, regime-dependent effects rather than a uniform improvement. The pooled Sharpe ratio remains flat ($+0.003$, 95\% CI [$-0.295$, $+0.222$]), pooled return decreases from 28.23\% to 26.93\%, and maximum drawdown widens from $-18.52\%$ to $-19.95\%$. Although M3 achieves strong Sharpe ratios in Folds 3 and 4 (1.328 and 1.164), its recursive variance penalty dampens equity exposure during sustained upward trends, slightly curtailing profit capture.
+
+\subsubsection{Step 3: Impact of Turnover Regularisation (M4 versus M3)}
+Augmenting the reward with a quadratic penalty ($\lambda_{\mathrm{turn}}=0.1$) demonstrates an operational trade-off:
+\begin{itemize}
+\item \textbf{Friction Reduction:} Daily turnover decreases from 0.079 to 0.019 (a 76\% reduction, improved in 12/12 pairs), reducing costs to 0.97\% of starting capital, approaching the passive benchmark (0.61\%).
+\item \textbf{Downside Protection:} Maximum drawdown improves by $+3.90\%$ (from $-19.95\%$ to $-16.04\%$, 95\% CI [$+1.45\%$, $+7.00\%$]), recording the shallowest drawdown among all models, including Equal-Weight ($-18.91\%$).
+\item \textbf{Return Trade-off:} Conservatism reduces pooled return from 26.93\% to 20.97\% (improved in 1/4 folds). Regularisation limits churn and drawdown, but penalises rapid reallocations needed to capture explosive recoveries.
+\end{itemize}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig7_3_turnover_cost.png}
+\caption{Average daily turnover and total transaction costs (\% of initial capital $V_0$) across models.}\label{fig:tc}
+\end{figure}
+
+\subsection{Fold-by-Fold Performance Dynamics}
+Table~\ref{tab:perfold} reports out-of-sample cumulative returns across individual two-year test windows, and Figure~\ref{fig:fold} illustrates cumulative profit trajectories over each fold.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Out-of-sample cumulative return (\%) per walk-forward fold (mean $\pm$ standard deviation over seeds).}\label{tab:perfold}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Fold Window & Model M1 & Model M2 & Model M3 & Model M4 & Equal-Weight\\
+\midrule
+Fold 1 (2018--2019) & 10.0 $\pm$ 1.7 & 17.8 $\pm$ 7.7 & 4.4 $\pm$ 5.9 & 12.1 $\pm$ 5.3 & 24.9\\
+Fold 2 (2020--2021) & 34.0 $\pm$ 9.2 & 44.8 $\pm$ 6.9 & 44.1 $\pm$ 4.7 & 28.5 $\pm$ 14.8 & 50.4\\
+Fold 3 (2022--2023) & 23.4 $\pm$ 9.7 & 31.6 $\pm$ 4.7 & 34.5 $\pm$ 5.2 & 28.3 $\pm$ 5.3 & 43.4\\
+Fold 4 (2024--2025) & 15.0 $\pm$ 4.2 & 18.7 $\pm$ 1.3 & 24.7 $\pm$ 3.6 & 15.1 $\pm$ 4.0 & 27.3\\
+\midrule
+Pooled Mean & 20.6 $\pm$ 5.1 & 28.2 $\pm$ 2.0 & 26.9 $\pm$ 3.3 & 21.0 $\pm$ 4.2 & 36.5\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig7_4_foldprofit.png}
+\caption{Cumulative out-of-sample portfolio profit across the four two-year test windows (mean across random seeds; initial capital $V_0=$ INR 1,000,000; $y$-axis denotes profit in INR; January 2026 marks the final tick for data ending December 2025).}\label{fig:fold}
+\end{figure}
+
+Performance varies across market regimes: \textbf{Fold 1 (2018--2019):} Moderate growth; M2 leads RL agents (17.8\%), M3 lags (4.4\%), and Equal-Weight leads at 24.9\%. \textbf{Fold 2 (2020--2021):} Pandemic shock and rapid recovery; M2 (44.8\%) and M3 (44.1\%) capture upside, whereas M4 lags (28.5\%) due to constrained repositioning. \textbf{Fold 3 (2022--2023):} Tightening and sector rotation; M3 achieves its highest return (34.5\%, Sharpe 1.328), outperforming M2 (31.6\%) and M4 (28.3\%). \textbf{Fold 4 (2024--2025):} Secular bull market; M3 delivers 24.7\%, while M4 (15.1\%) remains constrained.
+
+\subsection{Equal-Weight Benchmark Outperformance and Gap Decomposition}
+The passive Equal-Weight benchmark produced higher cumulative returns than every RL model across all test windows. We distinguish between the pooled average 2-year fold return (36.48\% in Table~\ref{tab:overall}) and the \emph{sum of daily gross stock returns} over the chained 2018--2025 timeline (135.66 percentage points in Table~\ref{tab:decomp}), which is measured before transaction costs and without compounding; the compounded, cost-adjusted profit path is the one shown in Figure~\ref{fig:cum}.
+
+Table~\ref{tab:decomp} decomposes the gap between each model and Equal-Weight over the chained timeline into two exploratory components: (i) Cash Drag: return forfeited by holding cash in an upward-trending market (evaluated against a counterfactual ``EW Same Cash'' portfolio); and (ii) Stock Selection and Timing: difference between model return and ``EW Same Cash'', reflecting active equity weights. Average allocations are presented in Table~\ref{tab:alloc}.
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Exploratory decomposition of the return gap against Equal-Weight (percentage points; sum of daily gross stock returns over the chained 2018--2025 timeline, before costs and without compounding).}\label{tab:decomp}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Model & EW Return & Cash Drag & EW Same Cash & Stock Selection & Model Return\\
+\midrule
+M1 (MLP) & 135.66 & $-13.67$ & 121.99 & $-2.11$ & 119.88\\
+M2 (LSTM) & 135.66 & $-9.99$ & 125.67 & $-2.14$ & 123.53\\
+M3 (+ DSR) & 135.66 & $-15.14$ & 120.52 & $-3.32$ & 117.20\\
+M4 (+ Turn.\ Pen.) & 135.66 & $-42.35$ & 93.31 & $-7.84$ & 85.47\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\small
+\caption{Average asset allocations across models over the out-of-sample evaluation period.}\label{tab:alloc}
+\setlength{\tabcolsep}{3.4pt}
+\begin{tabular}{@{}lccccccccccc@{}}
+\toprule
+Model & RELI & TCS & HDFCB & ICICIB & ITC & HIND & LT & SUNP & MARU & BHAR & Cash\\
+\midrule
+M1 & 0.088 & 0.120 & 0.085 & 0.087 & 0.084 & 0.077 & 0.091 & 0.087 & 0.087 & 0.094 & 0.101\\
+M2 & 0.098 & 0.144 & 0.073 & 0.091 & 0.081 & 0.087 & 0.082 & 0.090 & 0.098 & 0.071 & 0.087\\
+M3 & 0.089 & 0.119 & 0.073 & 0.077 & 0.072 & 0.079 & 0.073 & 0.094 & 0.107 & 0.086 & 0.131\\
+M4 & 0.066 & 0.103 & 0.079 & 0.061 & 0.049 & 0.066 & 0.057 & 0.071 & 0.092 & 0.032 & 0.324\\
+EW & 0.100 & 0.100 & 0.100 & 0.100 & 0.100 & 0.100 & 0.100 & 0.100 & 0.100 & 0.100 & 0.000\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The decomposition indicates that cash drag accounts for the majority of the gap. The Indian equity market experienced strong overall growth over 2018--2025; the passive EW benchmark remained 100\% invested at all times, capturing market beta with minimal turnover (0.61\%). Conversely, Model M4 allocated an average of 32.4\% to cash to avoid volatility and rebalancing penalties. Under the zero-return cash assumption, this resulted in an estimated $-42.35$ percentage points of cash drag relative to EW, compared to $-7.84$ percentage points from equity selection. In addition, the selected large-caps represent corporate leaders that prospered over 2011--2025, creating a strong survivorship baseline that active strategies struggle to surpass after frictions.
+
+\subsection{M4 Hyperparameter Tuning and Validation Dynamics}\label{sec:tuning}
+Figure~\ref{fig:lambda} depicts the parameter sweep over $\lambda_{\mathrm{turn}}\in\{0.01,0.03,0.1,0.3\}$ on Fold 1 validation data across two seeds (seeds 0 and 1).
+
+\begin{figure}[!htbp]
+\centering
+\begin{minipage}[b]{0.38\textwidth}\centering
+\includegraphics[width=\textwidth]{figures/fig7_5_lambda_sweep.png}
+\captionof{figure}{M4 turnover penalty sweep on Fold 1 validation (chosen $\lambda=0.1$ shaded).}\label{fig:lambda}
+\end{minipage}\hfill
+\begin{minipage}[b]{0.60\textwidth}\centering
+\includegraphics[width=\textwidth]{figures/fig7_6_val_curves.png}
+\captionof{figure}{Validation Sharpe and turnover dynamics over 300,000 steps.}\label{fig:val}
+\end{minipage}
+\end{figure}
+
+The preliminary sweep indicated that $\lambda=0.1$ achieved a favorable trade-off on Fold 1 validation, reducing validation turnover while maintaining Sharpe ratio. At $\lambda=0.01$, turnover remained elevated (0.040), whereas at $\lambda=0.3$, reallocations were overly restricted. We disclose as an experimental limitation that $\lambda_{\mathrm{turn}}=0.1$ was selected based on preliminary validation tuning on Fold 1 alone across two seeds and applied frozen across all subsequent folds. Finally, Figure~\ref{fig:val} demonstrates that validation performance peaks between 50,000 and 100,000 steps before degrading, highlighting the necessity of checkpoint selection based on validation Sharpe ratio rather than relying on the final training step.
+
+% =====================================================================
+\section{Conclusion}\label{ch:concl}
+% =====================================================================
+This study investigated the roles of temporal memory, risk-sensitive rewards, and turnover regularisation in deep reinforcement learning for daily portfolio allocation across ten major National Stock Exchange of India (NSE) equities over 2018--2025. Based on our four-fold, three-seed walk-forward experiments, we answer our core research questions:
+\begin{itemize}
+\item \textbf{RQ1 (Temporal Architecture):} Does an LSTM recurrent encoder improve out-of-sample risk-adjusted returns and policy stability compared to an MLP baseline?\\
+\textit{Answer: Yes.} Under our setup, transitioning from the static MLP (M1) to the sequence-aware LSTM (M2) increased the pooled Sharpe ratio from 0.714 to 0.915 ($+0.201$, 95\% CI [$+0.156$, $+0.246$]), showing gains across all four folds (4/4). The recurrent representation cut average daily turnover from 0.186 to 0.080 and reduced cumulative transaction costs from 9.68\% to 4.27\% of capital, confirming that multi-day sequence features filter daily noise and prevent erratic reallocations.
+\item \textbf{RQ2 (Risk-Aware Reward Shaping):} Does transitioning from raw net return to the Differential Sharpe Ratio (DSR) improve Sharpe ratios and drawdowns?\\
+\textit{Answer: The effect is mixed and regime-dependent.} The DSR reward (M3) produced a flat incremental Sharpe delta ($+0.003$, 95\% CI [$-0.295$, $+0.222$]) relative to M2. While DSR performed strongly in trending regimes (Fold 3 Sharpe 1.328 and Fold 4 Sharpe 1.164), its recursive variance penalty slightly dampened pooled return (26.93\% vs.\ 28.23\%) and did not improve pooled maximum drawdown ($-19.95\%$ vs.\ $-18.52\%$).
+\item \textbf{RQ3 (Turnover Regularisation):} Does augmenting the reward with a quadratic penalty suppress turnover and transaction costs, and what is the trade-off?\\
+\textit{Answer: Yes, with an explicit operational trade-off.} Incorporating the quadratic weight-change penalty in Model M4 reduced average daily turnover from 0.079 to 0.019 (a 76\% reduction, improved in 12/12 pairs) and lowered transaction fees to 0.97\% of capital. M4 also achieved the shallowest maximum drawdown among all evaluated models ($-16.04\%$, $+3.90\%$ over M3). However, this conservatism reduced pooled return from 26.93\% to 20.97\%, demonstrating that penalising turnover restricts participation in rapid market rebounds.
+\item \textbf{RQ4 (Benchmark Competitiveness):} Can a continuous actor--critic DRL agent outperform a passively rebalanced equal-weight benchmark in a realistic Indian equity universe?\\
+\textit{Answer: No.} The passive Equal-Weight benchmark achieved superior pooled return (36.48\%) and Sharpe ratio (1.13). Our exploratory gap decomposition reveals that this is primarily driven by cash drag ($-42.35$ percentage points in M4) resulting from learned cash reserves in a secular bull market under the zero-return cash assumption, alongside survivorship bias among established large-cap leaders.
+\end{itemize}
+In conclusion, deep reinforcement learning can autonomously acquire disciplined, low-turnover allocation strategies on continuous simplices. While active outperformance against fully-invested broad-market beta remains difficult due to cash drag and trading costs, our controlled ablation isolates the empirical value of sequence modeling, reward shaping, and turnover control for quantitative asset management.
+
+% =====================================================================
+\phantomsection\addcontentsline{toc}{section}{Bibliography}
+{\footnotesize\setlength{\bibsep}{1pt}\bibliography{refs}}
+
+\end{document}

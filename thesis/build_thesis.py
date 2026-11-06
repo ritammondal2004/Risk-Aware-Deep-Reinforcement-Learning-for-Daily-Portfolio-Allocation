@@ -24,19 +24,19 @@ def build_all():
     main_pdf = os.path.join(thesis_dir, "main.pdf")
     final_pdf = os.path.join(thesis_dir, "BTP1_Report_Final.pdf")
     
-    if os.path.exists(main_pdf):
+    if res.returncode == 0 and os.path.exists(main_pdf):
         doc = fitz.open(main_pdf)
         print(f"SUCCESS: Built main.pdf with {len(doc)} pages.")
         # Synchronize BTP1_Report_Final.pdf
         try:
             shutil.copyfile(main_pdf, final_pdf)
             print(f"SUCCESS: Synchronized {final_pdf} ({os.path.getsize(final_pdf)} bytes).")
-        except PermissionError:
-            print(f"NOTE: {final_pdf} is currently open in a PDF viewer (locked). main.pdf was successfully built ({len(doc)} pages).")
+        except Exception as e:
+            print(f"NOTE: Could not sync {final_pdf} ({e}). main.pdf was successfully built ({len(doc)} pages).")
         return len(doc)
     else:
-        print("FAILED to build main.pdf. Output:")
-        print(res.stdout[-1500:])
+        print(f"FAILED to build main.pdf (exit code {res.returncode}). Output:")
+        print(res.stdout[-2500:] if res.stdout else "No stdout")
         return 0
 
 if __name__ == "__main__":

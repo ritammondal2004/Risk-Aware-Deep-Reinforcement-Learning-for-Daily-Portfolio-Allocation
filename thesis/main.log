@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  6 NOV 2026 01:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  6 NOV 2026 16:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -208,7 +208,37 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \@float@everytoks=\toks27
 \@floatcapt=\box58
 )
-(C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithm.sty
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
+(C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
+)
+\@float@every@algorithm=\toks28
+\c@algorithm=\count306
+)
+(C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/algorithmicx\algpseudoco
+de.sty
+Package: algpseudocode 
+
+(C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/algorithmicx\algorithmic
+x.sty
+Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
+
+Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
+\c@ALG@line=\count307
+\c@ALG@rem=\count308
+\c@ALG@nested=\count309
+\ALG@tlm=\skip58
+\ALG@thistlm=\skip59
+\c@ALG@Lnr=\count310
+\c@ALG@blocknr=\count311
+\c@ALG@storecount=\count312
+\c@ALG@tmpcounter=\count313
+\ALG@tmplength=\skip60
+)
+Document Style - pseudocode environments for use with the `algorithmicx' style
+) (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
 
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
@@ -228,9 +258,9 @@ Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
 ) (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
 Package: colortbl 2026/05/01 v1.0l Color table columns (DPC)
-\everycr=\toks28
-\minrowclearance=\skip58
-\rownum=\count306
+\everycr=\toks29
+\minrowclearance=\skip61
+\rownum=\count314
 )
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\pifont.sty
 Package: pifont 2020/03/25 PSNFSS-v9.3 Pi font support (SPQR) 
@@ -261,13 +291,13 @@ Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
 \caption@hangindent=\dimen196
 Package caption Info: Standard document class detected.
 )
-\c@caption@flags=\count307
-\c@continuedfloat=\count308
+\c@caption@flags=\count315
+\c@continuedfloat=\count316
 Package caption Info: float package is loaded.
 )
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/tools\enumerate.sty
 Package: enumerate 2023/07/04 v3.00 enumerate extensions (DPC)
-\@enLab=\toks29
+\@enLab=\toks30
 )
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
 Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
@@ -312,10 +342,10 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count309
+\c@section@level=\count317
 ) (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count310
+\etb@tempcnta=\count318
 )
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.st
 y
@@ -323,8 +353,8 @@ Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
 \@linkdim=\dimen197
-\Hy@linkcounter=\count311
-\Hy@pagecounter=\count312
+\Hy@linkcounter=\count319
+\Hy@pagecounter=\count320
  (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
@@ -333,7 +363,7 @@ Now handling font encoding PD1 ...
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count313
+\Hy@SavedSpaceFactor=\count321
 
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
@@ -347,7 +377,7 @@ Package hyperref Info: Plain pages OFF on input line 4210.
 Package hyperref Info: Backreferencing OFF on input line 4215.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4462.
-\c@Hy@tempcnt=\count314
+\c@Hy@tempcnt=\count322
 
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip18
@@ -364,7 +394,7 @@ sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count315
+\Fld@menulength=\count323
 \Field@Width=\dimen199
 \Fld@charsize=\dimen256
 Package hyperref Info: Hyper figures OFF on input line 6078.
@@ -374,16 +404,16 @@ Package hyperref Info: backreferencing OFF on input line 6093.
 Package hyperref Info: Link coloring OFF on input line 6098.
 Package hyperref Info: Link coloring with OCG OFF on input line 6103.
 Package hyperref Info: PDF/A mode OFF on input line 6108.
-\Hy@abspage=\count316
-\c@Item=\count317
-\c@Hfootnote=\count318
+\Hy@abspage=\count324
+\c@Item=\count325
+\c@Hfootnote=\count326
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
 File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
-\Fld@listcount=\count319
-\c@bookmark@seq@number=\count320
+\Fld@listcount=\count327
+\c@bookmark@seq@number=\count328
 
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfile
 check.sty
@@ -396,42 +426,42 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 84.
 )
-\Hy@SectionHShift=\skip59
+\Hy@SectionHShift=\skip62
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 15.
+Package hyperref Info: Option `colorlinks' set `true' on input line 18.
 
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/natbib\natbib.sty
 Package: natbib 2010/09/13 8.31b (PWD, AO)
-\bibhang=\skip60
-\bibsep=\skip61
+\bibhang=\skip63
+\bibsep=\skip64
 LaTeX Info: Redefining \cite on input line 694.
-\c@NAT@ctr=\count321
+\c@NAT@ctr=\count329
 )
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
 ex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count322
+\l__color_backend_stack_int=\count330
 ) (main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -471,17 +501,17 @@ LaTeX Font Info:    ... okay on input line 54.
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
 i
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count323
+\scratchcounter=\count331
 \scratchdimen=\dimen257
 \scratchbox=\box59
-\nofMPsegments=\count324
-\nofMParguments=\count325
-\everyMPshowfont=\toks30
-\MPscratchCnt=\count326
+\nofMPsegments=\count332
+\nofMParguments=\count333
+\everyMPshowfont=\toks31
+\MPscratchCnt=\count334
 \MPscratchDim=\dimen258
-\MPnumerator=\count327
-\makeMPintoPDFobject=\count328
-\everyMPtoPDFconversion=\toks31
+\MPnumerator=\count335
+\makeMPintoPDFobject=\count336
+\everyMPtoPDFconversion=\toks32
 )
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-ba
 se.sty
@@ -503,7 +533,7 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring ON on input line 54.
+Package hyperref Info: Link coloring ON on input line 57.
  (main.out) (main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
@@ -511,7 +541,7 @@ Package hyperref Info: Link coloring ON on input line 54.
 <figures/iitkgp_logo.png, id=127, 99.37125pt x 110.4125pt>
 File: figures/iitkgp_logo.png Graphic file (type png)
 <use figures/iitkgp_logo.png>
-Package pdftex.def Info: figures/iitkgp_logo.png  used on input line 84.
+Package pdftex.def Info: figures/iitkgp_logo.png  used on input line 87.
 (pdftex.def)             Requested size: 79.6678pt x 88.52217pt.
  [1
 
@@ -519,16 +549,16 @@ Package pdftex.def Info: figures/iitkgp_logo.png  used on input line 84.
 kgp_logo.png>] [1]
 File: figures/iitkgp_logo.png Graphic file (type png)
 <use figures/iitkgp_logo.png>
-Package pdftex.def Info: figures/iitkgp_logo.png  used on input line 141.
+Package pdftex.def Info: figures/iitkgp_logo.png  used on input line 144.
 (pdftex.def)             Requested size: 68.28644pt x 75.87637pt.
  [2]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 174
+LaTeX Font Info:    Trying to load font information for U+msa on input line 177
 .
 
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 174
+LaTeX Font Info:    Trying to load font information for U+msb on input line 177
 .
 
 (C:\Users\DELL\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
@@ -596,23 +626,26 @@ Package pdftex.def Info: figures/pipeline.png  used on input line 17.
 ] [7] [8]) (ch6_ablation.tex
 Chapter 6.
 
-Overfull \hbox (3.62001pt too wide) in paragraph at lines 21--38
+Overfull \hbox (3.62001pt too wide) in paragraph at lines 23--40
  [][] 
  []
 
-[9]) [10] (ch7_results.tex
+[9]
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 46.
+) [10] (ch7_results.tex
 Chapter 7.
 
 Overfull \hbox (56.08704pt too wide) in paragraph at lines 13--25
  [][] 
  []
 
-<figures/equity_stitched.png, id=550, 612.74635pt x 335.53929pt>
+<figures/equity_stitched.png, id=506, 612.74635pt x 335.53929pt>
 File: figures/equity_stitched.png Graphic file (type png)
 <use figures/equity_stitched.png>
 Package pdftex.def Info: figures/equity_stitched.png  used on input line 33.
 (pdftex.def)             Requested size: 415.98228pt x 227.80017pt.
-<figures/drawdown.png, id=551, 616.35986pt x 268.94765pt>
+<figures/drawdown.png, id=507, 616.35986pt x 268.94765pt>
 File: figures/drawdown.png Graphic file (type png)
 <use figures/drawdown.png>
 Package pdftex.def Info: figures/drawdown.png  used on input line 37.
@@ -625,24 +658,24 @@ Overfull \hbox (9.48634pt too wide) in paragraph at lines 51--81
 [11
 
 ] [12 <./figures/equity_stitched.png> <./figures/drawdown.png>]
-<figures/turnover_cost.png, id=570, 787.743pt x 281.33679pt>
+<figures/turnover_cost.png, id=526, 787.743pt x 281.33679pt>
 File: figures/turnover_cost.png Graphic file (type png)
 <use figures/turnover_cost.png>
 Package pdftex.def Info: figures/turnover_cost.png  used on input line 99.
 (pdftex.def)             Requested size: 342.56969pt x 122.34616pt.
-<figures/equity_per_fold.png, id=573, 1648.1575pt x 961.5925pt>
+<figures/equity_per_fold.png, id=529, 1648.1575pt x 961.5925pt>
 File: figures/equity_per_fold.png Graphic file (type png)
 <use figures/equity_per_fold.png>
 Package pdftex.def Info: figures/equity_per_fold.png  used on input line 129.
 (pdftex.def)             Requested size: 430.66331pt x 251.25533pt.
  [13 <./figures/turnover_cost.png>] [14 <./figures/equity_per_fold.png (PNG cop
 y)>]
-<figures/m4_lambda_sweep.png, id=596, 722.7pt x 505.89pt>
+<figures/m4_lambda_sweep.png, id=552, 722.7pt x 505.89pt>
 File: figures/m4_lambda_sweep.png Graphic file (type png)
 <use figures/m4_lambda_sweep.png>
 Package pdftex.def Info: figures/m4_lambda_sweep.png  used on input line 194.
 (pdftex.def)             Requested size: 239.80252pt x 167.8628pt.
-<figures/validation_curves.png, id=597, 855.88329pt x 280.30435pt>
+<figures/validation_curves.png, id=553, 855.88329pt x 280.30435pt>
 File: figures/validation_curves.png Graphic file (type png)
 <use figures/validation_curves.png>
 Package pdftex.def Info: figures/validation_curves.png  used on input line 200.
@@ -661,10 +694,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: B354E08D4E15E2507DAA2EDDEEA1FB98;6892.
  ) 
 Here is how much of TeX's memory you used:
- 13307 strings out of 467871
- 209785 string characters out of 5418861
- 649763 words of memory out of 5000000
- 41814 multiletter control sequences out of 15000+600000
+ 13919 strings out of 467871
+ 219798 string characters out of 5418861
+ 665704 words of memory out of 5000000
+ 42434 multiletter control sequences out of 15000+600000
  643741 words of font info for 97 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,17n,83p,1006b,546s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -710,9 +743,9 @@ pe1/public/amsfonts/cm/cmti9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/f
 onts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/DELL/AppData/Local/Programs/
 MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/DELL/AppData/Lo
 cal/Programs/MiKTeX/fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on main.pdf (21 pages, 5745100 bytes).
+Output written on main.pdf (21 pages, 5746341 bytes).
 PDF statistics:
- 800 PDF objects out of 1000 (max. 8388607)
- 147 named destinations out of 1000 (max. 500000)
+ 751 PDF objects out of 1000 (max. 8388607)
+ 125 named destinations out of 1000 (max. 500000)
  299 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -28,7 +28,7 @@ $f_{5,i,t}$ & 50-day EMA Relative Deviation & $ema_{50,i,t}^{\text{rel}}$ & $C_{
 $f_{6,i,t}$ & 200-day EMA Relative Deviation & $ema_{200,i,t}^{\text{rel}}$ & $C_{i,t} / \text{EMA}_{200}(C_{i,t}) - 1$, smoothing $\alpha = 2/(200+1)$ \citep{wang2025risk} \\
 $f_{7,i,t}$ & Relative Strength Index & $\text{RSI}_{i,t}^{\text{norm}}$ & $\text{RSI}_{14,i,t} / 100 - 0.5$, where $\text{RS} = \bar{U}_{14} / (\bar{D}_{14} + 10^{-8})$ \citep{wang2025risk} \\
 $f_{8,i,t}$ & MACD Difference & $\text{MACD}_{i,t}$ & $(\text{EMA}_{12}(C_{i,t}) - \text{EMA}_{26}(C_{i,t})) / C_{i,t}$ \citep{wang2025risk} \\
-$f_{9,i,t}$ & MACD Signal Line & $\text{Signal}_{i,t}$ & $\text{EMA}_9(\text{MACD}_{i,t})$ \citep{wang2025risk} \\
+$f_{9,i,t}$ & MACD Signal Line & $\text{Signal}_{i,t}$ & $\text{EMA}_9(\text{MACD}_{i,t}^{\text{raw}}) / C_{i,t}$, where $\text{MACD}_{i,t}^{\text{raw}} = \text{EMA}_{12}(C_{i,t}) - \text{EMA}_{26}(C_{i,t})$ \citep{wang2025risk} \\
 $f_{10,i,t}$ & Average True Range & $\text{ATR}_{i,t}^{\text{rel}}$ & $\text{SMA}_{14}(\text{TR}_{i,t}) / C_{i,t}$, $\text{TR}_t = \max(H_t-L_t, |H_t-C_{t-1}|, |L_t-C_{t-1}|)$ \citep{wang2025risk} \\
 $f_{11,i,t}$ & Bollinger Band \%B & $\%B_{i,t}$ & $(C_{i,t} - \text{LB}_{i,t}) / (\text{UB}_{i,t} - \text{LB}_{i,t} + 10^{-8})$, bands at $\pm 2\sigma_{20}$ \citep{wang2025risk} \\
 $f_{12,i,t}$ & Bollinger Bandwidth & $\text{BW}_{i,t}$ & $(\text{UB}_{i,t} - \text{LB}_{i,t}) / \text{MB}_{i,t}$ \citep{wang2025risk} \\

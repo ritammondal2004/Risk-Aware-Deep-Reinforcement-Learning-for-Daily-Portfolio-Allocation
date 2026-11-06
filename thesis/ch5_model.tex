@@ -38,7 +38,7 @@ To evaluate the contribution of temporal sequence modeling, two encoder backbone
     (\mathbf{h}_t, \mathbf{c}_t) = \text{LSTM}_\psi(\mathbf{F}_t), \quad \mathbf{z}_t = \mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a \quad \text{\citep{zou2024novel}},
     \end{equation}
     where $\mathbf{h}_t \in \mathbb{R}^{512}$ is the final hidden state summarizing the 30-day temporal trajectory from time step $t-T+1$ to $t$.
-\end{itemize}
+\end{itemize}   
 
 \section{Continuous Dirichlet Policy and Execution Logic}
 Target portfolio weights must satisfy the unit simplex constraints: $w_{i,t} \ge 0$ and $\sum_{i=1}^{11} w_{i,t} = 1$. Following \citet{yang2022selective}, we parameterise the policy using a continuous multivariate Dirichlet distribution where positive concentration parameters are formulated as $\alpha_{i,t} = \exp(z_{i,t})$. In our implementation, to prevent numerical overflow in Gamma function gradients and prevent distribution collapse onto simplex boundaries, the raw actor logits $\mathbf{z}_t \in \mathbb{R}^{11}$ are clamped to $[-3.0, 6.0]$:
@@ -139,33 +139,40 @@ For an unclipped transition $J_t(\theta) = \rho_t(\theta) \hat{A}_t$, differenti
 Equation~\eqref{eq:policy_grad} demonstrates that the gradient step is directed by the advantage estimate $\hat{A}_t$ and scaled by the importance weight $\rho_t(\theta)$, adjusting the Dirichlet concentration mapping to shift probability density toward higher-yielding allocations on $\Delta^{10}$ \citep{yang2022selective}, where the shared encoder processes the instantaneous state $\mathbf{s}_t$ for M1 or the historical sequence $\mathbf{F}_t$ for M2--M4. Optimization is carried out via Adam ($\eta = 10^{-4}$) with gradient norm clipping at $0.5$ \citep{zou2024novel} and early stopping when approximate KL divergence exceeds $1.5 \times \text{target\_kl} = 0.03$ \citep{schulman2017proximal}.
 
 \section{PPO Training Parameters}
-Table~\ref{tab:hyperparameters} summarizes all PPO hyperparameters extracted directly from our codebase.
+Table~\ref{tab:hyperparameters} summarizes the PPO hyperparameters and operational settings extracted directly from our codebase, along with the empirical or theoretical basis for each choice.
 
 \begin{table}[H]
 \centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
 \caption{PPO training parameters and operational settings (verified from source code).}
 \label{tab:hyperparameters}
-\begin{tabularx}{\textwidth}{llcX}
+\renewcommand{\arraystretch}{1.02}
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{@{}p{3.4cm}p{4.2cm}p{1.6cm}p{6.3cm}@{}}
 \toprule
 \textbf{Parameter} & \textbf{Description} & \textbf{Value} & \textbf{Selection Basis / Source} \\
 \midrule
-Discount factor ($\gamma$) & Return discount factor & 0.99 & Zou et al. (2024) \citep{zou2024novel} (Table 1) \\
-GAE parameter ($\lambda_{\text{GAE}}$) & Advantage trace decay & 0.95 & Schulman et al. (2017) \citep{schulman2017proximal} \\
-Rollout horizon ($T_{\text{rollout}}$) & Interaction steps per buffer & 128 & Zou et al. (2024) \citep{zou2024novel} (Table 1) \\
-PPO clipping range ($\epsilon$) & Policy ratio clipping threshold & 0.2 & Schulman et al. (2017) \citep{schulman2017proximal}; Zou et al. (2024) \citep{zou2024novel} \\
-Value coefficient ($c_1$) & Critic loss weight & 0.5 & Zou et al. (2024) \citep{zou2024novel} (Table 1); Schulman et al. (2017) \\
-Entropy coefficient ($c_2$) & Policy entropy bonus weight & 0.01 & Zou et al. (2024) \citep{zou2024novel} (Table 1); Schulman et al. (2017) \\
-Optimiser & Parameter optimiser & Adam & Zou et al. (2024) \citep{zou2024novel} \\
-Learning rate ($\eta$) & Adam learning rate & $10^{-4}$ & Validation selection (Fold 1; Zou et al. \citep{zou2024novel} test $3\times 10^{-4}$) \\
-Target KL ($\text{target\_kl}$) & Approximate KL early-stop & 0.02 & Schulman et al. (2017) \citep{schulman2017proximal} \\
-Training epochs ($K$) & Update epochs per rollout & 10 & Schulman et al. (2017) \citep{schulman2017proximal} \\
-Mini-batch size ($B$) & Batch size per SGD update & 64 & Schulman et al. (2017) \citep{schulman2017proximal} \\
-Gradient clipping & Maximum gradient norm & 0.5 & Zou et al. (2024) \citep{zou2024novel} (Table 1) \\
-Reward normalisation & Online reward scaling & Welford Std & Online Welford running standardization \\
-Total environment steps & Training budget per run & 300,000 & Controlled ablation budget across M1--M4 \\
+Discount factor ($\gamma$) & Return discount factor & 0.99 & Zou et al.\ (2024) \citep{zou2024novel} (Table 1) \\
+GAE parameter ($\lambda_{\text{GAE}}$) & Advantage trace decay & 0.95 & Schulman et al.\ (2017) \citep{schulman2017proximal} \\
+Rollout horizon ($T_{\text{rollout}}$) & Interaction steps per buffer & 128 & Zou et al.\ (2024) \citep{zou2024novel} (Table 1) \\
+PPO clipping range ($\epsilon$) & Policy ratio clipping threshold & 0.2 & Schulman et al.\ (2017) \citep{schulman2017proximal}; Zou et al.\ (2024) \citep{zou2024novel} \\
+Value coefficient ($c_1$) & Critic loss weight & 0.5 & Zou et al.\ (2024) \citep{zou2024novel} (Table 1); Schulman et al.\ (2017) \\
+Entropy coefficient ($c_2$) & Policy entropy bonus weight & 0.01 & Zou et al.\ (2024) \citep{zou2024novel} (Table 1); Schulman et al.\ (2017) \\
+Optimiser & Parameter optimiser & Adam & Zou et al.\ (2024) \citep{zou2024novel} \\
+Learning rate ($\eta$) & Adam learning rate & $10^{-4}$ & Validation selection (Fold 1; Zou et al.\ \citep{zou2024novel} test $3\times 10^{-4}$) \\
+Target KL ($\text{target\_kl}$) & Approximate KL early-stop & 0.02 & Implementation safeguard \citep{schulman2017proximal} \\
+Training epochs ($K$) & Update epochs per rollout & 10 & Schulman et al.\ (2017) \citep{schulman2017proximal} \\
+Mini-batch size ($B$) & Batch size per SGD update & 64 & Schulman et al.\ (2017) \citep{schulman2017proximal} \\
+Gradient clipping & Maximum gradient norm & 0.5 & Zou et al.\ (2024) \citep{zou2024novel} (Table 1) \\
+Reward normalisation & Online reward scaling & Welford Std & Online Welford running standardisation \\
+Total environment steps & Training budget per run & 300,000 & Target budget; executes 300,032 steps ($2{,}344 \times 128$) \\
 Validation interval & Checkpoint evaluation frequency & 25,000 & Validation selection interval \\
+Transaction cost ($c_{\text{trans}}$) & Proportional cost per turnover & 0.001 & Standard institutional rate \citep{zou2024novel} (0.1\%) \\
+Execution threshold ($\tau$) & Action truncation threshold & 0.01 & Implementation setting (1\% minimum position) \\
+Log-concentration clamp & Bounds of logits $\boldsymbol{\ell}_t$ & $[-3.0, 6.0]$ & Implementation numerical stability safeguard \\
+Window length ($T$), hidden ($H$) & Sequence length; LSTM units & 30; 512 & Zou et al.\ (2024) \citep{zou2024novel} \\
+DSR rate ($\eta_{\text{dsr}}$) & Moment adaptation rate & 0.01 & Online moment decay setting \citep{millea2021deep} \\
+Turnover penalty ($\lambda_{\text{turn}}$) & M4 regularisation weight & 0.1 & Validation tuning on Fold 1 \citep{wang2025risk} \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
 \end{table}
