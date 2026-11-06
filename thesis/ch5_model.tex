@@ -6,18 +6,13 @@ The portfolio allocation agents are developed within an Actor--Critic framework 
 
 \begin{figure}[htbp]
 \centering
-\begin{minipage}{0.48\textwidth}
-\centering
-\includegraphics[height=3.8cm,keepaspectratio]{figures/architecture.png}
+\includegraphics[width=0.76\textwidth]{figures/architecture.png}
 \caption{Actor--Critic architecture from state tensor to executed portfolio weights.}
 \label{fig:architecture}
-\end{minipage}\hfill
-\begin{minipage}{0.48\textwidth}
-\centering
-\includegraphics[height=3.8cm,keepaspectratio]{figures/pipeline.png}
+\vspace{6pt}
+\includegraphics[width=0.76\textwidth]{figures/pipeline.png}
 \caption{PPO Dirichlet allocation and environment interaction loop.}
 \label{fig:pipeline}
-\end{minipage}
 \end{figure}
 
 As shown in Figures~\ref{fig:architecture} and~\ref{fig:pipeline}, the actor and critic share an encoder backbone. The actor head outputs Dirichlet distribution parameters, while the critic head estimates the scalar state-value baseline $V_\phi(\mathbf{s}_t)$ for advantage computation.
@@ -38,6 +33,12 @@ To evaluate the contribution of temporal sequence modeling, two encoder backbone
     (\mathbf{h}_t, \mathbf{c}_t) = \text{LSTM}_\psi(\mathbf{F}_t), \quad \mathbf{z}_t = \mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a \quad \text{\citep{zou2024novel}},
     \end{equation}
     where $\mathbf{h}_t \in \mathbb{R}^{512}$ is the final hidden state summarizing the 30-day temporal trajectory from time step $t-T+1$ to $t$.
+    
+    \item \textbf{Critic Value Head:} Sharing the identical 512-dimensional encoder latent representation $\mathbf{h}_t \in \mathbb{R}^{512}$ with the actor, the critic head parameterised by $\phi = \{\mathbf{W}_v, b_v\}$ maps the latent feature vector linearly to a single scalar state-value baseline estimate:
+    \begin{equation}
+    V_\phi(\mathbf{s}_t) = \mathbf{W}_v \mathbf{h}_t + b_v \quad (\text{for M1}), \qquad V_\phi(\mathbf{F}_t) = \mathbf{W}_v \mathbf{h}_t + b_v \quad (\text{for M2--M4}),
+    \end{equation}
+    where $\mathbf{W}_v \in \mathbb{R}^{1 \times 512}$ is initialized orthogonally with gain $1.0$, and scalar bias $b_v \in \mathbb{R}$ is initialized to zero (\texttt{nn.init.zeros\_}), matching the source implementation (\texttt{self.critic = nn.Linear(hidden, 1)}). The critic produces the baseline value estimate $V_\phi$ used for advantage estimation in PPO.
 \end{itemize}   
 
 \section{Continuous Dirichlet Policy and Execution Logic}
@@ -117,19 +118,36 @@ and the advantage estimate over the rollout horizon is given by:
 \end{equation}
 where $r_t$ is the reward at time $t$, $\gamma = 0.99$ is the discount factor, $\lambda = \lambda_{\text{GAE}} = 0.95$ is the GAE smoothing parameter, $V_\phi(\mathbf{s}_t)$ is the critic's value estimate, $\delta_t$ is the temporal-difference error, and $\hat{A}_t$ is the estimated advantage. In our implementation, the summation limit runs over the rollout buffer of length $T_{\text{rollout}} = 128$ ($l = 0, \dots, T_{\text{rollout}}-t-1$), and terminal-state handling cuts the recursion at segment boundaries by using the bootstrap value $V_\phi(\mathbf{s}_{\text{final}})$ and zeroing subsequent trace accumulation. PPO clipping limits the incentive for excessively large policy-ratio changes, helping stabilize policy optimization.
 
-To jointly train the shared encoder, actor, and critic parameters, the network minimizes the combined multi-task loss function:
+To jointly train the shared encoder, actor, and critic parameter sets, the network minimizes the combined multi-task loss function:
 \begin{equation}
 \mathcal{L}^{\text{total}}(\theta, \phi) = - L^{\text{clip}}(\theta) + c_1 L^{\text{value}}(\phi) - c_2 \mathcal{H}(\pi_\theta),
 \label{eq:total_loss}
 \end{equation}
 where $L^{\text{value}}(\phi) = \hat{\mathbb{E}}_t \left[ (V_\phi(\mathbf{s}_t) - \hat{V}_t^{\text{target}})^2 \right]$ is the mean squared error loss of the state-value baseline critic with weight coefficient $c_1 = 0.5$, and $\mathcal{H}(\pi_\theta) = \hat{\mathbb{E}}_t \left[ \mathcal{H}(\pi_\theta(\cdot \mid \mathbf{s}_t)) \right]$ is the analytical Dirichlet policy entropy bonus with coefficient $c_2 = 0.01$ encouraging distribution exploration. Both hyperparameter values ($c_1 = 0.5$ and $c_2 = 0.01$) are directly adopted from Table 1 of \citet{zou2024novel} in accordance with \citet{schulman2017proximal}.
 
-The actor parameters $\theta$ are updated to maximize the clipped PPO objective, while the critic parameters $\phi$ are updated to minimize the value-function loss. Using the combined loss defined in Equation~\eqref{eq:total_loss}, the optimizer performs:
+We formally partition the network parameters into three disjoint parameter sets:
+\begin{enumerate}[(i)]
+    \setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+    \item \textbf{Shared Encoder Parameters ($\psi$):} Weights and biases of the shared representation backbone (\texttt{self.enc} in \texttt{src/models.py}, either the 2-layer MLP for M1 or the single-layer LSTM for M2--M4) producing latent embedding $\mathbf{h}_t \in \mathbb{R}^{512}$.
+    \item \textbf{Actor Head Parameters ($\theta$):} Policy output layer weights and biases $\{\mathbf{W}_a, \mathbf{b}_a\}$ (\texttt{self.actor}) projecting $\mathbf{h}_t$ to Dirichlet concentration logits $\mathbf{z}_t \in \mathbb{R}^{11}$.
+    \item \textbf{Critic Head Parameters ($\phi$):} Value output layer weights and biases $\{\mathbf{W}_v, b_v\}$ (\texttt{self.critic}) projecting $\mathbf{h}_t$ to scalar state-value estimate $V_t \in \mathbb{R}$.
+\end{enumerate}
+
+Because the encoder is genuinely shared between actor and critic instances in our codebase, it receives backpropagated gradient contributions from both the actor surrogate objective and the critic value loss during optimization (\texttt{loss.backward()} in \texttt{src/ppo.py}). The shared encoder parameter update is:
+\begin{equation}
+\psi \leftarrow \psi - \eta \nabla_\psi \mathcal{L}^{\text{total}},
+\label{eq:shared_encoder_update}
+\end{equation}
+with the exact gradient decomposition:
+\begin{equation}
+\nabla_\psi \mathcal{L}^{\text{total}} = -\nabla_\psi L^{\text{clip}} + c_1 \nabla_\psi L^{\text{value}} - c_2 \nabla_\psi \mathcal{H}.
+\end{equation}
+The actor and critic head parameter updates are correspondingly:
 \begin{align}
-\theta &\leftarrow \theta - \eta \nabla_\theta \mathcal{L}^{\text{total}}(\theta, \phi), \\
-\phi &\leftarrow \phi - \eta \nabla_\phi \mathcal{L}^{\text{total}}(\theta, \phi).
+\theta &\leftarrow \theta - \eta \nabla_\theta \mathcal{L}^{\text{total}} = \theta - \eta \left( -\nabla_\theta L^{\text{clip}} - c_2 \nabla_\theta \mathcal{H} \right), \\
+\phi &\leftarrow \phi - \eta \nabla_\phi \mathcal{L}^{\text{total}} = \phi - \eta \left( c_1 \nabla_\phi L^{\text{value}} \right),
 \end{align}
-The actor gradient improves the policy using the estimated advantages, while the critic gradient improves value estimates by minimizing prediction error. Since the encoder is shared, it receives gradients from both actor and critic objectives.
+where $\nabla_\theta L^{\text{value}} = \mathbf{0}$ and $\nabla_\phi L^{\text{clip}} = \mathbf{0}$, ensuring that distinct heads are updated without double-counting shared parameters. In the implementation, a single unified Adam optimizer (\texttt{torch.optim.Adam(model.parameters(), lr=1e-4)}) applies these updates jointly across $\{\psi, \theta, \phi\}$ with global gradient norm clipping at $0.5$ \citep{zou2024novel}.
 
 For an unclipped transition $J_t(\theta) = \rho_t(\theta) \hat{A}_t$, differentiating with respect to policy parameters $\theta$ yields the actor policy gradient:
 \begin{equation}

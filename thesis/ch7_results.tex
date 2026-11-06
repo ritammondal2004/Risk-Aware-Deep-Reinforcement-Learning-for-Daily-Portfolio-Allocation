@@ -7,12 +7,12 @@ Out-of-sample evaluation was conducted across four chronological 2-year test win
 \begin{table}[htbp]
 \centering
 \small
-\setlength{\tabcolsep}{6pt}
+\setlength{\tabcolsep}{5pt}
 \caption{Pooled out-of-sample test performance across 4 folds and 3 seeds (mean $\pm$ standard deviation over seeds).}
 \label{tab:overall_results}
 \begin{tabular}{lcccccc}
 \toprule
-\textbf{Model} & \textbf{Cum. Return (\%)} & \textbf{CAGR (\%)} & \textbf{Sharpe Ratio} & \textbf{Sortino} & \textbf{Max DD (\%)} & \textbf{Cost (\% of $V_0$)} \\
+\textbf{Model} & \shortstack{\textbf{Mean Two-Year}\\\textbf{Test Return (\%)}} & \textbf{CAGR (\%)} & \textbf{Sharpe Ratio} & \textbf{Sortino} & \textbf{Max DD (\%)} & \textbf{Cost (\% of $V_0$)} \\
 \midrule
 \textbf{M1 (MLP)} & $20.62 \pm 5.14$ & $9.90 \pm 2.31$ & $0.71 \pm 0.13$ & $1.03 \pm 0.20$ & $-19.50 \pm 1.04$ & $9.68 \pm 0.10$ \\
 \textbf{M2 (LSTM)} & $28.23 \pm 2.03$ & $13.37 \pm 0.88$ & $0.92 \pm 0.07$ & $1.34 \pm 0.09$ & $-18.52 \pm 1.35$ & $4.27 \pm 1.44$ \\
@@ -24,7 +24,7 @@ Out-of-sample evaluation was conducted across four chronological 2-year test win
 \end{tabular}
 \end{table}
 
-The primary empirical finding is that the passive Equal-Weight benchmark achieved the highest pooled cumulative return ($36.48\%$) and highest Sharpe ratio ($1.13$), outperforming all four reinforcement learning models. Among active RL agents, M2 and M3 achieved the highest returns ($28.23\%$ and $26.93\%$), while M4 achieved the lowest execution friction ($0.97\%$ cost) and shallowest maximum drawdown ($-16.04\%$). 
+The primary empirical finding is that the passive Equal-Weight benchmark achieved the highest mean two-year test return ($36.48\%$) and highest Sharpe ratio ($1.13$), outperforming all four reinforcement learning models. Among active RL agents, M2 and M3 achieved the highest returns ($28.23\%$ and $26.93\%$), while M4 achieved the lowest execution friction ($0.97\%$ cost) and shallowest maximum drawdown ($-16.04\%$). 
 
 Figure~\ref{fig:equity_stitched} illustrates cumulative portfolio profit across the continuous 2018--2025 timeline (with starting capital $V_0 = \text{INR } 1{,}000{,}000$ reinvested sequentially), and Figure~\ref{fig:drawdown} portrays the corresponding peak-to-trough drawdowns.
 
@@ -54,19 +54,19 @@ To assess whether observed differences are consistent across environments, paire
 \midrule
 \multirow{4}{*}{\shortstack[l]{\textbf{M1 $\to$ M2} \\ \footnotesize (Temporal Memory)}} 
 & Sharpe Ratio & $+0.201$ & $[+0.156, +0.246]$ & $4 / 4$ & $9 / 12$ \\
-& Cum. Return (\%) & $+7.61\%$ & $[+4.81\%, +10.01\%]$ & $4 / 4$ & $10 / 12$ \\
+& Two-Year Return (\%) & $+7.61\%$ & $[+4.81\%, +10.01\%]$ & $4 / 4$ & $10 / 12$ \\
 & Daily Turnover & $-0.106$ & $[-0.138, -0.070]$ & $4 / 4$ & $11 / 12$ \\
 & Cost (\% of $V_0$) & $-5.41\%$ & $[-7.37\%, -3.34\%]$ & $4 / 4$ & $11 / 12$ \\
 \midrule
 \multirow{4}{*}{\shortstack[l]{\textbf{M2 $\to$ M3} \\ \footnotesize (DSR Reward)}} 
 & Sharpe Ratio & $+0.003$ & $[-0.295, +0.222]$ & $3 / 4$ & $7 / 12$ \\
-& Cum. Return (\%) & $-1.30\%$ & $[-9.33\%, +4.45\%]$ & $2 / 4$ & $6 / 12$ \\
+& Two-Year Return (\%) & $-1.30\%$ & $[-9.33\%, +4.45\%]$ & $2 / 4$ & $6 / 12$ \\
 & Max Drawdown (\%) & $-1.43\%$ & $[-5.36\%, +0.81\%]$ & $3 / 4$ & $6 / 12$ \\
 & Daily Turnover & $-0.002$ & $[-0.019, +0.014]$ & $2 / 4$ & $7 / 12$ \\
 \midrule
 \multirow{4}{*}{\shortstack[l]{\textbf{M3 $\to$ M4} \\ \footnotesize (Turnover Regularisation)}} 
 & Sharpe Ratio & $+0.005$ & $[-0.236, +0.280]$ & $2 / 4$ & $6 / 12$ \\
-& Cum. Return (\%) & $-5.96\%$ & $[-13.29\%, +3.37\%]$ & $1 / 4$ & $3 / 12$ \\
+& Two-Year Return (\%) & $-5.96\%$ & $[-13.29\%, +3.37\%]$ & $1 / 4$ & $3 / 12$ \\
 & Max Drawdown (\%) & $\mathbf{+3.90\%}$ & $[+1.45\%, +7.00\%]$ & $\mathbf{4 / 4}$ & $\mathbf{10 / 12}$ \\
 & Daily Turnover & $\mathbf{-0.060}$ & $[-0.082, -0.044]$ & $\mathbf{4 / 4}$ & $\mathbf{12 / 12}$ \\
 & Cost (\% of $V_0$) & $\mathbf{-3.17\%}$ & $[-4.01\%, -2.43\%]$ & $\mathbf{4 / 4}$ & $\mathbf{12 / 12}$ \\
@@ -141,7 +141,7 @@ Performance varies across market regimes:
 \end{itemize}
 
 \section{Equal-Weight Benchmark Outperformance and Gap Decomposition}
-The passive Equal-Weight benchmark produced higher cumulative returns than every RL model across all test windows. We distinguish between the \textbf{pooled average 2-year fold return} ($36.48\%$ in Table~\ref{tab:overall_results}) and the \textbf{compounded 8-year return across the chained 2018--2025 timeline} ($135.66\%$ in Table~\ref{tab:gap_decomp}).
+The passive Equal-Weight benchmark produced higher cumulative returns than every RL model across all test windows. We distinguish between the \textbf{mean two-year test return} ($36.48\%$ in Table~\ref{tab:overall_results}) and the \textbf{compounded 8-year return across the chained 2018--2025 timeline} ($135.66\%$ in Table~\ref{tab:gap_decomp}).
 
 Table~\ref{tab:gap_decomp} decomposes the chained cumulative return gap between each model and Equal-Weight into two exploratory components: (i)~\textbf{Cash Drag}: return forfeited by holding cash in an upward-trending market (evaluated against a counterfactual ``EW Same Cash'' portfolio); and (ii)~\textbf{Stock Selection and Timing}: difference between model return and ``EW Same Cash'', reflecting active equity weights. Average asset allocations are presented in Table~\ref{tab:avg_weights}.
 

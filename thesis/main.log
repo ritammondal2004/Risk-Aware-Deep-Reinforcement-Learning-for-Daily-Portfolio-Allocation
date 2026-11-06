@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  6 NOV 2026 16:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  6 NOV 2026 18:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -587,95 +587,94 @@ Chapter 4.
 File: figures/walk_forward_schematic.png Graphic file (type png)
 <use figures/walk_forward_schematic.png>
 Package pdftex.def Info: figures/walk_forward_schematic.png  used on input line
- 74.
+ 79.
 (pdftex.def)             Requested size: 352.35953pt x 128.82533pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 103--103
+Underfull \hbox (badness 10000) in paragraph at lines 108--108
 []|\OT1/cmr/m/n/9 Cumulative Re-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 103--103
+Underfull \hbox (badness 10000) in paragraph at lines 108--108
 []|\OT1/cmr/m/n/9 Sharpe Ra-tio
  []
 
 
-Underfull \hbox (badness 3884) in paragraph at lines 103--103
+Underfull \hbox (badness 3884) in paragraph at lines 108--108
 []|\OT1/cmr/m/n/9 Maximum Draw-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 103--103
+Underfull \hbox (badness 10000) in paragraph at lines 108--108
 []|$\OML/cmm/m/it/9 MDD \OT1/cmr/m/n/9 =
  []
 
 ) (ch5_model.tex
 Chapter 5.
-[5 <./figures/walk_forward_schematic.png>]
-<figures/architecture.png, id=358, 1780.6525pt x 890.32625pt>
+<figures/architecture.png, id=345, 1780.6525pt x 890.32625pt>
 File: figures/architecture.png Graphic file (type png)
 <use figures/architecture.png>
-Package pdftex.def Info: figures/architecture.png  used on input line 11.
-(pdftex.def)             Requested size: 216.22311pt x 108.12054pt.
-<figures/pipeline.png, id=359, 1678.27pt x 944.52875pt>
+Package pdftex.def Info: figures/architecture.png  used on input line 9.
+(pdftex.def)             Requested size: 371.93175pt x 185.95514pt.
+<figures/pipeline.png, id=346, 1678.27pt x 944.52875pt>
 File: figures/pipeline.png Graphic file (type png)
 <use figures/pipeline.png>
-Package pdftex.def Info: figures/pipeline.png  used on input line 17.
-(pdftex.def)             Requested size: 192.08789pt x 108.12054pt.
- [6 <./figures/architecture.png (PNG copy)> <./figures/pipeline.png (PNG copy)>
-] [7] [8]) (ch6_ablation.tex
+Package pdftex.def Info: figures/pipeline.png  used on input line 13.
+(pdftex.def)             Requested size: 371.93175pt x 209.32468pt.
+[5 <./figures/walk_forward_schematic.png>] [6 <./figures/architecture.png (PNG 
+copy)> <./figures/pipeline.png (PNG copy)>] [7] [8] [9]) (ch6_ablation.tex
 Chapter 6.
 
 Overfull \hbox (3.62001pt too wide) in paragraph at lines 23--40
  [][] 
  []
 
-[9]
+[10]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 46.
-) [10] (ch7_results.tex
+) [11] (ch7_results.tex
 Chapter 7.
 
-Overfull \hbox (56.08704pt too wide) in paragraph at lines 13--25
+Overfull \hbox (35.21225pt too wide) in paragraph at lines 13--25
  [][] 
  []
 
-<figures/equity_stitched.png, id=506, 612.74635pt x 335.53929pt>
+<figures/equity_stitched.png, id=517, 612.74635pt x 335.53929pt>
 File: figures/equity_stitched.png Graphic file (type png)
 <use figures/equity_stitched.png>
 Package pdftex.def Info: figures/equity_stitched.png  used on input line 33.
 (pdftex.def)             Requested size: 415.98228pt x 227.80017pt.
-<figures/drawdown.png, id=507, 616.35986pt x 268.94765pt>
+<figures/drawdown.png, id=518, 616.35986pt x 268.94765pt>
 File: figures/drawdown.png Graphic file (type png)
 <use figures/drawdown.png>
 Package pdftex.def Info: figures/drawdown.png  used on input line 37.
 (pdftex.def)             Requested size: 415.98228pt x 181.5154pt.
 
-Overfull \hbox (9.48634pt too wide) in paragraph at lines 51--81
+Overfull \hbox (16.19461pt too wide) in paragraph at lines 51--81
  [][] 
  []
 
-[11
+[12
 
-] [12 <./figures/equity_stitched.png> <./figures/drawdown.png>]
-<figures/turnover_cost.png, id=526, 787.743pt x 281.33679pt>
+] [13 <./figures/equity_stitched.png> <./figures/drawdown.png>]
+<figures/turnover_cost.png, id=537, 787.743pt x 281.33679pt>
 File: figures/turnover_cost.png Graphic file (type png)
 <use figures/turnover_cost.png>
 Package pdftex.def Info: figures/turnover_cost.png  used on input line 99.
 (pdftex.def)             Requested size: 342.56969pt x 122.34616pt.
-<figures/equity_per_fold.png, id=529, 1648.1575pt x 961.5925pt>
+<figures/equity_per_fold.png, id=540, 1648.1575pt x 961.5925pt>
 File: figures/equity_per_fold.png Graphic file (type png)
 <use figures/equity_per_fold.png>
 Package pdftex.def Info: figures/equity_per_fold.png  used on input line 129.
 (pdftex.def)             Requested size: 430.66331pt x 251.25533pt.
- [13 <./figures/turnover_cost.png>] [14 <./figures/equity_per_fold.png (PNG cop
+ [14 <./figures/turnover_cost.png>] [15 <./figures/equity_per_fold.png (PNG cop
 y)>]
-<figures/m4_lambda_sweep.png, id=552, 722.7pt x 505.89pt>
+<figures/m4_lambda_sweep.png, id=563, 722.7pt x 505.89pt>
 File: figures/m4_lambda_sweep.png Graphic file (type png)
 <use figures/m4_lambda_sweep.png>
 Package pdftex.def Info: figures/m4_lambda_sweep.png  used on input line 194.
 (pdftex.def)             Requested size: 239.80252pt x 167.8628pt.
-<figures/validation_curves.png, id=553, 855.88329pt x 280.30435pt>
+<figures/validation_curves.png, id=564, 855.88329pt x 280.30435pt>
 File: figures/validation_curves.png Graphic file (type png)
 <use figures/validation_curves.png>
 Package pdftex.def Info: figures/validation_curves.png  used on input line 200.
@@ -684,8 +683,8 @@ Package pdftex.def Info: figures/validation_curves.png  used on input line 200.
 )
 (ch8_conclusion.tex
 Chapter 8.
-[15 <./figures/m4_lambda_sweep.png> <./figures/validation_curves.png>])
-(main.bbl) [16] (main.aux)
+[16 <./figures/m4_lambda_sweep.png> <./figures/validation_curves.png>])
+(main.bbl) [17] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -694,13 +693,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: B354E08D4E15E2507DAA2EDDEEA1FB98;6892.
  ) 
 Here is how much of TeX's memory you used:
- 13919 strings out of 467871
- 219798 string characters out of 5418861
- 665704 words of memory out of 5000000
- 42434 multiletter control sequences out of 15000+600000
- 643741 words of font info for 97 fonts, out of 8000000 for 9000
+ 13934 strings out of 467871
+ 219964 string characters out of 5418861
+ 664845 words of memory out of 5000000
+ 42439 multiletter control sequences out of 15000+600000
+ 644354 words of font info for 99 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,17n,83p,1006b,546s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,17n,83p,1006b,533s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\DELL\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1
 000.pk><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
 /cm/cmbx10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/
@@ -710,42 +709,42 @@ s/type1/public/amsfonts/cm/cmbx8.pfb><C:/Users/DELL/AppData/Local/Programs/MiKT
 eX/fonts/type1/public/amsfonts/cm/cmbx9.pfb><C:/Users/DELL/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/DELL/AppData/Loca
 l/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><C:/Users/DELL/
-AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex8.pfb><C:
-/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/c
-mex9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
-ts/cm/cmmi10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/publi
-c/amsfonts/cm/cmmi5.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type
-1/public/amsfonts/cm/cmmi6.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fon
-ts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/DELL/AppData/Local/Programs/MiK
-TeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/DELL/AppData/Local/Progr
-ams/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/DELL/AppData/Loca
-l/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmib10.pfb><C:/Users/DELL/App
-Data/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb><C:/U
-sers/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pf
-b><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
-mr12.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
-ts/cm/cmr5.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/
-amsfonts/cm/cmr6.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/p
-ublic/amsfonts/cm/cmr7.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/t
-ype1/public/amsfonts/cm/cmr8.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/f
-onts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/DELL/AppData/Local/Programs/Mi
-KTeX/fonts/type1/public/amsfonts/cm/cmsl10.pfb><C:/Users/DELL/AppData/Local/Pro
-grams/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/DELL/AppData/L
-ocal/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users/DELL/Ap
-pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/
-DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:
-/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.
-pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm
-/cmsy9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsf
-onts/cm/cmti10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/pub
-lic/amsfonts/cm/cmti7.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/ty
-pe1/public/amsfonts/cm/cmti9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/f
-onts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/DELL/AppData/Local/Programs/
-MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/DELL/AppData/Lo
-cal/Programs/MiKTeX/fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on main.pdf (21 pages, 5746341 bytes).
+AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex9.pfb><C:
+/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10
+.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
+m/cmmi5.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
+fonts/cm/cmmi6.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/pub
+lic/amsfonts/cm/cmmi7.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/amsfonts/cm/cmmi8.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/f
+onts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/DELL/AppData/Local/Programs/M
+iKTeX/fonts/type1/public/amsfonts/cm/cmmib10.pfb><C:/Users/DELL/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb><C:/Users/DELL/Ap
+pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmib9.pfb><C:/
+Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.p
+fb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/
+cmr12.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
+nts/cm/cmr5.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/amsfonts/cm/cmr6.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/
+public/amsfonts/cm/cmr7.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/
+type1/public/amsfonts/cm/cmr8.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/DELL/AppData/Local/Programs/M
+iKTeX/fonts/type1/public/amsfonts/cm/cmsl10.pfb><C:/Users/DELL/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/DELL/AppData/
+Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users/DELL/A
+ppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users
+/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C
+:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8
+.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
+m/cmsy9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
+fonts/cm/cmti10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/pu
+blic/amsfonts/cm/cmti7.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/amsfonts/cm/cmti9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/DELL/AppData/Local/Programs
+/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/DELL/AppData/L
+ocal/Programs/MiKTeX/fonts/type1/urw/zapfding/uzdr.pfb>
+Output written on main.pdf (22 pages, 5750620 bytes).
 PDF statistics:
- 751 PDF objects out of 1000 (max. 8388607)
- 125 named destinations out of 1000 (max. 500000)
+ 764 PDF objects out of 1000 (max. 8388607)
+ 133 named destinations out of 1000 (max. 500000)
  299 words of extra memory for PDF output out of 10000 (max. 10000000)
 
