@@ -1,4 +1,3 @@
-\contentsline {chapter}{Acknowledgement and Abstract}{iii}{chapter*.1}%
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Background and Motivation}{1}{section.1.1}%
 \contentsline {chapter}{\numberline {2}Literature Review}{1}{chapter.2}%
@@ -10,21 +9,21 @@
 \contentsline {subsection}{\numberline {3.4.1}State Space}{3}{subsection.3.4.1}%
 \contentsline {subsection}{\numberline {3.4.2}Action Space}{3}{subsection.3.4.2}%
 \contentsline {subsection}{\numberline {3.4.3}Reward Design}{3}{subsection.3.4.3}%
-\contentsline {chapter}{\numberline {4}Dataset and Experimental Methodology}{4}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Equity Universe and Data Acquisition}{4}{section.4.1}%
+\contentsline {chapter}{\numberline {4}Dataset and Experimental Methodology}{3}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Equity Universe and Data Acquisition}{3}{section.4.1}%
 \contentsline {section}{\numberline {4.2}Feature Engineering and State Representation}{4}{section.4.2}%
 \contentsline {section}{\numberline {4.3}Walk-Forward Evaluation Protocol}{5}{section.4.3}%
 \contentsline {section}{\numberline {4.4}Evaluation Measures}{5}{section.4.4}%
-\contentsline {chapter}{\numberline {5}Model Architecture and Mathematical Formulation}{5}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Actor--Critic Framework and Policy Choice}{5}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Encoder Backbones: MLP versus LSTM}{7}{section.5.2}%
+\contentsline {chapter}{\numberline {5}Model Architecture and Mathematical Formulation}{6}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Actor--Critic Framework and Policy Choice}{6}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Encoder Backbones: MLP versus LSTM}{6}{section.5.2}%
 \contentsline {section}{\numberline {5.3}Continuous Dirichlet Policy and Execution Logic}{7}{section.5.3}%
 \contentsline {section}{\numberline {5.4}Reward Formulations across Models M1 to M4}{8}{section.5.4}%
 \contentsline {section}{\numberline {5.5}PPO Objective and Policy Optimization}{8}{section.5.5}%
 \contentsline {section}{\numberline {5.6}PPO Training Parameters}{10}{section.5.6}%
 \contentsline {chapter}{\numberline {6}Controlled Ablation Study Design}{10}{chapter.6}%
 \contentsline {section}{\numberline {6.1}Specification of Ablation Models M1--M4}{10}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Control Invariants and Training Algorithm}{11}{section.6.2}%
+\contentsline {section}{\numberline {6.2}Control Invariants and Training Algorithm}{10}{section.6.2}%
 \contentsline {chapter}{\numberline {7}Results and Discussion}{12}{chapter.7}%
 \contentsline {section}{\numberline {7.1}Overall Out-of-Sample Performance}{12}{section.7.1}%
 \contentsline {section}{\numberline {7.2}Analysis of Ablation Steps}{12}{section.7.2}%

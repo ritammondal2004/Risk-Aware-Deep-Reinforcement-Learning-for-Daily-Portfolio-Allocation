@@ -163,16 +163,15 @@ Indian Institute of Technology Kharagpur\\[4pt]
 Kharagpur -- 721302, India
 \end{minipage}
 
-%% ===== ACKNOWLEDGEMENT & ABSTRACT =====
+%% ===== ACKNOWLEDGEMENT, ABSTRACT & TABLE OF CONTENTS =====
 \newpage
 \thispagestyle{plain}
 \chapter*{Acknowledgement and Abstract}
-\addcontentsline{toc}{chapter}{Acknowledgement and Abstract}
 
 \noindent\textbf{Acknowledgement:}\par
 I express my sincere gratitude to my supervisor, Dr. Abhishek Sharma, for his insightful guidance, intellectual mentorship, and continuous encouragement throughout this B.Tech.\ Project. His domain expertise in financial engineering, operations research, and sequential decision processes provided invaluable direction for this study. I also thank the Department of Industrial and Systems Engineering, Indian Institute of Technology Kharagpur, for providing computational facilities, and my peers and family for their continuous support.
 
-\vspace{0.3cm}
+\vspace{0.25cm}
 \noindent\textbf{Abstract:}\par
 Automating daily portfolio allocation via deep reinforcement learning (DRL) requires balancing return generation against market non-stationarity, partial state observability, and execution frictions. Prior literature separately suggests temporal encoders, risk-sensitive rewards, and turnover penalties, but these mechanisms are rarely evaluated under a single controlled setup. This report investigates a four-stage ablation: (i)~Model M1: PPO with a feedforward MLP baseline and net return reward; (ii)~Model M2: PPO with a recurrent LSTM encoder; (iii)~Model M3: LSTM-PPO with recursive Differential Sharpe Ratio (DSR) reward; and (iv)~Model M4: LSTM-PPO with DSR reward and a quadratic weight-change penalty ($\lambda_{\text{turn}} = 0.1$). All agents output continuous Dirichlet allocations over ten liquid National Stock Exchange of India (NSE) equities and an assumed zero-return cash reserve.
 
@@ -180,11 +179,9 @@ Models are evaluated across four chronological walk-forward folds spanning 2018-
 
 \medskip\noindent\raggedright\textbf{Keywords:} Deep Reinforcement Learning, Portfolio Allocation, Proximal Policy Optimisation, Dirichlet Distribution, Differential Sharpe Ratio, Turnover Regularisation, Walk-Forward Validation.
 
-%% ===== TABLE OF CONTENTS =====
-\newpage
-\thispagestyle{plain}
+\vspace{0.35cm}
 \begin{singlespace}
-\setcounter{tocdepth}{1}
+\setcounter{tocdepth}{0}
 \tableofcontents
 \end{singlespace}
 

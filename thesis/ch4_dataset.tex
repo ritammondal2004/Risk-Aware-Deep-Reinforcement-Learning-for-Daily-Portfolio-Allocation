@@ -39,9 +39,10 @@ $f_{13,i,t}$ & Average Directional Index & $\text{ADX}_{i,t}^{\text{norm}}$ & $\
 
 The instantaneous state vector $\mathbf{s}_t$ (or market observation vector $\mathbf{x}_t$) concatenates the 13 engineered technical features across all 10 equity assets ($10 \times 13 = 130$ market features) followed by the 11 current portfolio allocation weights ($w_{1,t}^{\text{cur}}, \dots, w_{10,t}^{\text{cur}}$ for the equities and $w_{\text{cash},t}^{\text{cur}}$ for cash):
 \begin{equation}
-\mathbf{s}_t = \Big[ \underbrace{f_{1,1,t}, \dots, f_{13,1,t}}_{\text{Stock 1}}, \; \underbrace{f_{1,2,t}, \dots, f_{13,2,t}}_{\text{Stock 2}}, \; \dots, \; \underbrace{f_{1,10,t}, \dots, f_{13,10,t}}_{\text{Stock 10}}, \; w_{1,t}^{\text{cur}}, \dots, w_{10,t}^{\text{cur}}, w_{\text{cash},t}^{\text{cur}} \Big]^\top.
+\mathbf{s}_t = \Big[ \underbrace{f_{1,1,t}, \dots, f_{13,1,t}}_{\text{Stock 1}}, \; \underbrace{f_{1,2,t}, \dots, f_{13,2,t}}_{\text{Stock 2}}, \; \dots, \; \underbrace{f_{1,10,t}, \dots, f_{13,10,t}}_{\text{Stock 10}}, \; w_{1,t}^{\text{cur}}, \dots, w_{10,t}^{\text{cur}}, w_{\text{cash},t}^{\text{cur}} \Big]^\top,
 \label{eq:state_vector}
 \end{equation}
+where $f_{j,i,t}$ denotes technical market feature $j$ ($j \in \{1, \dots, 13\}$) of equity asset $i$ ($i \in \{1, \dots, 10\}$) at time step $t$, $w_{i,t}^{\text{cur}}$ represents the current allocation weight held in equity asset $i$, and $w_{\text{cash},t}^{\text{cur}}$ is the current uninvested cash reserve weight.
 Thus, the complete instantaneous state dimension is:
 \begin{equation}
 \boxed{\mathbf{s}_t \in \mathbb{R}^{141}} \qquad (10 \times 13 + 11 = 141).
