@@ -12,18 +12,18 @@ class EnvParams:
     v0: float
     tau: float
     reward: str       # "net_return" | "dsr"
-    lam: float        # turnover penalty weight; 0.0 unless the model uses it
+    lam: float       
     eta: float
-    eps: float 
-
-    @classmethod
+    eps: float           
+                      
+    @classmethod          
     def from_cfg(cls, model, cfg=CFG):
         spec = MODEL_SPECS[model]
         return cls(cfg.state.window, cfg.cost.c_trans, cfg.cost.initial_value, cfg.model.action_threshold,
                    spec["reward"], cfg.reward.lambda_turnover if spec["turnover_penalty"] else 0.0,
                    cfg.reward.dsr_eta, cfg.reward.dsr_epsilon)
-
-
+                                                
+                     
 def threshold_and_renormalize(w, tau):
     """Action transformation: zero weights below tau, renormalise survivors to sum 1."""
     w = np.asarray(w, dtype=np.float64)

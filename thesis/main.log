@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  7 NOV 2026 01:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  7 NOV 2026 02:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -630,10 +630,9 @@ Overfull \hbox (3.62001pt too wide) in paragraph at lines 23--40
  [][] 
  []
 
-[10]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 46.
-) [11] (ch7_results.tex
+[10]) [11] (ch7_results.tex
 Chapter 7.
 
 Overfull \hbox (35.21225pt too wide) in paragraph at lines 13--25
@@ -684,8 +683,13 @@ Package pdftex.def Info: figures/validation_curves.png  used on input line 200.
 )
 (ch8_conclusion.tex
 Chapter 8.
-[16 <./figures/m4_lambda_sweep.png> <./figures/validation_curves.png>])
-(main.bbl) [17] (main.aux)
+[16 <./figures/m4_lambda_sweep.png> <./figures/validation_curves.png>]
+Overfull \hbox (0.84021pt too wide) in paragraph at lines 16--17
+[]\OT1/cmr/bx/n/10 RQ3 (Turnover Reg-u-lar-i-sa-tion): \OT1/cmr/m/it/10 Does au
+g-ment-ing the re-ward with a quadratic penalty sup-press turnover
+ []
+
+) (main.bbl) [17] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -696,11 +700,11 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Here is how much of TeX's memory you used:
  13910 strings out of 467871
  219659 string characters out of 5418861
- 664845 words of memory out of 5000000
+ 675845 words of memory out of 5000000
  42416 multiletter control sequences out of 15000+600000
  644354 words of font info for 99 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,17n,83p,1006b,534s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,17n,83p,1006b,570s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\DELL\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1
 000.pk><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
 /cm/cmbx10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/
@@ -743,7 +747,7 @@ ype1/public/amsfonts/cm/cmti9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/
 fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/DELL/AppData/Local/Programs
 /MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/DELL/AppData/L
 ocal/Programs/MiKTeX/fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on main.pdf (21 pages, 5734869 bytes).
+Output written on main.pdf (21 pages, 5738986 bytes).
 PDF statistics:
  667 PDF objects out of 1000 (max. 8388607)
  132 named destinations out of 1000 (max. 500000)
