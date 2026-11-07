@@ -40,13 +40,13 @@ Training Budget & 300,000 steps & 300,000 steps & 300,000 steps & 300,000 steps 
 \end{table}
 
 \section{Control Invariants and Training Algorithm}
-Experimental controls are strictly enforced: (i)~Actor and Critic heads are instantiated prior to the encoder to ensure identical initial head weights across models under the same seed; (ii)~all models train for a nominal budget of 300,000 environment interaction steps, executing exactly 2,344 rollout iterations of horizon $T_{\text{rollout}} = 128$ for a total of 300,032 completed transitions, with identical Adam learning rate ($10^{-4}$), batch size (64), and 10 PPO epochs; (iii)~all models experience identical market sequences and transaction costs; and (iv)~programmatic assertions verify that each transition alters exactly one dimension. Algorithm~\ref{alg:ppo} details the complete training workflow.
+Experimental controls are strictly enforced: (i)~Actor and Critic heads are instantiated prior to the encoder to ensure identical initial head weights across models under the same seed; (ii)~all models train for a nominal budget of 300,000 environment interaction steps, executing exactly 2,344 rollout iterations of horizon $T_{\text{rollout}} = 128$ for a total of 300,032 completed transitions, with identical Adam learning rate ($3 \times 10^{-4}$), batch size (64), and 10 PPO epochs; (iii)~all models experience identical market sequences and transaction costs; and (iv)~programmatic assertions verify that each transition alters exactly one dimension. Algorithm~\ref{alg:ppo} details the complete training workflow.
 
 \begin{algorithm}[H]
 \caption{Continuous Dirichlet PPO Daily Portfolio Allocation}\label{alg:ppo}
 \small
 \begin{algorithmic}[1]
-\Require Market indicators $\mathbf{X}$, returns $\mathbf{R}$, cost $c_{\text{trans}} = 0.001$, threshold $\tau = 0.01$, penalty $\lambda_{\text{turn}}$, DSR rate $\eta_{\text{dsr}} = 0.01$, PPO hyperparameters ($\gamma, \lambda_{\text{GAE}}, \epsilon, \eta = 10^{-4}$).
+\Require Market indicators $\mathbf{X}$, returns $\mathbf{R}$, cost $c_{\text{trans}} = 0.001$, threshold $\tau = 0.01$, penalty $\lambda_{\text{turn}}$, DSR rate $\eta_{\text{dsr}} = 0.01$, PPO hyperparameters ($\gamma, \lambda_{\text{GAE}}, \epsilon, \eta = 3 \times 10^{-4}$).
 \Ensure Optimised policy weights $\theta^*$ selected by peak validation Sharpe ratio.
 \State \textbf{Initialise} shared Encoder $\psi$, Actor $\theta$, Critic $\phi$, Adam optimiser; $V_0 \gets 10^6$, $\mathbf{w}_0^{\text{cur}} \gets [0,\dots,0,1]^\top$; DSR moments $A_0 \gets 0, B_0 \gets 0$; step counter $N_{\text{step}} \gets 0, N_{\text{eval}} \gets 25{,}000$, $\text{SR}_{\text{best}} \gets -\infty$.
 \While{$N_{\text{step}} < 300{,}000$} \Comment{Completes 2,344 rollouts $\times 128 = 300{,}032$ environment steps}
@@ -54,7 +54,7 @@ Experimental controls are strictly enforced: (i)~Actor and Critic heads are inst
   \For{$t = 1$ \textbf{to} $T_{\text{rollout}} = 128$}
     \State Observe window $\mathbf{F}_t \in \mathbb{R}^{30 \times 141}$; extract instantaneous state $\mathbf{s}_t \in \mathbb{R}^{141}$ (last row of $\mathbf{F}_t$).
     \State Compute latent state $\mathbf{h}_t \gets \text{Encoder}_\psi(\mathbf{s}_t)$ for M1, or $\text{Encoder}_\psi(\mathbf{F}_t)$ for M2--M4.
-    \State Compute logits $\boldsymbol{\ell}_t \gets \operatorname{clip}(\mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a, -3, 6)$ and concentration parameters $\boldsymbol{\alpha}_t \gets \exp(\boldsymbol{\ell}_t)$.
+    \State Compute raw logits $\mathbf{z}_t \gets \mathbf{W}_a \mathbf{h}_t + \mathbf{b}_a$ and concentration parameters $\boldsymbol{\alpha}_t \gets \exp(\mathbf{z}_t)$.
     \State Sample raw continuous action $\mathbf{a}_t \sim \operatorname{Dirichlet}(\boldsymbol{\alpha}_t)$ via Gamma variates; evaluate and record:
     \State \quad $\begin{aligned}
     \text{M1:}\quad &lp_t \gets \log\pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t), \quad V_t \gets V_\phi(\mathbf{s}_t),\\
@@ -71,7 +71,7 @@ Experimental controls are strictly enforced: (i)~Actor and Critic heads are inst
   \For{$\text{epoch} = 1$ \textbf{to} $10$}
     \For{each mini-batch of size $B = 64$ from $\mathcal{B}$}
       \State Evaluate ratio $\rho_i(\theta) \gets \exp(\log \pi_\theta - lp_i)$ and approximate KL divergence; \textbf{break} if $\text{KL} > 0.03$.
-      \State Update $(\psi, \theta, \phi)$ via Adam ($\eta = 10^{-4}$, grad clip $0.5$), minimising $\mathcal{L}^{\text{total}}(\theta, \phi)$ (Eq.~\eqref{eq:total_loss}).
+      \State Update $(\psi, \theta, \phi)$ via Adam ($\eta = 3 \times 10^{-4}$, grad clip $0.5$), minimising $\mathcal{L}^{\text{total}}(\theta, \phi)$ (Eq.~\eqref{eq:total_loss}).
     \EndFor
   \EndFor
   \If{$N_{\text{step}} \ge N_{\text{eval}}$ \textbf{or} $N_{\text{step}} \ge 300{,}000$}

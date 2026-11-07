@@ -42,9 +42,9 @@ To evaluate the contribution of temporal sequence modeling, two encoder backbone
 \end{itemize}   
 
 \section{Continuous Dirichlet Policy and Execution Logic}
-Target portfolio weights must satisfy the unit simplex constraints: $w_{i,t} \ge 0$ and $\sum_{i=1}^{11} w_{i,t} = 1$. Following \citet{yang2022selective}, we parameterise the policy using a continuous multivariate Dirichlet distribution where positive concentration parameters are formulated as $\alpha_{i,t} = \exp(z_{i,t})$. In our implementation, to prevent numerical overflow in Gamma function gradients and prevent distribution collapse onto simplex boundaries, the raw actor logits $\mathbf{z}_t \in \mathbb{R}^{11}$ are clamped to $[-3.0, 6.0]$:
+Target portfolio weights must satisfy the unit simplex constraints: $w_{i,t} \ge 0$ and $\sum_{i=1}^{11} w_{i,t} = 1$. Following \citet{yang2022selective}, we parameterise the policy using a continuous multivariate Dirichlet distribution where positive concentration parameters $\boldsymbol{\alpha}_t \in \mathbb{R}^{11}_{>0}$ are formulated directly from the raw actor logits $\mathbf{z}_t \in \mathbb{R}^{11}$:
 \begin{equation}
-\boldsymbol{\ell}_t = \operatorname{clip}(\mathbf{z}_t, -3.0, 6.0), \quad \alpha_{i,t} = \exp(\ell_{i,t}) \in [e^{-3}, e^6] \approx [0.0498, 403.43].
+\boldsymbol{\alpha}_t = \exp(\mathbf{z}_t), \qquad \alpha_{i,t} = \exp(z_{i,t}), \quad i = 1, \dots, 11.
 \end{equation}
 During environment rollouts, raw continuous action vectors $\mathbf{a}_t \in \Delta^{10}$ are sampled via normalized Gamma variates: $g_{i,t} \sim \operatorname{Gamma}(\alpha_{i,t}, 1)$ with $a_{i,t} = g_{i,t} / \sum_j g_{j,t}$ \citep{yang2022selective}. During deterministic evaluation, the policy executes the analytical mean $\mathbb{E}[a_{i,t}] = \alpha_{i,t} / \sum_j \alpha_{j,t}$.
 
@@ -147,14 +147,14 @@ The actor and critic head parameter updates are correspondingly:
 \theta &\leftarrow \theta - \eta \nabla_\theta \mathcal{L}^{\text{total}} = \theta - \eta \left( -\nabla_\theta L^{\text{clip}} - c_2 \nabla_\theta \mathcal{H} \right), \\
 \phi &\leftarrow \phi - \eta \nabla_\phi \mathcal{L}^{\text{total}} = \phi - \eta \left( c_1 \nabla_\phi L^{\text{value}} \right),
 \end{align}
-where $\nabla_\theta L^{\text{value}} = \mathbf{0}$ and $\nabla_\phi L^{\text{clip}} = \mathbf{0}$, ensuring that distinct heads are updated without double-counting shared parameters. In the implementation, a single unified Adam optimizer (\texttt{torch.optim.Adam(model.parameters(), lr=1e-4)}) applies these updates jointly across $\{\psi, \theta, \phi\}$ with global gradient norm clipping at $0.5$ \citep{zou2024novel}.
+where $\nabla_\theta L^{\text{value}} = \mathbf{0}$ and $\nabla_\phi L^{\text{clip}} = \mathbf{0}$, ensuring that distinct heads are updated without double-counting shared parameters. In the implementation, a single unified Adam optimizer (\texttt{torch.optim.Adam(model.parameters(), lr=3e-4)}) applies these updates jointly across $\{\psi, \theta, \phi\}$ with global gradient norm clipping at $0.5$ \citep{zou2024novel}.
 
 For an unclipped transition $J_t(\theta) = \rho_t(\theta) \hat{A}_t$, differentiating with respect to policy parameters $\theta$ yields the actor policy gradient:
 \begin{equation}
 \nabla_\theta J_t(\theta) = \hat{A}_t \nabla_\theta \rho_t(\theta) = \hat{A}_t \frac{\nabla_\theta \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t)}{\pi_{\theta_{\text{old}}}(\mathbf{a}_t \mid \mathbf{s}_t)} = \rho_t(\theta) \hat{A}_t \nabla_\theta \log \pi_\theta(\mathbf{a}_t \mid \mathbf{s}_t) \quad \text{\citep{schulman2017proximal}}.
 \label{eq:policy_grad}
 \end{equation}
-Equation~\eqref{eq:policy_grad} demonstrates that the gradient step is directed by the advantage estimate $\hat{A}_t$ and scaled by the importance weight $\rho_t(\theta)$, adjusting the Dirichlet concentration mapping to shift probability density toward higher-yielding allocations on $\Delta^{10}$ \citep{yang2022selective}, where the shared encoder processes the instantaneous state $\mathbf{s}_t$ for M1 or the historical sequence $\mathbf{F}_t$ for M2--M4. Optimization is carried out via Adam ($\eta = 10^{-4}$) with gradient norm clipping at $0.5$ \citep{zou2024novel} and early stopping when approximate KL divergence exceeds $1.5 \times \text{target\_kl} = 0.03$ \citep{schulman2017proximal}.
+Equation~\eqref{eq:policy_grad} demonstrates that the gradient step is directed by the advantage estimate $\hat{A}_t$ and scaled by the importance weight $\rho_t(\theta)$, adjusting the Dirichlet concentration mapping to shift probability density toward higher-yielding allocations on $\Delta^{10}$ \citep{yang2022selective}, where the shared encoder processes the instantaneous state $\mathbf{s}_t$ for M1 or the historical sequence $\mathbf{F}_t$ for M2--M4. Optimization is carried out via Adam ($\eta = 3 \times 10^{-4}$) with gradient norm clipping at $0.5$ \citep{zou2024novel} and early stopping when approximate KL divergence exceeds $1.5 \times \text{target\_kl} = 0.03$ \citep{schulman2017proximal}.
 
 \section{PPO Training Parameters}
 Table~\ref{tab:hyperparameters} summarizes the PPO hyperparameters and operational settings extracted directly from our codebase, along with the empirical or theoretical basis for each choice.
@@ -177,7 +177,7 @@ PPO clipping range ($\epsilon$) & Policy ratio clipping threshold & 0.2 & Schulm
 Value coefficient ($c_1$) & Critic loss weight & 0.5 & Zou et al.\ (2024) \citep{zou2024novel} (Table 1); Schulman et al.\ (2017) \\
 Entropy coefficient ($c_2$) & Policy entropy bonus weight & 0.01 & Zou et al.\ (2024) \citep{zou2024novel} (Table 1); Schulman et al.\ (2017) \\
 Optimiser & Parameter optimiser & Adam & Zou et al.\ (2024) \citep{zou2024novel} \\
-Learning rate ($\eta$) & Adam learning rate & $10^{-4}$ & Validation selection (Fold 1; Zou et al.\ \citep{zou2024novel} test $3\times 10^{-4}$) \\
+Learning rate ($\eta$) & Adam learning rate & $3 \times 10^{-4}$ & Zou et al.\ (2024) \citep{zou2024novel} (Table 1) \\
 Target KL ($\text{target\_kl}$) & Approximate KL early-stop & 0.02 & Implementation safeguard \citep{schulman2017proximal} \\
 Training epochs ($K$) & Update epochs per rollout & 10 & Schulman et al.\ (2017) \citep{schulman2017proximal} \\
 Mini-batch size ($B$) & Batch size per SGD update & 64 & Schulman et al.\ (2017) \citep{schulman2017proximal} \\
@@ -187,7 +187,7 @@ Total environment steps & Training budget per run & 300,000 & Target budget; exe
 Validation interval & Checkpoint evaluation frequency & 25,000 & Validation selection interval \\
 Transaction cost ($c_{\text{trans}}$) & Proportional cost per turnover & 0.001 & Standard institutional rate \citep{zou2024novel} (0.1\%) \\
 Execution threshold ($\tau$) & Action truncation threshold & 0.01 & Implementation setting (1\% minimum position) \\
-Log-concentration clamp & Bounds of logits $\boldsymbol{\ell}_t$ & $[-3.0, 6.0]$ & Implementation numerical stability safeguard \\
+Log-concentration clamp & Bounds of logits $\mathbf{z}_t$ & $[-3.0, 6.0]$ & Implementation numerical stability safeguard \\
 Window length ($T$), hidden ($H$) & Sequence length; LSTM units & 30; 512 & Zou et al.\ (2024) \citep{zou2024novel} \\
 DSR rate ($\eta_{\text{dsr}}$) & Moment adaptation rate & 0.01 & Online moment decay setting \citep{millea2021deep} \\
 Turnover penalty ($\lambda_{\text{turn}}$) & M4 regularisation weight & 0.1 & Validation tuning on Fold 1 \citep{wang2025risk} \\
