@@ -187,7 +187,6 @@ Total environment steps & Training budget per run & 300,000 & Target budget; exe
 Validation interval & Checkpoint evaluation frequency & 25,000 & Validation selection interval \\
 Transaction cost ($c_{\text{trans}}$) & Proportional cost per turnover & 0.001 & Standard institutional rate \citep{zou2024novel} (0.1\%) \\
 Execution threshold ($\tau$) & Action truncation threshold & 0.01 & Implementation setting (1\% minimum position) \\
-Log-concentration clamp & Bounds of logits $\mathbf{z}_t$ & $[-3.0, 6.0]$ & Implementation numerical stability safeguard \\
 Window length ($T$), hidden ($H$) & Sequence length; LSTM units & 30; 512 & Zou et al.\ (2024) \citep{zou2024novel} \\
 DSR rate ($\eta_{\text{dsr}}$) & Moment adaptation rate & 0.01 & Online moment decay setting \citep{millea2021deep} \\
 Turnover penalty ($\lambda_{\text{turn}}$) & M4 regularisation weight & 0.1 & Validation tuning on Fold 1 \citep{wang2025risk} \\
