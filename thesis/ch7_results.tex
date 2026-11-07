@@ -141,30 +141,10 @@ Performance varies across market regimes:
     \item \textbf{Fold 4 (2024--2025):} Secular bull market; M3 delivers $24.7\%$, while M4 ($15.1\%$) remains constrained.
 \end{itemize}
 
-\section{Equal-Weight Benchmark Outperformance and Gap Decomposition}
-The passive Equal-Weight benchmark produced higher cumulative returns than every RL model across all test windows. We distinguish between the \textbf{mean two-year test return} ($36.48\%$ in Table~\ref{tab:overall_results}) and the \textbf{compounded 8-year return across the chained 2018--2025 timeline} ($135.66\%$ in Table~\ref{tab:gap_decomp}).
+\section{Average Asset Allocation Across Models}
+Table~\ref{tab:avg_weights} reports the average portfolio allocations across the out-of-sample evaluation period. M4 maintained the highest average cash allocation (32.4\%), compared with 10.1\% for M1, 8.7\% for M2, and 13.1\% for M3. This more conservative allocation was associated with lower turnover and drawdown, but also limited participation in equity-market gains. The Equal-Weight benchmark remained fully invested, with 10\% allocated to each equity and no cash holding.
 
-Table~\ref{tab:gap_decomp} decomposes the chained cumulative return gap between each model and Equal-Weight into two exploratory components: (i)~\textbf{Cash Drag}: return forfeited by holding cash in an upward-trending market (evaluated against a counterfactual ``EW Same Cash'' portfolio); and (ii)~\textbf{Stock Selection and Timing}: difference between model return and ``EW Same Cash'', reflecting active equity weights. Average asset allocations are presented in Table~\ref{tab:avg_weights}.
-
-\begin{table}[htbp]
-\centering
-\small
-\setlength{\tabcolsep}{6pt}
-\caption{Exploratory decomposition of cumulative out-of-sample return gap against Equal-Weight (\% points over the chained 2018--2025 timeline).}
-\label{tab:gap_decomp}
-\begin{tabular}{lccccc}
-\toprule
-\textbf{Model} & \textbf{EW Return} & \textbf{Cash Drag} & \textbf{EW Same Cash} & \textbf{Stock Selection} & \textbf{Model Return} \\
-\midrule
-\textbf{M1 (MLP)} & $135.66$ & $-13.67$ & $121.99$ & $-2.11$ & $119.88$ \\
-\textbf{M2 (LSTM)} & $135.66$ & $-9.99$ & $125.67$ & $-2.14$ & $123.53$ \\
-\textbf{M3 (+ DSR)} & $135.66$ & $-15.14$ & $120.52$ & $-3.32$ & $117.20$ \\
-\textbf{M4 (+ Turn. Pen.)} & $135.66$ & $\mathbf{-42.35}$ & $93.31$ & $-7.84$ & $\mathbf{85.47}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3.8pt}
@@ -182,8 +162,6 @@ Table~\ref{tab:gap_decomp} decomposes the chained cumulative return gap between 
 \bottomrule
 \end{tabular}
 \end{table}
-
-The decomposition indicates that cash drag accounts for the majority of the gap. The Indian equity market experienced strong overall growth over 2018--2025; the passive EW benchmark remained 100\% invested at all times, capturing market beta with minimal turnover ($0.61\%$). Conversely, Model M4 allocated an average of $32.4\%$ to cash to avoid volatility and rebalancing penalties. Under the zero-return cash assumption, this resulted in an estimated $-42.35\%$ cash drag relative to EW, compared to $-7.84\%$ from equity selection. In addition, the selected large-caps represent corporate leaders that prospered over 2011--2025, creating a strong survivorship baseline that active strategies struggle to surpass after frictions.
 
 \section{M4 Hyperparameter Tuning and Validation Dynamics}
 Figure~\ref{fig:m4_sweep} depicts the parameter sweep over $\lambda_{\text{turn}} \in \{0.01, 0.03, 0.1, 0.3\}$ on Fold 1 validation data across two seeds (seeds 0 and 1).

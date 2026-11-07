@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  8 NOV 2026 00:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  8 NOV 2026 01:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -668,29 +668,29 @@ File: figures/equity_per_fold.png Graphic file (type png)
 <use figures/equity_per_fold.png>
 Package pdftex.def Info: figures/equity_per_fold.png  used on input line 130.
 (pdftex.def)             Requested size: 430.66331pt x 251.25533pt.
- [14 <./figures/turnover_cost.png>] [15 <./figures/equity_per_fold.png (PNG cop
-y)>]
-<figures/m4_lambda_sweep.png, id=464, 722.7pt x 505.89pt>
+ [14 <./figures/turnover_cost.png>]
+<figures/m4_lambda_sweep.png, id=453, 722.7pt x 505.89pt>
 File: figures/m4_lambda_sweep.png Graphic file (type png)
 <use figures/m4_lambda_sweep.png>
-Package pdftex.def Info: figures/m4_lambda_sweep.png  used on input line 195.
+Package pdftex.def Info: figures/m4_lambda_sweep.png  used on input line 173.
 (pdftex.def)             Requested size: 239.80252pt x 167.8628pt.
-<figures/validation_curves.png, id=465, 855.88329pt x 280.30435pt>
+<figures/validation_curves.png, id=454, 855.88329pt x 280.30435pt>
 File: figures/validation_curves.png Graphic file (type png)
 <use figures/validation_curves.png>
-Package pdftex.def Info: figures/validation_curves.png  used on input line 201.
+Package pdftex.def Info: figures/validation_curves.png  used on input line 179.
 
 (pdftex.def)             Requested size: 239.80252pt x 78.536pt.
-)
+ [15 <./figures/equity_per_fold.png (PNG copy)>])
 (ch8_conclusion.tex
 Chapter 8.
-[16 <./figures/m4_lambda_sweep.png> <./figures/validation_curves.png>]
+
 Overfull \hbox (0.84021pt too wide) in paragraph at lines 16--17
 []\OT1/cmr/bx/n/10 RQ3 (Turnover Reg-u-lar-i-sa-tion): \OT1/cmr/m/it/10 Does au
 g-ment-ing the re-ward with a quadratic penalty sup-press turnover
  []
 
-) (main.bbl) [17] (main.aux)
+[16 <./figures/m4_lambda_sweep.png> <./figures/validation_curves.png>])
+(main.bbl) [17] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-24>
@@ -699,10 +699,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 21ACFE3264CA488F713DE9458C74D6ED;1455.
  ) 
 Here is how much of TeX's memory you used:
- 13904 strings out of 467871
- 219598 string characters out of 5418861
- 665819 words of memory out of 5000000
- 42413 multiletter control sequences out of 15000+600000
+ 13902 strings out of 467871
+ 219566 string characters out of 5418861
+ 665653 words of memory out of 5000000
+ 42412 multiletter control sequences out of 15000+600000
  643386 words of font info for 96 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,17n,83p,1006b,528s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -746,9 +746,9 @@ cm/cmti9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
 sfonts/cm/cmtt10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/p
 ublic/amsfonts/symbols/msbm10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/
 fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on main.pdf (21 pages, 5713497 bytes).
+Output written on main.pdf (21 pages, 5711379 bytes).
 PDF statistics:
- 657 PDF objects out of 1000 (max. 8388607)
- 132 named destinations out of 1000 (max. 500000)
+ 653 PDF objects out of 1000 (max. 8388607)
+ 131 named destinations out of 1000 (max. 500000)
  115 words of extra memory for PDF output out of 10000 (max. 10000000)
 
