@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  7 NOV 2026 19:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.5)  8 NOV 2026 00:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -583,7 +583,7 @@ l.30
       [1] [2]) (ch4_dataset.tex
 Chapter 4.
 [3] [4]
-<figures/walk_forward_schematic.png, id=217, 811.1103pt x 296.5479pt>
+<figures/walk_forward_schematic.png, id=216, 811.1103pt x 296.5479pt>
 File: figures/walk_forward_schematic.png Graphic file (type png)
 <use figures/walk_forward_schematic.png>
 Package pdftex.def Info: figures/walk_forward_schematic.png  used on input line
@@ -612,12 +612,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 109--109
 ) (ch5_model.tex
 Chapter 5.
 [5 <./figures/walk_forward_schematic.png>]
-<figures/architecture.png, id=251, 1780.6525pt x 890.32625pt>
+<figures/architecture.png, id=250, 1780.6525pt x 890.32625pt>
 File: figures/architecture.png Graphic file (type png)
 <use figures/architecture.png>
 Package pdftex.def Info: figures/architecture.png  used on input line 9.
 (pdftex.def)             Requested size: 371.93175pt x 185.95514pt.
-<figures/pipeline.png, id=252, 1678.27pt x 944.52875pt>
+<figures/pipeline.png, id=251, 1678.27pt x 944.52875pt>
 File: figures/pipeline.png Graphic file (type png)
 <use figures/pipeline.png>
 Package pdftex.def Info: figures/pipeline.png  used on input line 13.
@@ -640,45 +640,45 @@ Overfull \hbox (35.21225pt too wide) in paragraph at lines 13--25
  [][] 
  []
 
-<figures/equity_stitched.png, id=415, 612.74635pt x 335.53929pt>
+<figures/equity_stitched.png, id=414, 612.74635pt x 335.53929pt>
 File: figures/equity_stitched.png Graphic file (type png)
 <use figures/equity_stitched.png>
 Package pdftex.def Info: figures/equity_stitched.png  used on input line 33.
 (pdftex.def)             Requested size: 415.98228pt x 227.80017pt.
-<figures/drawdown.png, id=416, 616.35986pt x 268.94765pt>
+<figures/drawdown.png, id=415, 616.35986pt x 268.94765pt>
 File: figures/drawdown.png Graphic file (type png)
 <use figures/drawdown.png>
 Package pdftex.def Info: figures/drawdown.png  used on input line 37.
 (pdftex.def)             Requested size: 415.98228pt x 181.5154pt.
 
-Overfull \hbox (16.19461pt too wide) in paragraph at lines 51--81
+Overfull \hbox (16.19461pt too wide) in paragraph at lines 51--82
  [][] 
  []
 
 [12
 
 ] [13 <./figures/equity_stitched.png> <./figures/drawdown.png>]
-<figures/turnover_cost.png, id=437, 787.743pt x 281.33679pt>
+<figures/turnover_cost.png, id=436, 787.743pt x 281.33679pt>
 File: figures/turnover_cost.png Graphic file (type png)
 <use figures/turnover_cost.png>
-Package pdftex.def Info: figures/turnover_cost.png  used on input line 99.
+Package pdftex.def Info: figures/turnover_cost.png  used on input line 100.
 (pdftex.def)             Requested size: 342.56969pt x 122.34616pt.
-<figures/equity_per_fold.png, id=440, 1648.1575pt x 961.5925pt>
+<figures/equity_per_fold.png, id=439, 1648.1575pt x 961.5925pt>
 File: figures/equity_per_fold.png Graphic file (type png)
 <use figures/equity_per_fold.png>
-Package pdftex.def Info: figures/equity_per_fold.png  used on input line 129.
+Package pdftex.def Info: figures/equity_per_fold.png  used on input line 130.
 (pdftex.def)             Requested size: 430.66331pt x 251.25533pt.
  [14 <./figures/turnover_cost.png>] [15 <./figures/equity_per_fold.png (PNG cop
 y)>]
-<figures/m4_lambda_sweep.png, id=465, 722.7pt x 505.89pt>
+<figures/m4_lambda_sweep.png, id=464, 722.7pt x 505.89pt>
 File: figures/m4_lambda_sweep.png Graphic file (type png)
 <use figures/m4_lambda_sweep.png>
-Package pdftex.def Info: figures/m4_lambda_sweep.png  used on input line 194.
+Package pdftex.def Info: figures/m4_lambda_sweep.png  used on input line 195.
 (pdftex.def)             Requested size: 239.80252pt x 167.8628pt.
-<figures/validation_curves.png, id=466, 855.88329pt x 280.30435pt>
+<figures/validation_curves.png, id=465, 855.88329pt x 280.30435pt>
 File: figures/validation_curves.png Graphic file (type png)
 <use figures/validation_curves.png>
-Package pdftex.def Info: figures/validation_curves.png  used on input line 200.
+Package pdftex.def Info: figures/validation_curves.png  used on input line 201.
 
 (pdftex.def)             Requested size: 239.80252pt x 78.536pt.
 )
@@ -699,13 +699,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 21ACFE3264CA488F713DE9458C74D6ED;1455.
  ) 
 Here is how much of TeX's memory you used:
- 13906 strings out of 467871
- 219619 string characters out of 5418861
- 666845 words of memory out of 5000000
- 42414 multiletter control sequences out of 15000+600000
- 643739 words of font info for 97 fonts, out of 8000000 for 9000
+ 13904 strings out of 467871
+ 219598 string characters out of 5418861
+ 665819 words of memory out of 5000000
+ 42413 multiletter control sequences out of 15000+600000
+ 643386 words of font info for 96 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,17n,83p,1006b,530s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,17n,83p,1006b,528s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\DELL\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1
 000.pk><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
 /cm/cmbx10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/
@@ -733,23 +733,22 @@ cmr6.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmr7.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/
 amsfonts/cm/cmr8.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/p
 ublic/amsfonts/cm/cmr9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/t
-ype1/public/amsfonts/cm/cmsl10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX
-/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/DELL/AppData/Local/Program
-s/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users/DELL/AppData/Local/
-Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/DELL/AppData
-/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/DELL/
-AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/User
-s/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><
+ype1/public/amsfonts/cm/cmsy10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users/DELL/AppData/Local/Programs
+/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/DELL/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/DELL/AppData/
+Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/DELL/A
+ppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Users
+/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><
 C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti
-10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
-/cm/cmti7.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/a
-msfonts/cm/cmti9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/p
-ublic/amsfonts/cm/cmtt10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts
-/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/DELL/AppData/Local/Programs
-/MiKTeX/fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on main.pdf (21 pages, 5728771 bytes).
+7.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/
+cm/cmti9.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
+sfonts/cm/cmtt10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/fonts/type1/p
+ublic/amsfonts/symbols/msbm10.pfb><C:/Users/DELL/AppData/Local/Programs/MiKTeX/
+fonts/type1/urw/zapfding/uzdr.pfb>
+Output written on main.pdf (21 pages, 5713497 bytes).
 PDF statistics:
- 662 PDF objects out of 1000 (max. 8388607)
+ 657 PDF objects out of 1000 (max. 8388607)
  132 named destinations out of 1000 (max. 500000)
  115 words of extra memory for PDF output out of 10000 (max. 10000000)
 
