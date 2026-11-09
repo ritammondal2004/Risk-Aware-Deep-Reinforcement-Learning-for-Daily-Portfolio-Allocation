@@ -15,7 +15,7 @@
 
 ## Abstract
 
-Daily equity portfolio allocation is fundamentally a sequential decision-making problem governed by a competing trilemma: compounding capital growth (return), mitigating downside tail risk and drawdowns (risk), and curtailing rebalancing transaction fees (friction). While modern deep reinforcement learning (DRL) literature proposes numerous architectural and algorithmic enhancements, they are conventionally evaluated in disparate experimental settings—conflating their true individual contributions.
+Daily equity portfolio allocation is fundamentally a sequential decision-making problem governed by a competing trilemma: compounding capital growth (return), mitigating downside tail risk and drawdowns (risk), and curtailing rebalancing transaction fees (friction). While modern deep reinforcement learning (DRL) literature proposes numerous architectural and algorithmic enhancements, they are conventionally evaluated in disparate experimental settings—conflating their true individual contributions.  
 
 This project implements a **rigorous single-factor controlled ablation study** within a continuous-action Proximal Policy Optimization (PPO) framework to systematically isolate three core mechanisms:
 1. **Temporal Sequence Memory:** Stateless Multi-Layer Perceptron (MLP) vs. 30-day Long Short-Term Memory (LSTM) encoder ($M_1 \to M_2$).
@@ -26,38 +26,6 @@ The models are formulated as Partially Observable Markov Decision Processes (POM
 
 ---
 
-## Controlled Four-Model Ablation Design
-
-Each model transition modifies exactly **one** isolated algorithmic component while holding the asset universe, indicators, costs, PPO hyperparameters, training budget, and walk-forward folds strictly identical:
-
-| Model | Encoder Architecture | Reward Function ($r_t$) | Turnover Penalty | Algorithmic Mechanism Isolated |
-| :---: | :---: | :---: | :---: | :--- |
-| **M1** | 2-Layer MLP (512 units) | Net Return ($R_{\text{net}, t}$) | None | Stateless baseline |
-| **M2** | 1-Layer LSTM (512 units, 30 days) | Net Return ($R_{\text{net}, t}$) | None | **M1 $\to$ M2:** Adds 30-day temporal sequence memory |
-| **M3** | 1-Layer LSTM (512 units, 30 days) | Differential Sharpe ($D_t$) | None | **M2 $\to$ M3:** Adds online risk-aware reward |
-| **M4** | 1-Layer LSTM (512 units, 30 days) | Differential Sharpe ($D_t$) | Quadratic ($\lambda = 0.1$) | **M3 $\to$ M4:** Adds turnover friction regularization |
-
----
-
-## Empirical Results Summary
-
-Averaged out-of-sample metrics across 4 chronological walk-forward folds (8 test years: 2018–2025) and 3 seeds (12 paired evaluations per model):
-
-| Model | Mean 2-Year Return | Annualized Sharpe | Max Drawdown | Total Cost (% of $V_0$) | Daily Turnover |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **M1 (MLP)** | 20.62% | 0.71 | −19.50% | 9.68% | 0.186 |
-| **M2 (LSTM)** | 28.23% | 0.92 | −18.52% | 4.27% | 0.080 |
-| **M3 (DSR)** | 26.93% | 0.92 | −19.95% | 4.14% | 0.079 |
-| **M4 (Turnover Penalty)** | 20.97% | 0.92 | **−16.04%** | **0.97%** | **0.019** |
-| **Equal-Weight (Benchmark)** | **36.48%** | **1.13** | −18.91% | **0.61%** | — |
-
-### Key Findings & Answers to Research Questions:
-- **RQ1 (Temporal Memory): YES.** Replacing the stateless MLP with an LSTM encoder provides substantial, statistically robust gains: Sharpe ratio improves by $+0.201$ (95% CI $[+0.156, +0.246]$, better in 4/4 folds), return increases by $+7.61$ pp, and daily turnover and costs are cut by more than half.
-- **RQ2 (Risk-Aware Reward): INCONCLUSIVE.** The Differential Sharpe Ratio yielded no detectable overall improvement over net return ($\Delta \text{Sharpe} = +0.003$, 95% CI $[-0.295, +0.222]$ straddles zero).
-- **RQ3 (Turnover Regularization): YES, WITH A RETURN TRADE-OFF.** Quadratic turnover regularization successfully reduces turnover by 76% ($0.079 \to 0.019$) and trading costs to $0.97\%$ while securing the best maximum drawdown ($-16.04\%$), but the conservative positioning caps cumulative return ($20.97\%$).
-- **RQ4 (Benchmark Competitiveness): NO.** Passive Equal-Weight outperformed all RL agents. Primary factors: (1) full equity exposure during the strong 2018–2025 Indian bull run; (2) cash drag from RL agents holding zero-yield cash allocations (8.7%–32.4% avg); and (3) high organic growth among the 10 large-cap blue-chip equities.
-
----
 
 ## Repository Structure
 
