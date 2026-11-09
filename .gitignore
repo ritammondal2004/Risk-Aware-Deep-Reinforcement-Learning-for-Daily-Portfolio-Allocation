@@ -9,3 +9,8 @@ outputs/
 *.pt
 
 *.npz  
+BTP1_Presentation_Content.md
+ 
+# PPT folder: track only .pptx
+ppt/*
+!ppt/*.pptx

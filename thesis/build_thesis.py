@@ -4,29 +4,20 @@ import shutil
 import fitz
 
 def build_all():
-    thesis_dir = r"c:\RTM\IIT KGP\sem 7\BTP1_repo\thesis"
-    miktex_bin = r"C:\Users\DELL\AppData\Local\Programs\MiKTeX\miktex\bin\x64"
-    pdflatex = os.path.join(miktex_bin, "pdflatex.exe")
-    bibtex = os.path.join(miktex_bin, "bibtex.exe")
-
-    # Terminate any running Acrobat instance that could lock PDF files
-    try:
-        subprocess.run(["taskkill", "/F", "/IM", "Acrobat.exe"], capture_output=True)
-    except Exception:
-        pass
-
     env = os.environ.copy()
     paths = env.get("PATH", "").split(";")
     clean_paths = [p for p in paths if "anaconda" not in p.lower() and "conda" not in p.lower()]
-    clean_paths.insert(0, miktex_bin)
     env["PATH"] = ";".join(clean_paths)
 
-    # 1. Build main.tex with full BibTeX resolution
+    thesis_dir = r"D:\RTM\IIT KGP\sem 7\BTP1_repo\thesis"
+    miktex_bin = r"D:\Users\DELL\AppData\Local\Programs\MiKTeX\miktex\bin\x64"
+    pdflatex = os.path.join(miktex_bin, "pdflatex.exe")
+    bibtex = os.path.join(miktex_bin, "bibtex.exe")
+
+    # 1. Build main.tex
     print("Building main.pdf...")
     subprocess.run([pdflatex, "-interaction=nonstopmode", "main.tex"], cwd=thesis_dir, env=env, capture_output=True)
-    b_res = subprocess.run([bibtex, "main"], cwd=thesis_dir, env=env, capture_output=True, text=True)
-    if b_res.returncode != 0:
-        print("BibTeX error:", b_res.stdout, b_res.stderr)
+    subprocess.run([bibtex, "main"], cwd=thesis_dir, env=env, capture_output=True)
     subprocess.run([pdflatex, "-interaction=nonstopmode", "main.tex"], cwd=thesis_dir, env=env, capture_output=True)
     res = subprocess.run([pdflatex, "-interaction=nonstopmode", "main.tex"], cwd=thesis_dir, env=env, capture_output=True, text=True)
 
