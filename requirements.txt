@@ -1,8 +1,0 @@
-numpy
-pandas
-scipy
-torch
-yfinance>=0.2.54
-pyarrow
-pytest
-matplotlib  
