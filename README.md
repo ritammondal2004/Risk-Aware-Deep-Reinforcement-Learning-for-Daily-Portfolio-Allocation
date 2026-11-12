@@ -5,13 +5,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![B.Tech Project-I](https://img.shields.io/badge/IIT%20Kharagpur-B.Tech%20Project--I-navy.svg)](https://www.iitkgp.ac.in/)
 
+ ### [**read the paper here**](https://www.researchgate.net/publication/417808837_Risk-Aware_Deep_Reinforcement_Learning_for_Daily_Portfolio_Allocation)
+
 > **Academic Evaluation Repository**  
 > **Candidate:** Ritam Mondal (Roll No. 23IM30018)  
 > **Supervisor:** Dr. Abhishek Sharma  
 > **Department:** Department of Industrial and Systems Engineering, Indian Institute of Technology Kharagpur  
-> **Presentation Slide Deck:** [`ppt/BTP1_Risk_Aware_DRL_Portfolio.pptx`](ppt/BTP1_Risk_Aware_DRL_Portfolio.pptx)
+> **Presentation Slide Deck:** [`thesis/BTP_PPT.pptx`]
 
 ---
+
+
 
 ## Abstract
 
@@ -76,7 +80,7 @@ Clone the repository and set up a Python 3.10+ virtual environment:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/BTP1_repo.git
+git clone https://github.com/ritammondal2004/Risk-Aware-Deep-Reinforcement-Learning-for-Daily-Portfolio-Allocation.git
 cd BTP1_repo
 
 # Create and activate a virtual environment
@@ -181,49 +185,3 @@ python -m src.report
 Output tables and charts will be saved in `outputs/plots/` and `outputs/metrics/`.
 
 ---
-
-## Methodological & Scientific Protocols
-
-To ensure rigorous reproducibility and eliminate common financial RL pitfalls:
-1. **Strict Chronological Walk-Forward:** No random shuffling or future lookahead. Training (6y) $\to$ Validation (1y) $\to$ Test (2y).
-2. **Zero Information Leakage:** Technical indicators use backward-looking windows only. Feature scaling parameters ($\mu, \sigma$) are fitted strictly on each fold's training split.
-3. **Realistic Market Frictions:** Proportional transaction cost of 0.1% deducted on every rebalance.
-4. **Simplex Constraint via Dirichlet Policy:** Raw action $a_t \sim \operatorname{Dirichlet}(\alpha_t)$ naturally satisfies non-negativity and unit sum.
-5. **Decoupled Environment Pruning:** Positions $<1\%$ are filtered and renormalized in the environment to prevent micro-trading fees; this does not alter policy log-likelihoods.
-6. **Objective Checkpointing:** Models are checkpointed based strictly on validation Sharpe ratio, never on test performance.
-
----
-
-## Academic References
-
-1. **Schulman, J., Wolski, F., Dhariwal, P., Radford, A., & Klimov, O. (2017).**  
-   *Proximal Policy Optimization Algorithms.*  
-   arXiv:1707.06347. [https://arxiv.org/abs/1707.06347](https://arxiv.org/abs/1707.06347)
-
-2. **Schulman, J., Moritz, P., Levine, S., Jordan, M., & Abbeel, P. (2016).**  
-   *High-Dimensional Continuous Control Using Generalized Advantage Estimation.*  
-   arXiv:1506.02438. [https://arxiv.org/abs/1506.02438](https://arxiv.org/abs/1506.02438)
-
-3. **Zou, J., Lou, J., Wang, B., & Liu, S. (2024).**  
-   *A Novel Deep Reinforcement Learning Based Automated Stock Trading System Using Cascaded LSTM Networks.*  
-   *Expert Systems with Applications*, 242, 122801. [https://doi.org/10.1016/j.eswa.2023.122801](https://doi.org/10.1016/j.eswa.2023.122801)
-
-4. **Millea, A. (2021).**  
-   *Deep Reinforcement Learning for Trading—A Critical Survey.*  
-   *Data*, 6(11), 119. [https://doi.org/10.3390/data6110119](https://doi.org/10.3390/data6110119)
-
-5. **Moody, J., & Wu, L. (1997 / 2001).**  
-   *Learning to Trade via Direct Reinforcement.*  
-   *IEEE Transactions on Neural Networks*, 12(4), 875–889. [https://doi.org/10.1109/72.935097](https://doi.org/10.1109/72.935097)
-
-6. **Liu, X.-Y., Xia, Z., Yang, H., Gao, J., Zha, D., Zhu, M., Wang, C. D., Wang, Z., & Guo, J. (2024).**  
-   *Dynamic Datasets and Market Environments for Financial Reinforcement Learning.*  
-   *Machine Learning*, 113, 2795–2839. [https://doi.org/10.1007/s10994-023-06511-w](https://doi.org/10.1007/s10994-023-06511-w)
-
-7. **Wang, X., & Liu, L. (2025).**  
-   *Risk-Sensitive Deep Reinforcement Learning for Portfolio Optimization.*  
-   *Journal of Risk and Financial Management*, 18(7), 347. [https://doi.org/10.3390/jrfm18070347](https://doi.org/10.3390/jrfm18070347)
-
-8. **Yang, H., Park, H., & Lee, K. (2022).**  
-   *A Selective Portfolio Management Algorithm with Off-Policy Reinforcement Learning Using Dirichlet Distribution.*  
-   *Axioms*, 11(12), 664. [https://doi.org/10.3390/axioms11120664](https://doi.org/10.3390/axioms11120664)

@@ -11,6 +11,5 @@ outputs/
 *.npz  
 BTP1_Presentation_Content.md
  
-# PPT folder: track only .pptx
-ppt/*
-!ppt/*.pptx
+thesis/turnitin_23IM30018.pdf
+thesis/*.tex

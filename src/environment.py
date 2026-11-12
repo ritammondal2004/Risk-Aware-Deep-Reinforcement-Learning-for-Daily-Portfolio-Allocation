@@ -90,7 +90,7 @@ class PortfolioEnv:
     def reset(self):
         self.i, self.V, self.w, self.done = self.first, self.p.v0, self._cash(), False
         self.wbuf = np.tile(self.w, (self.p.window, 1))
-        self.dsr.reset()
+        self.dsr.reset() 
         return self._obs(), {"index": self.i}  
 
     def step(self, raw_action):
@@ -107,7 +107,7 @@ class PortfolioEnv:
         turnover = float(np.abs(dw).sum())
         cost = p.c_trans * self.V * turnover
         growth = float((target[:N] * (1.0 + self.R[i])).sum() + target[N])
-        v_new = (self.V - cost) * growth
+        v_new = (self.V - cost) * growth 
         r_net = v_new / self.V - 1.0                         # cost already inside v_new
 
         w_new = np.empty(N + 1)
